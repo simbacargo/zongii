@@ -175,7 +175,7 @@ def product_list(request):
     query = request.GET.get("q", "").strip()
 
     # products = Product.objects.select_related("supplier", "business").filter(is_active=True)
-    products = Product.objects.all()
+    products = Product.objects.filter(is_active=True)
     if business_id:
         products = products.filter(business_id=business_id)
 

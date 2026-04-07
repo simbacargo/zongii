@@ -1,0 +1,29 @@
+{% for category in categories %}
+<tr id="category-row-{{ category.pk }}">
+  <td>{{ category.name }}</td>
+  <td>
+    <div class="actions">
+      <button class="btn-sm outline"
+        hx-get="{% url 'category_update' category.pk %}"
+        hx-target="#modal-content"
+        hx-swap="innerHTML">
+        Edit
+      </button>
+      <button class="btn-sm outline contrast"
+        hx-post="{% url 'category_delete' category.pk %}"
+        hx-target="#category-table-body"
+        hx-swap="innerHTML"
+        hx-confirm="Delete '{{ category.name }}'?"
+        hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+        Delete
+      </button>
+    </div>
+  </td>
+</tr>
+{% empty %}
+<tr>
+  <td colspan="2" style="text-align:center;color:var(--pico-muted-color);padding:2rem">
+    No categories yet.
+  </td>
+</tr>
+{% endfor %}

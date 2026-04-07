@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Customers{% endblock %}
+{% block page_title %}Customers{% endblock %}
+
+{% block topbar_actions %}
+  <a href="{% url 'customer_create' %}" role="button" class="btn-sm">+ New Customer</a>
+{% endblock %}
+
+{% block content %}
+<article>
+  <input
+    type="search"
+    name="q"
+    value="{{ query }}"
+    placeholder="Search by name, email or phone…"
+    style="margin-bottom:1rem"
+    hx-get="{% url 'customer_list' %}"
+    hx-trigger="input changed delay:350ms, search"
+    hx-target="#customer-table-body"
+    hx-swap="innerHTML"
+    hx-include="[name='q']"
+    hx-indicator="#cust-indicator"
+  >
+  <span id="cust-indicator" class="htmx-indicator" style="font-size:.8rem;color:var(--pico-muted-color)">Searching…</span>
+
+  <table role="grid">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Balance due</th>
+        <th style="width:130px">Actions</th>
+      </tr>
+    </thead>
+    <tbody id="customer-table-body">
+      {% include "customer_rows.html" %}
+    </tbody>
+  </table>
+</article>
+{% endblock %}

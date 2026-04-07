@@ -1,0 +1,106 @@
+{% if user.is_authenticated %}
+<aside class="w-72 h-screen flex flex-col bg-white border-r border-gray-100 p-8 sticky top-0">
+  <div class="mb-12 px-2">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-100">
+        <i class="bi bi-box-seam-fill"></i>
+      </div>
+      <span class="text-xl font-black text-gray-900 tracking-tight">Msaidizi</span>
+    </div>
+  </div>
+
+  <div class="mb-6 px-4">
+    <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
+      Main Menu
+    </h2>
+  </div>
+
+  <nav class="flex-1">
+    <ul class="space-y-1.5" hx-target="#main-content" hx-push-url="true" hx-indicator="#loading-spinner">
+      
+      {# 1. Dashboard #}
+      {% url 'dashboard' as url_dash %}
+      <li>
+        <a href="{{ url_dash }}"
+           class="flex items-center gap-4 px-4 py-3 rounded-2xl transition-all duration-300 group {% if request.path == url_dash %}bg-gray-900 text-white shadow-xl shadow-gray-200{% else %}text-gray-600 hover:bg-gray-50 hover:text-gray-900{% endif %}">
+          <i class="bi bi-grid-1x2 text-lg {% if request.path == url_dash %}text-white{% else %}text-gray-400 group-hover:text-blue-600{% endif %}"></i>
+          <span class="text-sm {% if request.path == url_dash %}font-bold{% else %}font-medium{% endif %}">Dashboard</span>
+        </a>
+      </li>
+
+      {# 2. Register Product #}
+      {% url 'register_product' as url_reg %}
+      <li>
+        <a href="#" hx-get="{% url 'product_create' %}"
+           class="flex items-center gap-4 px-4 py-3 rounded-2xl transition-all duration-300 group {% if request.path == url_reg %}bg-gray-900 text-white shadow-xl shadow-gray-200{% else %}text-gray-600 hover:bg-gray-50 hover:text-gray-900{% endif %}">
+          <i class="bi bi-plus-circle text-lg {% if request.path == url_reg %}text-white{% else %}text-gray-400 group-hover:text-blue-600{% endif %}"></i>
+          <span class="text-sm {% if request.path == url_reg %}font-bold{% else %}font-medium{% endif %}">Register Product</span>
+        </a>
+      </li>
+
+      {# 3. Product List #}
+      <li>
+        <a href="#" hx-get="/products" hx-target="#main-content"
+           class="flex items-center gap-4 px-4 py-3 rounded-2xl transition-all duration-300 group {% if request.path == product_list %}bg-gray-900 text-white shadow-xl shadow-gray-200{% else %}text-gray-600 hover:bg-gray-50 hover:text-gray-900{% endif %}">
+          <i class="bi bi-list-ul text-lg {% if request.path == product_list %}text-white{% else %}text-gray-400 group-hover:text-blue-600{% endif %}"></i>
+          <span class="text-sm {% if request.path == product_list %}font-bold{% else %}font-medium{% endif %}">Product List</span>
+        </a>
+      </li>
+
+      {# 4. Record Sale #}
+      {% url 'record_sale' as url_record %}
+      <li>
+        <a href="#" hx-get="{% url 'sale_create' %}"
+           class="flex items-center gap-4 px-4 py-3 rounded-2xl transition-all duration-300 group {% if request.path == url_record %}bg-gray-900 text-white shadow-xl shadow-gray-200{% else %}text-gray-600 hover:bg-gray-50 hover:text-gray-900{% endif %}">
+          <i class="bi bi-cart-plus text-lg {% if request.path == url_record %}text-white{% else %}text-gray-400 group-hover:text-blue-600{% endif %}"></i>
+          <span class="text-sm {% if request.path == url_record %}font-bold{% else %}font-medium{% endif %}">Record Sale</span>
+        </a>
+      </li>
+
+      {# 5. Sales #}
+      {% url 'sales_list' as url_sales %}
+      <li>
+        <a href="#" hx-get="{{ url_sales }}"
+           class="flex items-center gap-4 px-4 py-3 rounded-2xl transition-all duration-300 group {% if request.path == url_sales %}bg-gray-900 text-white shadow-xl shadow-gray-200{% else %}text-gray-600 hover:bg-gray-50 hover:text-gray-900{% endif %}">
+          <i class="bi bi-graph-up-arrow text-lg {% if request.path == url_sales %}text-white{% else %}text-gray-400 group-hover:text-blue-600{% endif %}"></i>
+          <span class="text-sm {% if request.path == url_sales %}font-bold{% else %}font-medium{% endif %}">Sales</span>
+        </a>
+      </li>
+
+      {# 6. Verify Sales (ADMIN ONLY) #}
+      {% if user.is_staff %}
+        {% url 'verify_sales' as url_verify %}
+        <li>
+          <a href="#" hx-get="{{ url_verify }}"
+             class="flex items-center gap-4 px-4 py-3 rounded-2xl transition-all duration-300 group {% if request.path == url_verify %}bg-gray-900 text-white shadow-xl shadow-gray-200{% else %}text-gray-600 hover:bg-gray-50 hover:text-gray-900{% endif %}">
+            <i class="bi bi-patch-check text-lg {% if request.path == url_verify %}text-white{% else %}text-gray-400 group-hover:text-blue-600{% endif %}"></i>
+            <span class="text-sm {% if request.path == url_verify %}font-bold{% else %}font-medium{% endif %}">Verify Sales</span>
+          </a>
+        </li>
+      {% endif %}
+
+      {# 7. Customers #}
+      {% url 'customer_list' as url_customers %}
+      <li>
+        <a href="#" hx-get="{{ url_customers }}"
+           class="flex items-center gap-4 px-4 py-3 rounded-2xl transition-all duration-300 group {% if request.path == url_customers %}bg-gray-900 text-white shadow-xl shadow-gray-200{% else %}text-gray-600 hover:bg-gray-50 hover:text-gray-900{% endif %}">
+          <i class="bi bi-people text-lg {% if request.path == url_customers %}text-white{% else %}text-gray-400 group-hover:text-blue-600{% endif %}"></i>
+          <span class="text-sm {% if request.path == url_customers %}font-bold{% else %}font-medium{% endif %}">Customers</span>
+        </a>
+      </li>
+
+    </ul>
+  </nav>
+
+  <div class="pt-6 border-t border-gray-50">
+    {% url 'profile' as url_profile %}
+    <a href="#" hx-get="{{ url_profile }}" hx-target="#main-content" hx-push-url="true"
+       class="flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all {% if request.path == url_profile %}bg-blue-50 text-blue-600{% else %}text-gray-600 hover:bg-gray-50{% endif %}">
+      <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+         <i class="bi bi-person-fill text-gray-400"></i>
+      </div>
+      <span class="text-sm font-bold">Settings</span>
+    </a>
+  </div>
+</aside>
+{% endif %}

@@ -1,0 +1,83 @@
+
+<div class="max-w-7xl mx-auto">
+
+  <!-- STORE PICKER -->
+  <div class="flex justify-end mb-4">
+    {   % include "components/store_picker.html" %}
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+    <!-- LEFT SIDE -->
+    <div class="lg:col-span-2 space-y-6">
+
+      <!-- CUSTOMER SEARCH -->
+      <div class="bg-white p-6 rounded-xl shadow relative">
+        <label class="text-xs font-bold text-gray-400 uppercase">Customer</label>
+
+        <input
+          type="text"
+          name="customer"
+          placeholder="Search customer..."
+          class="w-full border-b p-2"
+          hx-get="{% url 'search_customers' %}"
+          hx-trigger="keyup changed delay:300ms"
+          hx-target="#customer-results"
+          hx-include="[name='customer']"
+        />
+
+        <div id="customer-results" class="absolute left-0 right-0 bg-white shadow mt-1 z-50"></div>
+      </div>
+
+      <!-- PRODUCT SEARCH -->
+      <div class="bg-white p-6 rounded-xl shadow relative">
+
+        <input
+          type="text"
+          name="product"
+          placeholder="Search product..."
+          class="w-full border p-3 rounded"
+          hx-get="{% url 'search_products' %}"
+          hx-trigger="keyup changed delay:300ms"
+          hx-target="#product-results"
+          hx-include="[name='product']"
+        />
+
+        <div id="product-results" class="absolute left-0 right-0 bg-white shadow mt-1 z-50"></div>
+      </div>
+
+      <!-- CART -->
+      <div id="cart-container">
+        {% include "partials/cart.html" %}
+      </div>
+
+    </div>
+
+    <!-- RIGHT SIDE -->
+    <div>
+
+      <div class="bg-white p-6 rounded-xl shadow sticky top-6">
+
+        <h3 class="text-xl font-bold mb-4">Summary</h3>
+
+        <div id="total-container">
+          {% include "partials/total.html" %}
+        </div>
+
+        <button
+          hx-post="{% url 'create_sale' %}"
+          hx-target="#response-message"
+          hx-swap="innerHTML"
+          class="w-full bg-black text-white py-3 rounded mt-6"
+        >
+          Post Transaction
+        </button>
+
+      </div>
+
+      <div id="response-message" class="mt-4"></div>
+
+    </div>
+
+  </div>
+</div>

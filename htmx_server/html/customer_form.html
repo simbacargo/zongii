@@ -1,0 +1,25 @@
+<form
+  hx-post="{% if category %}{% url 'category_update' category.pk %}{% else %}{% url 'category_create' %}{% endif %}"
+  hx-target="#category-table-body"
+  hx-swap="innerHTML"
+  hx-on:htmx:after-swap="closeModal()"
+  hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+>
+  <h3>{% if category %}Edit Category{% else %}New Category{% endif %}</h3>
+
+  {% if messages %}
+    {% for m in messages %}
+      <p style="color:var(--pico-del-color)">{{ m }}</p>
+    {% endfor %}
+  {% endif %}
+
+  <label>
+    Name
+    <input type="text" name="name" value="{{ category.name|default:'' }}" required autofocus placeholder="e.g. Valves">
+  </label>
+
+  <div class="actions" style="justify-content:flex-end;margin-top:1rem">
+    <button type="button" class="outline" onclick="closeModal()">Cancel</button>
+    <button type="submit">{% if category %}Save{% else %}Create{% endif %}</button>
+  </div>
+</form>

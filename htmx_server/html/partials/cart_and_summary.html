@@ -1,0 +1,44 @@
+<div class="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
+    <table class="w-full text-left">
+        <tbody class="divide-y divide-gray-50">
+            {% for item in cart_items %}
+            <tr class="hover:bg-gray-50/50 transition-colors">
+                <td class="px-6 py-4">
+                    <div class="font-semibold text-gray-900 text-sm">{{ item.product.name }}</div>
+                </td>
+                <td class="px-6 py-4 text-center">
+                    <div class="flex items-center justify-center gap-3">
+                        <button hx-post="{% url 'update_cart' item.product.id %}" hx-vals='{"action": "subtract"}' hx-target="#cart-container" class="w-7 h-7 rounded-full border">-</button>
+                        <span class="font-bold text-sm">{{ item.qty }}</span>
+                        <button hx-post="{% url 'update_cart' item.product.id %}" hx-vals='{"action": "add"}' hx-target="#cart-container" class="w-7 h-7 rounded-full border">+</button>
+                    </div>
+                </td>
+                <td class="px-6 py-4 text-right font-bold">{{ item.subtotal}}</td>
+                <td class="px-4 py-4">
+                    <button hx-post="{% url 'update_cart' item.product.id %}" hx-vals='{"action": "delete"}' hx-target="#cart-container" class="text-red-400">🗑</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div id="summary-container" hx-swap-oob="true">
+    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 sticky top-6">
+        <h3 class="text-xl font-bold mb-6">Summary</h3>
+        <div class="flex justify-between items-baseline border-b border-dashed pb-4 mb-8">
+            <span class="text-lg font-bold">Grand Total</span>
+            <div class="text-right">
+                <span class="text-3xl font-black text-blue-600">{{ total|default:0 }}</span>
+                <span class="text-xs font-bold text-blue-400 block">TZS</span>
+            </div>
+        </div>
+        <form hx-post="{ % url 'record_sale' %}" hx-target="body">
+            <input type="hidden" name="post_sale" value="1">
+            <button type="submit" {% if not cart_items %}disabled{% endif %} 
+                    class="w-full py-4 bg-gray-900 text-white rounded-xl font-bold shadow-lg disabled:bg-gray-100">
+                Post Transaction
+            </button>
+        </form>
+    </div>
+</div>

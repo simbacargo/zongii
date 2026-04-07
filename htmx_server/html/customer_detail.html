@@ -1,0 +1,50 @@
+{% for customer in page_obj %}
+<tr>
+  <td><strong>{{ customer.name }}</strong></td>
+  <td>{{ customer.email|default:"—" }}</td>
+  <td>{{ customer.phone|default:"—" }}</td>
+  <td>
+    {% if customer.remaining_balance > 0 %}
+      <span class="badge badge-warning">${{ customer.remaining_balance }}</span>
+    {% else %}
+      <span class="badge badge-success">$0</span>
+    {% endif %}
+  </td>
+  <td>
+    <div class="actions">
+      <a href="{% url 'customer_detail' customer.pk %}" role="button" class="btn-sm outline">View</a>
+      <a href="{% url 'customer_update' customer.pk %}" role="button" class="btn-sm outline">Edit</a>
+    </div>
+  </td>
+</tr>
+{% empty %}
+<tr>
+  <td colspan="5" style="text-align:center;color:var(--pico-muted-color);padding:2rem">No customers found.</td>
+</tr>
+{% endfor %}
+
+{% if page_obj.has_other_pages %}
+<tr>
+  <td colspan="5">
+    <div style="display:flex;gap:.5rem;justify-content:center;padding:.5rem 0">
+      {% if page_obj.has_previous %}
+        <button class="btn-sm outline"
+          hx-get="?page={{ page_obj.previous_page_number }}&q={{ query }}"
+          hx-target="#customer-table-body" hx-swap="innerHTML">
+          &laquo; Prev
+        </button>
+      {% endif %}
+      <span style="align-self:center;font-size:.85rem;color:var(--pico-muted-color)">
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+      </span>
+      {% if page_obj.has_next %}
+        <button class="btn-sm outline"
+          hx-get="?page={{ page_obj.next_page_number }}&q={{ query }}"
+          hx-target="#customer-table-body" hx-swap="innerHTML">
+          Next &raquo;
+        </button>
+      {% endif %}
+    </div>
+  </td>
+</tr>
+{% endif %}

@@ -1,0 +1,62 @@
+<div class="p-6 max-w-7xl mx-auto min-h-screen bg-gray-50 font-sans" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+    
+    <div id="toast" class="fixed top-10 left-1/2 -translate-x-1/2 z-[100] bg-gray-900 text-white px-6 py-3 rounded-2xl shadow-2xl font-bold text-sm hidden">
+        Sale recorded successfully!
+    </div>
+
+    <header class="flex justify-between items-center mb-8 bg-white p-6 rounded-3xl shadow-sm">
+        <div>
+            <h1 class="text-3xl font-black text-gray-900 tracking-tight">Inventory</h1>
+            <div class="flex items-center gap-2 mt-1">
+                <span class="h-2 w-2 rounded-full bg-green-500"></span>
+                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Live</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <a href="#" hx-get="{% url 'product_create' %}" hx-target="#main-content" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl font-bold transition-all shadow-lg shadow-blue-100">
+                + Add Product
+            </a>
+        </div>
+    </header>
+
+    <div class="mb-6">
+        <div class="relative max-w-md">
+            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
+            <input
+                type="text"
+                name="search"
+                placeholder="Search part #, name, or brand..."
+                class="w-full pl-12 pr-4 py-4 bg-white border border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-500/10 outline-none font-bold transition-all"
+                hx-get="{% url 'product_list' %}"
+                hx-target="#product-table-body"
+                hx-trigger="keyup changed delay:500ms"
+            >
+        </div>
+    </div>
+
+    <div class="bg-white border border-gray-200 rounded-[2.5rem] overflow-hidden shadow-sm">
+        <table class="w-full text-left">
+            <thead>
+                <tr class="bg-gray-50 border-b border-gray-100">
+                    <th class="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">Item Details</th>
+                    <th class="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Specs</th>
+                    <th class="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Retail Price</th>
+                    <th class="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Physical Stock</th>
+                    <th class="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="product-table-body" class="divide-y divide-gray-50">
+                {% include "partials/product_table_body.html" %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    // Simple logic to handle the Toast triggered by HTMX
+    document.body.addEventListener('show-toast-sale', function() {
+        const toast = document.getElementById('toast');
+        toast.classList.remove('hidden');
+        setTimeout(() => toast.classList.add('hidden'), 3000);
+    });
+</script>

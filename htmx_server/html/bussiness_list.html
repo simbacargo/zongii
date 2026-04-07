@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Businesses{% endblock %}
+{% block page_title %}Businesses{% endblock %}
+
+{% block topbar_actions %}
+  <a href="{% url 'business_create' %}" role="button" class="btn-sm">+ New Business</a>
+{% endblock %}
+
+{% block content %}
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem">
+  {% for biz in businesses %}
+  <article>
+    <header><strong>{{ biz.name }}</strong></header>
+    <p style="font-size:.85rem;color:var(--pico-muted-color)">
+      Owner: {{ biz.owner.get_full_name|default:biz.owner.username }}
+    </p>
+    <footer class="actions">
+      <a href="{% url 'business_detail' biz.pk %}" role="button" class="btn-sm outline">View</a>
+      {% if biz.owner == request.user %}
+        <a href="{% url 'business_update' biz.pk %}" role="button" class="btn-sm outline">Edit</a>
+        <button class="btn-sm outline contrast"
+          hx-post="{% url 'business_delete' biz.pk %}"
+          hx-confirm="Delete '{{ biz.name }}'? This cannot be undone."
+          hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+          hx-target="closest article"
+          hx-swap="outerHTML swap:300ms">
+          Delete
+        </button>
+      {% endif %}
+    </footer>
+  </article>
+  {% empty %}
+  <p style="color:var(--pico-muted-color)">No businesses yet. <a href="{% url 'business_create' %}">Create one.</a></p>
+  {% endfor %}
+</div>
+{% endblock %}

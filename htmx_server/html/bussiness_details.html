@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}{{ business.name }}{% endblock %}
+{% block page_title %}{{ business.name }}{% endblock %}
+
+{% block topbar_actions %}
+  {% if business.owner == request.user %}
+    <a href="{% url 'business_update' business.pk %}" role="button" class="btn-sm outline">Edit</a>
+    <button class="btn-sm outline contrast"
+      hx-post="{% url 'business_delete' business.pk %}"
+      hx-confirm="Delete this business? All inventory will be removed."
+      hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+      Delete
+    </button>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+  <article>
+    <header><strong>Details</strong></header>
+    <dl>
+      <dt>Owner</dt>
+      <dd>{{ business.owner.get_full_name|default:business.owner.username }}</dd>
+      <dt>Members</dt>
+      <dd>
+        {% for member in business.members.all %}
+          <span class="badge badge-neutral">{{ member.get_full_name|default:member.username }}</span>
+        {% empty %}—{% endfor %}
+      </dd>
+    </dl>
+  </article>
+
+  <article>
+    <header><strong>Inventory snapshot</strong></header>
+    <p>
+      <a href="{% url 'product_list' %}?business={{ business.pk }}">
+        View all products &rarr;
+      </a>
+    </p>
+  </article>
+</div>
+{% endblock %}

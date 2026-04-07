@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Categories{% endblock %}
+{% block page_title %}Categories{% endblock %}
+
+{% block topbar_actions %}
+  <button class="btn-sm"
+    hx-get="{% url 'category_create' %}"
+    hx-target="#modal-content"
+    hx-swap="innerHTML">
+    + New Category
+  </button>
+{% endblock %}
+
+{% block content %}
+<article>
+  <table role="grid">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th style="width:120px">Actions</th>
+      </tr>
+    </thead>
+    <tbody id="category-table-body">
+      {% include "category_rows.html" %}
+    </tbody>
+  </table>
+</article>
+{% endblock %}

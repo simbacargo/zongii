@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}{% if business %}Edit Business{% else %}New Business{% endif %}{% endblock %}
+{% block page_title %}{% if business %}Edit "{{ business.name }}"{% else %}New Business{% endif %}{% endblock %}
+
+{% block topbar_actions %}
+  <a href="{% url 'business_list' %}" role="button" class="btn-sm outline">Cancel</a>
+{% endblock %}
+
+{% block content %}
+<article style="max-width:480px">
+  <form
+    method="POST"
+    hx-post="{% if business %}{% url 'business_update' business.pk %}{% else %}{% url 'business_create' %}{% endif %}"
+    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+  >
+    {% csrf_token %}
+    {% if messages %}
+      {% for m in messages %}
+        <p style="color:var(--pico-del-color)">{{ m }}</p>
+      {% endfor %}
+    {% endif %}
+
+    <label>
+      Business name
+      <input type="text" name="name" value="{{ business.name|default:'' }}" required autofocus placeholder="e.g. Main Warehouse">
+    </label>
+
+    <button type="submit">{% if business %}Save changes{% else %}Create business{% endif %}</button>
+  </form>
+</article>
+{% endblock %}

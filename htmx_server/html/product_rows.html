@@ -1,0 +1,66 @@
+{% for product in page_obj %}
+<tr>
+  <td>
+    <strong>{{ product.name }}</strong><br>
+    <small style="color:var(--pico-muted-color)">{{ product.brand }}</small>
+  </td>
+  <td><code style="font-size:.8rem">{{ product.part_number }}</code></td>
+  <td>
+    {% with avail=product.available_stock %}
+      {% if avail <= 0 %}
+        <span class="badge badge-danger">Out ({{ avail }})</span>
+      {% elif avail <= product.reorder_point %}
+        <span class="badge badge-warning">Low ({{ avail }})</span>
+      {% else %}
+        <span class="badge badge-success">{{ avail }}</span>
+      {% endif %}
+    {% endwith %}
+  </td>
+  <td>${{ product.retail_price }}</td>
+  <td>
+    {% if product.is_active %}
+      <span class="badge badge-success">Active</span>
+    {% else %}
+      <span class="badge badge-neutral">Inactive</span>
+    {% endif %}
+  </td>
+  <td>
+    <div class="actions">
+      <a href="{% url 'product_detail' product.pk %}" role="button" class="btn-sm outline">View</a>
+      <a href="{% url 'product_update' product.pk %}" role="button" class="btn-sm outline">Edit</a>
+    </div>
+  </td>
+</tr>
+{% empty %}
+<tr>
+  <td colspan="6" style="text-align:center;color:var(--pico-muted-color);padding:2rem">
+    No products found.
+  </td>
+</tr>
+{% endfor %}
+
+{% if page_obj.has_other_pages %}
+<tr>
+  <td colspan="6">
+    <div style="display:flex;gap:.5rem;justify-content:center;padding:.5rem 0">
+      {% if page_obj.has_previous %}
+        <button class="btn-sm outline"
+          hx-get="?page={{ page_obj.previous_page_number }}&q={{ query }}"
+          hx-target="#product-table-body" hx-swap="innerHTML">
+          &laquo; Prev
+        </button>
+      {% endif %}
+      <span style="align-self:center;font-size:.85rem;color:var(--pico-muted-color)">
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+      </span>
+      {% if page_obj.has_next %}
+        <button class="btn-sm outline"
+          hx-get="?page={{ page_obj.next_page_number }}&q={{ query }}"
+          hx-target="#product-table-body" hx-swap="innerHTML">
+          Next &raquo;
+        </button>
+      {% endif %}
+    </div>
+  </td>
+</tr>
+{% endif %}

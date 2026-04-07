@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="max-w-7xl mx-auto">
+
+  <h1 class="text-2xl font-bold mb-6">Dashboard</h1>
+
+  <!-- STATS -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+
+    <div class="bg-white p-6 rounded-xl shadow">
+      <p class="text-gray-400 text-sm">Revenue</p>
+      <h2 class="text-2xl font-bold text-green-600">
+        {{ total_revenue|floatformat:0 }} TZS
+      </h2>
+    </div>
+
+    <div class="bg-white p-6 rounded-xl shadow">
+      <p class="text-gray-400 text-sm">Products</p>
+      <h2 class="text-2xl font-bold">{{ total_products }}</h2>
+    </div>
+
+    <div class="bg-white p-6 rounded-xl shadow">
+      <p class="text-gray-400 text-sm">Customers</p>
+      <h2 class="text-2xl font-bold">{{ total_customers }}</h2>
+    </div>
+
+    <div class="bg-white p-6 rounded-xl shadow">
+      <p class="text-gray-400 text-sm">Low Stock</p>
+      <h2 class="text-2xl font-bold text-red-500">{{ low_stock_count }}</h2>
+    </div>
+
+  </div>
+
+  <!-- CHARTS -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+    <!-- SALES LINE -->
+    <div class="bg-white p-6 rounded-xl shadow">
+      <h3 class="font-bold mb-4">Sales Over Time</h3>
+      <canvas id="salesChart"></canvas>
+    </div>
+
+    <!-- TOP PRODUCTS PIE -->
+    <div class="bg-white p-6 rounded-xl shadow">
+      <h3 class="font-bold mb-4">Top Products</h3>
+      <canvas id="productsChart"></canvas>
+    </div>
+
+  </div>
+
+  <!-- BEST SELLERS TABLE -->
+  <div class="bg-white mt-8 p-6 rounded-xl shadow">
+    <h3 class="font-bold mb-4">Best Selling Products</h3>
+
+    <table class="w-full text-left">
+      <thead class="text-gray-400 text-sm">
+        <tr>
+          <th>Product</th>
+          <th>Units Sold</th>
+          <th>Revenue</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% for item in top_products %}
+        <tr class="border-t">
+          <td>{{ item.product__name }}</td>
+          <td>{{ item.total_qty }}</td>
+          <td>{{ item.total_sales }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<!-- CHART SCRIPT -->
+<script>
+  const salesData = {{ sales_chart|safe }};
+  const productData = {{ product_chart|safe }};
+
+  // SALES LINE
+  new Chart(document.getElementById('salesChart'), {
+    type: 'line',
+    data: {
+      labels: salesData.labels,
+      datasets: [{
+        label: 'Revenue',
+        data: salesData.data,
+        borderColor: 'blue',
+        fill: true
+      }]
+    }
+  });
+
+  // PIE CHART
+  new Chart(document.getElementById('productsChart'), {
+    type: 'pie',
+    data: {
+      labels: productData.labels,
+      datasets: [{
+        data: productData.data
+      }]
+    }
+  });
+</script>
+{% endblock %}

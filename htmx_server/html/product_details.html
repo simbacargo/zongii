@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block title %}{{ product.name }}{% endblock %}
+{% block page_title %}{{ product.brand }} — {{ product.name }}{% endblock %}
+
+{% block topbar_actions %}
+  <a href="{% url 'product_update' product.pk %}" role="button" class="btn-sm outline">Edit</a>
+  <button class="btn-sm outline contrast"
+    hx-post="{% url 'product_delete' product.pk %}"
+    hx-confirm="Deactivate '{{ product.name }}'?"
+    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+    Deactivate
+  </button>
+{% endblock %}
+
+{% block content %}
+<div style="display:grid;grid-template-columns:2fr 1fr;gap:1rem">
+
+  <!-- Left column -->
+  <div style="display:flex;flex-direction:column;gap:1rem">
+
+    <article>
+      <header><strong>Identification</strong></header>
+      <dl style="display:grid;grid-template-columns:1fr 1fr;gap:.25rem .5rem">
+        <dt>Part number</dt><dd><code>{{ product.part_number }}</code></dd>
+        <dt>Brand</dt><dd>{{ product.brand }}</dd>
+        <dt>Slug</dt><dd><code>{{ product.slug }}</code></dd>
+        <dt>UPC</dt><dd>{{ product.upc_code|default:"—" }}</dd>
+        <dt>Categories</dt>
+        <dd>
+          {% for cat in product.categories.all %}
+            <span class="badge badge-neutral">{{ cat.name }}</span>
+          {% empty %}—{% endfor %}
+        </dd>
+      </dl>
+      {% if product.description %}
+        <p style="margin-top:.75rem;color:var(--pico-muted-color);font-size:.9rem">{{ product.description }}</p>
+      {% endif %}
+    </article>
+
+    <article>
+      <header><strong>Technical specs</strong></header>
+      <dl style="display:grid;grid-template-columns:1fr 1fr;gap:.25rem .5rem">
+        <dt>Material</dt><dd>{{ product.get_material_display|default:"—" }}</dd>
+        <dt>Connection size</dt><dd>{{ product.connection_size|default:"—" }}</dd>
+        <dt>Connection type</dt><dd>{{ product.connection_type|default:"—" }}</dd>
+        <dt>Max pressure</dt><dd>{% if product.max_pressure_psi %}{{ product.max_pressure_psi }} PSI{% else %}—{% endif %}</dd>
+        <dt>Lead free</dt><dd>{% if product.is_lead_free %}<span class="badge badge-success">Yes</span>{% else %}<span class="badge badge-neutral">No</span>{% endif %}</dd>
+      </dl>
+    </article>
+
+    <article>
+      <header><strong>Pricing</strong></header>
+      <dl style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.25rem .5rem">
+        <dt>Cost</dt><dd>${{ product.buying_price }}</dd>
+        <dt>Wholesale</dt><dd>${{ product.wholesale_price }}</dd>
+        <dt>Retail</dt><dd>${{ product.retail_price }}</dd>
+        <dt>Tax rate</dt><dd>{{ product.tax_rate }}%</dd>
+        <dt>Collected</dt><dd>${{ product.amount_collected }}</dd>
+      </dl>
+    </article>
+  </div>
+
+  <!-- Right column -->
+  <div style="display:flex;flex-direction:column;gap:1rem">
+
+    <article>
+      <header><strong>Stock</strong></header>
+      <div style="font-size:2rem;font-weight:700;text-align:center;margin:.5rem 0">
+        {{ product.available_stock }}
+        <div style="font-size:.85rem;font-weight:400;color:var(--pico-muted-color)">available</div>
+      </div>
+      <dl>
+        <dt>On hand</dt><dd>{{ product.quantity_at_hand }}</dd>
+        <dt>Allocated</dt><dd>{{ product.quantity_allocated }}</dd>
+        <dt>Reorder point</dt><dd>{{ product.reorder_point }}</dd>
+        <dt>Unit of measure</dt><dd>{{ product.get_unit_of_measure_display }}</dd>
+        <dt>Bin location</dt><dd>{{ product.bin_location|default:"—" }}</dd>
+        <dt>Weight</dt><dd>{% if product.weight %}{{ product.weight }} lbs{% else %}—{% endif %}</dd>
+      </dl>
+    </article>
+
+    <article>
+      <header><strong>Meta</strong></header>
+      <dl>
+        <dt>Business</dt><dd>{{ product.business.name }}</dd>
+        <dt>Supplier</dt><dd>{{ product.supplier|default:"—" }}</dd>
+        <dt>Created by</dt><dd>{{ product.created_by.get_full_name|default:product.created_by.username|default:"—" }}</dd>
+        <dt>Added</dt><dd>{{ product.created_at|date:"M d, Y" }}</dd>
+        <dt>Updated</dt><dd>{{ product.updated_at|date:"M d, Y" }}</dd>
+        <dt>Status</dt>
+        <dd>
+          {% if product.is_active %}
+            <span class="badge badge-success">Active</span>
+          {% else %}
+            <span class="badge badge-neutral">Inactive</span>
+          {% endif %}
+        </dd>
+      </dl>
+    </article>
+
+    {% if product.product_photo %}
+    <article>
+      <img src="{{ product.product_photo.url }}" alt="{{ product.name }}" style="width:100%;border-radius:var(--pico-border-radius)">
+    </article>
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %}

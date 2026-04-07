@@ -1,0 +1,125 @@
+{% load humanize %}
+
+<aside id="sidebar" class="w-64 bg-sky-900 shadow-xl flex flex-col flex-shrink-0 rounded-lg">
+
+    <nav class="py-6 flex-grow overflow-y-auto">
+        <ul class="space-y-4">
+            <li class="px-2">
+                <a href="#" hx-target="#main-content" hx-get="{% url 'dashboard' %}" 
+                   class="flex items-center p-2 text-lg font-medium text-white hover:bg-indigo-600 rounded-lg transition duration-200">
+                   <i class="bi bi-house-door mr-3 text-xl"></i><span>
+                    {% if user.language == 'fr' %}
+                        Tableau de bord
+                    {% elif user.language == 'sw' %}
+                        Dashibodi
+                    {% else %}
+                        Dashboard
+                    {% endif %}
+                </span>
+                </a>
+            </li>
+            {% if user.is_admin %}
+            <li class="px-2">
+                <a href="#" hx-target="#main-content" hx-get="{% url 'product_create' %}" 
+                   class="flex items-center p-2 text-lg font-medium text-white hover:bg-indigo-600 rounded-lg transition duration-200">
+                   <i class="bi bi-box mr-3 text-xl"></i><span>
+                    {% if user.language == 'fr' %}
+                        Ajouter un Produit
+                    {% elif user.language == 'sw' %}
+                        Sajili Bidhaa
+                    {% else %}
+                        Register Product
+                    {% endif %}
+                   </span>
+                </a>
+            </li>
+            {% endif %}
+            <li class="px-2">
+                <a href="#" hx-target="#main-content" hx-get="{% url 'list_of_products' %}" 
+                   class="flex items-center p-2 text-lg font-medium text-white hover:bg-indigo-600 rounded-lg transition duration-200">
+                   <i class="bi bi-boxes mr-3 text-xl"></i><span>
+                    {% if user.language == 'fr' %}
+                        Liste des Produits
+                    {% elif user.language == 'sw' %}
+                        Orodha ya Bidhaa
+                    {% else %}
+                        Product List
+                    {% endif %}
+                   </span>
+                </a>
+            </li>
+
+            <li class="px-2">
+                <a href="#" hx-target="#main-content" hx-get="{% url 'create_sale' %}" 
+                   class="flex items-center p-2 text-lg font-medium text-white hover:bg-indigo-600 rounded-lg transition duration-200">
+                   <i class="bi bi-cart-plus mr-3 text-xl"></i><span>
+                    {% if user.language == 'fr' %}
+                        Enregistrer une Vente
+                    {% elif user.language == 'sw' %}
+                        Sajili Mauzo
+                    {% else %}
+                        Record Sale
+                    {% endif %}
+                   </span>
+                </a>
+            </li>
+
+            <li class="px-2">
+                <a href="#" hx-target="#main-content" hx-get="{% url 'list_sales' %}" 
+                   class="flex items-center p-2 text-lg font-medium text-white hover:bg-indigo-600 rounded-lg transition duration-200">
+                   <i class="bi bi-clipboard-data mr-3 text-xl"></i><span>
+                    {% if user.language == 'fr' %}
+                        Liste des Ventes
+                    {% elif user.language == 'sw' %}
+                        Orodha ya Mauzo
+                    {% else %}
+                        Sales 
+                    {% endif %}
+                   </span>
+                </a>
+            </li>
+            {% if user.is_admin %}
+            <li class="px-2">
+                <a href="#" hx-target="#main-content" hx-get="{% url 'list_unverified_sales' %}" 
+                   class="flex items-center p-2 text-lg font-medium text-white hover:bg-indigo-600 rounded-lg transition duration-200">
+                   <i class="bi bi-check mr-3 text-xl"></i><span>
+                    {% if user.language == 'fr' %}
+                        Ventes Non Vérifiées
+                    {% elif user.language == 'sw' %}
+                        Idhinisha Mauzo
+                    {% else %}
+                        Verify Sales
+                    {% endif %}
+                   </span>
+                </a>
+            </li>
+            {% endif %}
+
+            <li class="px-2">
+                <a href="#" hx-target="#main-content" hx-get="{% url 'customer_list' %}" 
+                   class="flex items-center p-2 text-lg font-medium text-white hover:bg-indigo-600 rounded-lg transition duration-200">
+                   <i class="bi bi-person-lines-fill mr-3 text-xl"></i><span>
+                    {% if user.language == 'fr' %}
+                        Clients Enregistrés
+                    {% elif user.language == 'sw' %}
+                        Wateja Waliosajiliwa
+                    {% else %}
+                        Registered Customers
+                    {% endif %}
+                   </span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    
+    <div class="mt-auto p-4 flex-shrink-0">
+        <div class="bg-blue-100 text-black font-extrabold text-lg p-3 rounded-lg flex justify-between items-center">
+            <b>{{user.username|capfirst }}</b>
+            {% if user.is_admin %}
+                <span class="text-sm font-semibold">Admin</span>
+            {% else %}
+                <span class="text-sm font-semibold">User</span>
+            {% endif %}
+        </div>
+    </div>
+</aside>    

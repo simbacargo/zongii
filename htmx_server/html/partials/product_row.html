@@ -1,0 +1,74 @@
+<tr id="product-{{ product.id }}" 
+    class="hover:bg-blue-50/30 transition-colors cursor-pointer group border-b border-gray-100"
+    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+    
+    <td class="px-8 py-6">
+        <div class="font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
+            {{ product.name }}
+            {% if success %}
+                <span class="ml-2 text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full animate-pulse">
+                    {{ success }}
+                </span>
+            {% endif %}
+        </div>
+        <div class="text-[10px] text-gray-400 font-bold uppercase mt-1">
+            {{ product.brand }} <span class="mx-1 text-gray-200">|</span> 
+            <span class="font-mono text-blue-500">{{ product.part_number }}</span>
+        </div>
+    </td>
+
+    <td class="px-8 py-6 text-center">
+        <span class="px-2 py-1 bg-gray-100 rounded text-[9px] font-black text-gray-500 uppercase">
+            {{ product.get_material_display|default:"N/A" }}
+        </span>
+    </td>
+
+    <td class="px-8 py-6 text-right font-black text-gray-900">
+        {{ product.retail_price }} <span class="text-[10px] text-gray-400">TZS</span>
+    </td>
+
+    <td class="px-8 py-6 text-center">
+        <div class="inline-flex flex-col px-3 py-1 rounded-xl {% if product.quantity_at_hand <= product.reorder_point %}bg-red-50 text-red-600{% else %}bg-green-50 text-green-600{% endif %}">
+            <span class="text-sm font-black">{{ product.quantity_at_hand }} {{ product.get_unit_of_measure_display }}</span>
+            <span class="text-[8px] uppercase font-bold opacity-60">
+                {% if product.quantity_at_hand <= product.reorder_point %}Low Stock{% else %}Available{% endif %}
+            </span>
+        </div>
+    </td>
+
+    <td class="px-8 py-6">
+        <div class="flex justify-center gap-3">
+            <button 
+            onclick="(()=>{alert("hello")})"
+                hx-post="{% url 'product_sell' product.id %}"
+                hx-target="#product-{{ product.id }}"
+                hx-swap="outerHTML"
+                hx-indicator="#loading-{{ product.id }}"
+                class="px-5 py-2 bg-indigo-600 text-white rounded-xl text-xs font-black hover:bg-indigo-700 transition active:scale-95 disabled:opacity-50"
+                {% if product.quantity_at_hand <= 0 %}disabled{% endif %}
+            >
+                Sell
+            </button>
+
+            <a href="#" hx-get="{% url 'product_update' product.id %}" hx-target="#main-content" hx-swap="innerHTML"
+               class="p-2 text-gray-400 hover:text-blue-600 transition-colors"
+               title="Edit Product">
+               ✎
+            </a>
+
+            <button 
+                hx-post="{% url 'product_delete' product.id %}"
+                hx-target="#product-{{ product.id }}"
+                hx-swap="delete"
+                hx-confirm="Are you sure you want to deactivate {{ product.name }}?"
+                class="p-2 text-gray-400 hover:text-red-600 transition-colors"
+                title="Deactivate Product"
+            >
+                🗑
+            </button>
+        </div>
+        <div id="loading-{{ product.id }}" class="htmx-indicator text-[10px] text-center text-indigo-500 font-bold">
+            Processing...
+        </div>
+    </td>
+</tr>

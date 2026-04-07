@@ -1,0 +1,6 @@
+{% for product in product %}
+    {% include "partials/product_row.html" %}
+{% empty %}
+    <tr><td colspan="5" class="p-10 text-center text-gray-400 font-bold">No products found.</td></tr>
+{% endfor %}
+  

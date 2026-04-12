@@ -231,7 +231,7 @@ LOGIN_REDIRECT_URL ="/"
 LOGOUT_REDIRECT_URL ="/"
 CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1:8080',"https://msaidizi.nsaro.com", "https://nsaro.com",
-    'kdcharite.com', 'www.kdcharite.com',
+    'https://kdcharite.com', 'https://www.kdcharite.com',
     ]  # Add your frontend domain here
 
 

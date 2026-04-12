@@ -26,8 +26,8 @@
   </td>
   <td>
     <div class="actions">
-      <a href="{% url 'product_detail' product.pk %}" role="button" class="btn-sm outline">View</a>
-      <a href="{% url 'product_update' product.pk %}" role="button" class="btn-sm outline">Edit</a>
+      <a href="#" hx-get="{% url 'product_detail' product.pk %}" hx-target="#main-content" role="button" class="btn-sm outline">View</a>
+      <a href="#" hx-get="{% url 'product_update' product.pk %}" hx-target="#main-content" role="button" class="btn-sm outline">Edit</a>
     </div>
   </td>
 </tr>

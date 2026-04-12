@@ -1,50 +1,46 @@
-{% for customer in page_obj %}
-<tr>
-  <td><strong>{{ customer.name }}</strong></td>
-  <td>{{ customer.email|default:"—" }}</td>
-  <td>{{ customer.phone|default:"—" }}</td>
-  <td>
-    {% if customer.remaining_balance > 0 %}
-      <span class="badge badge-warning">${{ customer.remaining_balance }}</span>
-    {% else %}
-      <span class="badge badge-success">$0</span>
-    {% endif %}
-  </td>
-  <td>
-    <div class="actions">
-      <a href="{% url 'customer_detail' customer.pk %}" role="button" class="btn-sm outline">View</a>
-      <a href="{% url 'customer_update' customer.pk %}" role="button" class="btn-sm outline">Edit</a>
-    </div>
-  </td>
-</tr>
-{% empty %}
-<tr>
-  <td colspan="5" style="text-align:center;color:var(--pico-muted-color);padding:2rem">No customers found.</td>
-</tr>
-{% endfor %}
+<tr id="customer-{{ c.id }}" class="hover:bg-slate-50/50 transition-colors">
+    <td class="p-6">
+        <div class="flex items-center gap-4">
+            <div class="h-12 w-12 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 font-bold">
+                {{ c.name|slice:":1" }}
+            </div>
+            <div>
+                <p class="text-md font-black text-slate-900">{{ c.name }}</p>
+                <p class="text-sm text-slate-500">{{ c.phone|default:"No Phone" }}</p>
+            </div>
+        </div>
+    </td>
+    <td class="p-6 text-right">
+        Tsh.<span class="text-xl font-black text-rose-600"> {{ c.remaining_balance }}</span>
+    </td>
+    <td class="p-6">
+        <form hx-post="{ % url 'customer_debt_list' %}" 
+              hx-target="#customer-{{ c.id }}" 
+              hx-swap="outerHTML"
+              class="flex items-center justify-center gap-2">
+            {% csrf_token %}
+            <input type="hidden" name="customer_id" value="{{ c.id }}">
+            
+            <div class="relative">
+                <span class="absolute left-3 top-2 text-slate-400 text-xs">$</span>
+                <input type="number" name="amount" placeholder="0.00" step="0.01"
+                       class="w-24 pl-6 pr-2 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+            </div>
 
-{% if page_obj.has_other_pages %}
-<tr>
-  <td colspan="5">
-    <div style="display:flex;gap:.5rem;justify-content:center;padding:.5rem 0">
-      {% if page_obj.has_previous %}
-        <button class="btn-sm outline"
-          hx-get="?page={{ page_obj.previous_page_number }}&q={{ query }}"
-          hx-target="#customer-table-body" hx-swap="innerHTML">
-          &laquo; Prev
-        </button>
-      {% endif %}
-      <span style="align-self:center;font-size:.85rem;color:var(--pico-muted-color)">
-        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-      </span>
-      {% if page_obj.has_next %}
-        <button class="btn-sm outline"
-          hx-get="?page={{ page_obj.next_page_number }}&q={{ query }}"
-          hx-target="#customer-table-body" hx-swap="innerHTML">
-          Next &raquo;
-        </button>
-      {% endif %}
-    </div>
-  </td>
+            <button type="submit" class="bg-slate-900 text-white text-xs font-bold px-4 py-2 rounded-xl hover:bg-indigo-600 transition-all">
+                Pay
+            </button>
+            
+            <button type="button" 
+                    hx-post="{ % url 'customer_debt_list' %}"
+                    hx-vals='{"customer_id": "{{ c.id }}", "amount": "{{ c.balance }}"}'
+                    hx-target="#customer-{{ c.id }}"
+                    hx-swap="outerHTML"
+                    hx-confirm="Clear full debt for {{ c.name }}?"
+                    class="p-2 text-slate-400 hover:text-emerald-600 transition-colors"
+                    title="Clear Full Debt">
+                <i class="bi bi-check-all text-xl"></i>
+            </button>
+        </form>
+    </td>
 </tr>
-{% endif %}

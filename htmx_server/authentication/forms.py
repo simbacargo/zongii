@@ -1,7 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 
-from server.settings import ALLOWED_SIGNUP_DOMAINS
+from htmx_server.settings import ALLOWED_SIGNUP_DOMAINS
 from django.contrib.auth import (
     authenticate, get_user_model, password_validation,
 )

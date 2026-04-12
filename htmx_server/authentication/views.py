@@ -50,7 +50,7 @@ def signup(request):
         form = SignupForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
-            user.is_active = False
+            user.is_active = True
             new_password = form.cleaned_data.get('password1')  # Use 'password1' as it’s the field for the password
             user.set_password(new_password)
             user.save()
@@ -65,15 +65,17 @@ def signup(request):
                 # 'token': account_activation_token.make_token(user),
                 'token': account_activation_token,
             })
-            mail_subject = 'Activate your account In Bin Suleiman Systems.'
-            to_email = form.cleaned_data.get('email')
-            email = EmailMessage(mail_subject, message, to=[to_email])
+            # mail_subject = 'Activate your account In Bin Suleiman Systems.'
+            # to_email = form.cleaned_data.get('email')
+            # email = EmailMessage(mail_subject, message, to=[to_email])
             # email.send()
 
-            if is_htmx_request(request):
-                return JsonResponse({'message': 'Please confirm your email address to complete the registration'}, status=200)
-            else:
-                return HttpResponse('Please confirm your email address to complete the registration')
+            # if is_htmx_request(request):
+                # return JsonResponse({'message': 'Please confirm your email address to complete the registration'}, status=200)
+            # else:
+                # return HttpResponse('Please confirm your email address to complete the registration')
+            return redirect('dashboard')
+            
 
         else:
             if is_htmx_request(request):
@@ -82,12 +84,12 @@ def signup(request):
                 return JsonResponse({'errors': errors}, status=400)
             else:
                 # Render form with errors for non-HTMX requests
-                return render(request, 'registration/signup.html', {'form': form})
+                return render(request, 'signup.html', {'form': form})
 
     else:
         form = SignupForm()
 
-    return render(request, 'registration/signup.html', {'form': form})
+    return render(request, 'signup.html', {'form': form})
     
 from django.urls import reverse
 def activate(request, uidb64, token: str):

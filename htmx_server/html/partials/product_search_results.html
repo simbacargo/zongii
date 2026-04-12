@@ -1,0 +1,20 @@
+<div class="absolute z-50 w-full bg-white mt-1 border rounded-xl shadow-2xl max-h-60 overflow-y-auto">
+    {% for p in products %}
+    <div class="p-3 hover:bg-indigo-50 cursor-pointer border-b last:border-0 flex justify-between items-center"
+         hx-get="{% url 'sale_create_htmx' %}?product={{ p.id }}&quantity_sold=1"
+         hx-target="#calculation-area"
+         hx-on::after-request="document.getElementById('selected-product-id').value = '{{ p.id }}'; 
+                              document.getElementById('search-input').value = '{{ p.name }}';
+                              document.getElementById('search-results').innerHTML = '';">
+        <div>
+            <div class="font-bold text-gray-800">{{ p.name }}</div>
+            <div class="text-xs text-gray-400">{{ p.part_number }} | {{ p.brand }}</div>
+        </div>
+        <div class="text-sm font-semibold text-indigo-600">
+            {{ p.quantity_at_hand }} in stock
+        </div>
+    </div>
+    {% empty %}
+    <div class="p-4 text-gray-500 text-sm italic">No products found</div>
+    {% endfor %}
+</div>

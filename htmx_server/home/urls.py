@@ -1,4 +1,6 @@
 from django.urls import path
+from authentication import views as auth_views
+from authentication.urls import urlpatterns as auth_urls
 from . import views
 
 urlpatterns = [
@@ -32,14 +34,17 @@ urlpatterns = [
 
     # ── Sales ───────────────────────────────────
     path("sales/",                     views.sale_list,        name="sale_list"),
+    path("sales/",                     views.sale_list,        name="sales_list"),
     path("sales/<int:pk>/",            views.sale_detail,      name="sale_detail"),
-    path("sales/create/",              views.sale_create,      name="sale_create"),
+    path("sales/create/",              views.sale_create_htmx,      name="sale_create"),
+    path("sales/create/",              views.sale_create_htmx,      name="sale_create_htmx"),
     path("sales/<int:pk>/edit/",       views.sale_update,      name="sale_update"),
     path("sales/<int:pk>/delete/",     views.sale_delete,      name="sale_delete"),
     path("sales/<int:pk>/approve/",    views.sale_approve,     name="sale_approve"),
     path("sales/<int:pk>/reject/",     views.sale_reject,      name="sale_reject"),
 
-    
+path('sales/new/', views.sale_create_view, name='sale_create'),    
+path('cart/manage/', views.manage_cart, name='manage_cart'),
     
     
     
@@ -47,4 +52,4 @@ urlpatterns = [
     path("dashboard/", views.dashboard, name="dashboard"),
     path("products/<int:product_id>/sell/", views.product_sell, name="product_sell"),
     
-]
+]+ auth_urls

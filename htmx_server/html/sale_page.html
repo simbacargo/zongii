@@ -1,0 +1,67 @@
+
+{% block content %}
+<div class="max-w-5xl mx-auto p-4">
+    <div class="mb-8">
+        <h1 class="text-3xl font-extrabold text-gray-900">Checkout</h1>
+        <p class="text-gray-500">Search for products and record a new sale.</p>
+    </div>
+
+    <form hx-post="{% url 'sale_create' %}" hx-target="#main-content" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {% csrf_token %}
+        
+        <div class="lg:col-span-2 space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+                
+                <div class="relative mb-6">
+                    <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Find Product</label>
+                    <input type="text" name="q" 
+                           placeholder="Type product name or part number..."
+                           class="w-full p-4 pl-12 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition"
+                           hx-get="{% url 'sale_create' %}" 
+                           hx-trigger="keyup changed delay:300ms" 
+                           hx-target="#search-results"
+                           autocomplete="off">
+                    <i class="bi bi-search absolute left-4 top-10 text-gray-400"></i>
+                    
+                    <div id="search-results" class="relative"></div>
+                </div>
+
+                <input type="hidden" name="product" id="selected-product-id">
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Quantity</label>
+                        <input type="number" name="quantity_sold" id="qty-input" value="1" min="1"
+                               class="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"
+                               hx-get="{% url 'sale_create' %}"
+                               hx-trigger="keyup changed"
+                               hx-include="#selected-product-id"
+                               hx-target="#calc-area">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Assign Customer</label>
+                        <select name="customer" class="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl outline-none">
+                            <option value="">Walk-in Customer</option>
+                            {% for c in customers %}
+                            <option value="{{ c.id }}">{{ c.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="lg:col-span-1">
+            <div id="calc-area" class="bg-indigo-600 rounded-3xl p-8 text-white shadow-xl sticky top-4">
+                <div class="text-center py-10 opacity-50 italic text-sm">
+                    Select a product to see the total
+                </div>
+            </div>
+            
+            <button type="submit" class="w-full mt-4 bg-gray-900 text-white font-bold py-5 rounded-2xl hover:bg-black transition-all shadow-lg active:scale-95">
+                Complete Transaction
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

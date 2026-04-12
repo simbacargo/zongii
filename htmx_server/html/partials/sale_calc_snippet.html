@@ -1,0 +1,25 @@
+<div class="space-y-6 animate-in fade-in slide-in-from-bottom-2">
+    <div class="border-b border-white/20 pb-4">
+        <h3 class="text-lg font-medium opacity-80">Order Summary</h3>
+        <p class="text-2xl font-bold">{{ product.name }}</p>
+    </div>
+    
+    <div class="flex justify-between items-center">
+        <span class="opacity-70">Price per unit</span>
+        <span class="font-bold">${{ product.retail_price }}</span>
+    </div>
+
+    <div class="flex justify-between items-center">
+        <span class="opacity-70">Quantity</span>
+        <span class="font-bold">× {{ quantity }}</span>
+    </div>
+
+    <div class="pt-6 border-t border-white/20">
+        <div class="flex justify-between items-end">
+            <span class="text-xl font-bold">Total</span>
+            <span class="text-4xl font-black">${{ total }}</span>
+        </div>
+    </div>
+    
+    <input type="hidden" name="price_per_unit" value="{{ product.retail_price }}">
+</div>

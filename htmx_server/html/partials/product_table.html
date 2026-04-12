@@ -1,0 +1,71 @@
+{% for product in page_obj %}
+<tr class="hover:bg-gray-50/50 transition-colors border-b border-gray-50 last:border-0">
+    <td class="p-4">
+        <div class="flex items-center gap-4">
+            {% if product.product_photo %}
+            <img src="{{ product.product_photo.url }}" class="w-12 h-12 rounded-lg object-cover bg-gray-100">
+            {% else %}
+            <div class="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center text-gray-400">
+                <i class="bi bi-box"></i>
+            </div>
+            {% endif %}
+            <div>
+                <div class="text-sm font-bold text-gray-900">{{ product.name }}</div>
+                <div class="text-xs text-gray-400">{{ product.material|default:"N/A" }}</div>
+            </div>
+        </div>
+    </td>
+    <td class="p-4">
+        <div class="text-sm font-medium text-gray-800">{{ product.brand }}</div>
+        <div class="text-[10px] font-mono text-gray-400 uppercase">{{ product.part_number }}</div>
+    </td>
+    <td class="p-4">
+        <div class="text-sm font-bold text-gray-900">${{ product.retail_price }}</div>
+        <div class="text-[10px] text-gray-400">Cost: ${{ product.buying_price }}</div>
+    </td>
+    <td class="p-4 text-center">
+        <div class="inline-flex flex-col items-center">
+            <span class="text-sm font-black {% if product.quantity_at_hand <= product.reorder_point %}text-red-600{% else %}text-gray-900{% endif %}">
+                {{ product.quantity_at_hand }}
+            </span>
+            {% if product.quantity_at_hand <= product.reorder_point %}
+            <span class="text-[8px] font-bold uppercase text-red-500 tracking-tighter">Low Stock</span>
+            {% endif %}
+        </div>
+    </td>
+    <td class="p-4 text-right">
+        <div class="flex justify-end gap-2">
+            <a href="#" hx-get="{% url 'product_update' product.id %}" hx-target="#main-content" class="h-9 w-9 flex items-center justify-center rounded-xl bg-gray-50 text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 transition-all">
+                <i class="bi bi-pencil-square"></i>
+            </a>
+            <button hx-post="{% url 'product_delete' product.id %}" 
+                    hx-confirm="Deactivate this product?"
+                    hx-target="closest tr"
+                    hx-swap="outerHTML"
+                    class="h-9 w-9 flex items-center justify-center rounded-xl bg-gray-50 text-gray-400 hover:bg-red-50 hover:text-red-600 transition-all">
+                <i class="bi bi-trash"></i>
+            </button>
+        </div>
+    </td>
+</tr>
+{% empty %}
+<tr>
+    <td colspan="5" class="p-20 text-center">
+        <p class="text-gray-400 italic">No products found matching your search.</p>
+    </td>
+</tr>
+{% endfor %}
+
+{% if page_obj.has_next %}
+<tr id="load-more-row">
+    <td colspan="5" class="p-4 text-center">
+        <button hx-get="{% url 'product_list' %}?page={{ page_obj.next_page_number }}&q={{ query }}"
+                hx-target="#product-table-body"
+                hx-select="#product-table-body > tr"
+                hx-swap="beforeend"
+                class="text-xs font-bold text-indigo-600 hover:underline">
+            Load More Products...
+        </button>
+    </td>
+</tr>
+{% endif %}

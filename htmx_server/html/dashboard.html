@@ -1,110 +1,146 @@
 {% extends "base.html" %}
 
 {% block content %}
-
-<div class="max-w-7xl mx-auto">
-
-  <h1 class="text-2xl font-bold mb-6">Dashboard</h1>
-
-  <!-- STATS -->
-  <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-
-    <div class="bg-white p-6 rounded-xl shadow">
-      <p class="text-gray-400 text-sm">Revenue</p>
-      <h2 class="text-2xl font-bold text-green-600">
-        {{ total_revenue|floatformat:0 }} TZS
-      </h2>
+<div class="max-w-7xl mx-auto p-4 lg:p-6 min-h-screen bg-gray-50">
+    
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+        <div>
+            <h1 class="text-4xl font-black text-slate-900 tracking-tight">Executive Dashboard</h1>
+            <p class="text-slate-500 font-medium">Monitoring business health and inventory movement.</p>
+        </div>
+        
+        <div class="inline-flex p-1 bg-slate-200 rounded-2xl shadow-inner">
+            <button hx-get="?period=week" hx-target="#dashboard-body" 
+                    class="px-6 py-2 rounded-xl text-sm font-bold transition-all {% if period == 'week' %}bg-white shadow-sm text-indigo-600{% else %}text-slate-600 hover:text-slate-900{% endif %}">
+                Last 7 Days
+            </button>
+            <button hx-get="?period=month" hx-target="#dashboard-body" 
+                    class="px-6 py-2 rounded-xl text-sm font-bold transition-all {% if period == 'month' %}bg-white shadow-sm text-indigo-600{% else %}text-slate-600 hover:text-slate-900{% endif %}">
+                Last 30 Days
+            </button>
+        </div>
     </div>
 
-    <div class="bg-white p-6 rounded-xl shadow">
-      <p class="text-gray-400 text-sm">Products</p>
-      <h2 class="text-2xl font-bold">{{ total_products }}</h2>
+    <div id="dashboard-body" class="space-y-8 animate-in fade-in duration-500">
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm">
+                <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mb-4">
+                    <i class="bi bi-wallet2 text-xl"></i>
+                </div>
+                <p class="text-slate-400 text-xs font-bold uppercase tracking-widest">Gross Revenue</p>
+                <h2 class="text-3xl font-black text-slate-900 mt-1">${{ revenue|floatformat:2 }}</h2>
+            </div>
+
+            <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm">
+                <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mb-4">
+                    <i class="bi bi-graph-up-arrow text-xl"></i>
+                </div>
+                <p class="text-slate-400 text-xs font-bold uppercase tracking-widest">Net Profit</p>
+                <h2 class="text-3xl font-black text-emerald-600 mt-1">${{ profit|floatformat:2 }}</h2>
+            </div>
+
+            <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm">
+                <div class="w-12 h-12 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mb-4">
+                    <i class="bi bi-exclamation-triangle text-xl"></i>
+                </div>
+                <p class="text-slate-400 text-xs font-bold uppercase tracking-widest">Restock Alerts</p>
+                <h2 class="text-3xl font-black text-slate-900 mt-1">{{ low_stock_count }}</h2>
+            </div>
+
+            <div class="bg-slate-900 p-6 rounded-[2rem] shadow-xl shadow-slate-200">
+                <div class="w-12 h-12 bg-slate-800 text-slate-400 rounded-2xl flex items-center justify-center mb-4">
+                    <i class="bi bi-percent text-xl"></i>
+                </div>
+                <p class="text-slate-500 text-xs font-bold uppercase tracking-widest">Avg Margin</p>
+                <h2 class="text-3xl font-black text-white mt-1">{% widthratio profit revenue 100 %}%</h2>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2 bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
+                <h3 class="text-xl font-black text-slate-900 mb-6">Revenue Analytics</h3>
+                <div class="h-[350px]">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+
+            <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm flex flex-col">
+                <h3 class="text-xl font-black text-slate-900 mb-6">Top Sellers</h3>
+                <div class="space-y-6 flex-1">
+                    {% for p in top_products %}
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center font-bold text-slate-400 text-sm">
+                            #{{ forloop.counter }}
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-sm font-bold text-slate-800">{{ p.name|truncatechars:20 }}</p>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">{{ p.total_sold }} units sold</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="mt-8 p-4 bg-rose-50 rounded-2xl border border-rose-100">
+                    <h4 class="text-xs font-black text-rose-600 uppercase mb-3">Critical Stock</h4>
+                    {% for item in low_stock_items %}
+                        <div class="flex justify-between items-center text-xs mb-1">
+                            <span class="text-rose-800">{{ item.name }}</span>
+                            <span class="font-black text-rose-950">{{ item.quantity_at_hand }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
     </div>
-
-    <div class="bg-white p-6 rounded-xl shadow">
-      <p class="text-gray-400 text-sm">Customers</p>
-      <h2 class="text-2xl font-bold">{{ total_customers }}</h2>
-    </div>
-
-    <div class="bg-white p-6 rounded-xl shadow">
-      <p class="text-gray-400 text-sm">Low Stock</p>
-      <h2 class="text-2xl font-bold text-red-500">{{ low_stock_count }}</h2>
-    </div>
-
-  </div>
-
-  <!-- CHARTS -->
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-
-    <!-- SALES LINE -->
-    <div class="bg-white p-6 rounded-xl shadow">
-      <h3 class="font-bold mb-4">Sales Over Time</h3>
-      <canvas id="salesChart"></canvas>
-    </div>
-
-    <!-- TOP PRODUCTS PIE -->
-    <div class="bg-white p-6 rounded-xl shadow">
-      <h3 class="font-bold mb-4">Top Products</h3>
-      <canvas id="productsChart"></canvas>
-    </div>
-
-  </div>
-
-  <!-- BEST SELLERS TABLE -->
-  <div class="bg-white mt-8 p-6 rounded-xl shadow">
-    <h3 class="font-bold mb-4">Best Selling Products</h3>
-
-    <table class="w-full text-left">
-      <thead class="text-gray-400 text-sm">
-        <tr>
-          <th>Product</th>
-          <th>Units Sold</th>
-          <th>Revenue</th>
-        </tr>
-      </thead>
-
-      <tbody>
-        {% for item in top_products %}
-        <tr class="border-t">
-          <td>{{ item.product__name }}</td>
-          <td>{{ item.total_qty }}</td>
-          <td>{{ item.total_sales }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-
 </div>
 
-<!-- CHART SCRIPT -->
 <script>
-  const salesData = {{ sales_chart|safe }};
-  const productData = {{ product_chart|safe }};
+    // Initialize Chart.js
+    function initChart() {
+        const ctx = document.getElementById('revenueChart').getContext('2d');
+        const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+        gradient.addColorStop(0, 'rgba(79, 70, 229, 0.2)');
+        gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
 
-  // SALES LINE
-  new Chart(document.getElementById('salesChart'), {
-    type: 'line',
-    data: {
-      labels: salesData.labels,
-      datasets: [{
-        label: 'Revenue',
-        data: salesData.data,
-        borderColor: 'blue',
-        fill: true
-      }]
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: {{ chart_labels|safe }},
+                datasets: [{
+                    label: 'Daily Revenue',
+                    data: {{ chart_revenue|safe }},
+                    borderColor: '#4f46e5',
+                    borderWidth: 5,
+                    pointBackgroundColor: '#fff',
+                    pointBorderColor: '#4f46e5',
+                    pointBorderWidth: 3,
+                    pointRadius: 4,
+                    pointHoverRadius: 8,
+                    tension: 0.4,
+                    fill: true,
+                    backgroundColor: gradient
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, grid: { color: '#f1f5f9' }, border: { display: false } },
+                    x: { grid: { display: false }, border: { display: false } }
+                }
+            }
+        });
     }
-  });
 
-  // PIE CHART
-  new Chart(document.getElementById('productsChart'), {
-    type: 'pie',
-    data: {
-      labels: productData.labels,
-      datasets: [{
-        data: productData.data
-      }]
-    }
-  });
+    initChart();
+    
+    // Re-initialize chart when HTMX swaps content
+    document.body.addEventListener('htmx:afterSwap', function(evt) {
+        if (evt.detail.target.id === "dashboard-body") {
+            initChart();
+        }
+    });
 </script>
 {% endblock %}

@@ -394,3 +394,15 @@ os.system('cls' if os.name == 'nt' else 'clear')
 
 MEDIA_URL = '/inventory/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'inventory')
+
+# settings.py
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'localhost'  # Use your email provider's SMTP server
+EMAIL_PORT = 1025  # Use a local debugging SMTP server (e.g., Python's smtpd) for development
+EMAIL_USE_TLS = False  # Set to True if your email provider requires TLS
+EMAIL_HOST_USER = ''  # Your email address (if required)
+EMAIL_HOST_PASSWORD = ''  # Your email password (if required)
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = 'your-email@gmail.com'
+# EMAIL_HOST_PASSWORD = 'your-app-password'  # Not your regular password!

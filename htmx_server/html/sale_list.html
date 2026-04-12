@@ -1,0 +1,33 @@
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900">Sales History</h1>
+            <p class="text-gray-500">View and manage transactions</p>
+        </div>
+        <a hx-target="#main-content" hx-get="{% url 'sale_create' %}" href="#" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-bold shadow-lg transition-all flex items-center gap-2 w-fit">
+            <i class="bi bi-plus-lg"></i> New Sale
+        </a>
+    </div>
+
+    <div class="flex gap-2 mb-6 p-1 bg-gray-200 w-fit rounded-xl">
+        <button hx-get="{% url 'sale_list' %}" hx-target="#main-content" hx-push-url="false"
+                class="px-4 py-2 rounded-lg text-sm font-bold {% if not status_filter %}bg-white text-indigo-600 shadow-sm{% else %}text-gray-600 hover:bg-gray-300{% endif %}">
+            All Sales
+        </button>
+        <button hx-get="{% url 'sale_list' %}?status=pending" hx-target="#main-content" hx-push-url="false"
+                class="px-4 py-2 rounded-lg text-sm font-bold {% if status_filter == 'pending' %}bg-white text-yellow-600 shadow-sm{% else %}text-gray-600 hover:bg-gray-300{% endif %}">
+            Pending
+        </button>
+        <button hx-get="{% url 'sale_list' %}?status=approved" hx-target="#main-content" hx-push-url="false"
+                class="px-4 py-2 rounded-lg text-sm font-bold {% if status_filter == 'approved' %}bg-white text-green-600 shadow-sm{% else %}text-gray-600 hover:bg-gray-300{% endif %}">
+            Approved
+        </button>
+    </div>
+
+    <div id="sales-table-container" class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+        {% include "partials/sales_table.html" %}
+    </div>
+</div>
+{% endblock %}

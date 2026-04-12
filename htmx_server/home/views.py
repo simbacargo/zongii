@@ -354,7 +354,7 @@ def customer_list(request):
 
     paginator = Paginator(customers.order_by("name"), 25)
     page = paginator.get_page(request.GET.get("page"))
-    return render(request, "customer_list.html", {"page_obj": page, "query": query})
+    return render(request, "customer_list.html", {"page_obj": page, "query": query,"customers":customers})
 
 
 @login_required
@@ -449,6 +449,7 @@ def sale_list(request):
     """GET /sales/?status=pending|approved|rejected&page=<n>"""
     status_filter = request.GET.get("status", "")
     sales = Sale.objects.select_related("product", "customer", "created_by").filter(deleted=False)
+    sales = Sale.objects.all().filter(deleted=False)
 
     if status_filter == "approved":
         sales = sales.filter(aproved=True, rejected=False)
@@ -456,6 +457,7 @@ def sale_list(request):
         sales = sales.filter(rejected=True)
     elif status_filter == "pending":
         sales = sales.filter(aproved=False, rejected=False)
+        print(sales)
 
     paginator = Paginator(sales.order_by("-date_sold"), 25)
     page = paginator.get_page(request.GET.get("page"))
@@ -609,7 +611,7 @@ from django.db.models.functions import TruncDate
 from .models import Product, Sale, Customer
 import json
 
-
+@login_required
 def dashboard(request):
     # --- KPIs ---
     total_revenue = Sale.objects.aggregate(
@@ -672,42 +674,43 @@ from .models import Product, Sale
 from decimal import Decimal
 
 
-@login_required
-def product_sell(request, product_id):
-    if request.method != "POST":
-        return HttpResponseBadRequest("Invalid request")
+# @login_required
+# def product_sell(request, product_id):
+#     print(product_id)
+#     if request.method != "POST":
+#         return HttpResponseBadRequest("Invalid request")
 
-    product = get_object_or_404(Product, id=product_id)
+#     product = get_object_or_404(Product, id=product_id)
 
-    # --- DEFAULT SALE VALUES ---
-    quantity = 1  # simple quick-sale (like your button implies)
-    price = product.retail_price or product.buying_price
+#     # --- DEFAULT SALE VALUES ---
+#     quantity = 1  # simple quick-sale (like your button implies)
+#     price = product.retail_price or product.buying_price
 
-    # --- STOCK CHECK ---
-    if product.quantity_at_hand < quantity:
-        return render(request, "partials/product_row.html", {
-            "product": product,
-            "error": "Out of stock"
-        })
+#     # --- STOCK CHECK ---
+#     if product.quantity_at_hand < quantity:
+#         return render(request, "partials/product_row.html", {
+#             "product": product,
+#             "error": "Out of stock"
+#         })
 
-    # --- CREATE SALE ---
-    sale = Sale.objects.create(
-        product=product,
-        quantity_sold=quantity,
-        price_per_unit=price,
-        created_by=request.user
-    )
+#     # --- CREATE SALE ---
+#     sale = Sale.objects.create(
+#         product=product,
+#         quantity_sold=quantity,
+#         price_per_unit=price,
+#         created_by=request.user
+#     )
 
-    # Product stock updates automatically via model.save()
+#     # Product stock updates automatically via model.save()
 
-    # --- REFRESH PRODUCT FROM DB ---
-    product.refresh_from_db()
+#     # --- REFRESH PRODUCT FROM DB ---
+#     product.refresh_from_db()
 
-    # --- RETURN UPDATED ROW ---
-    return render(request, "partials/product_row.html", {
-        "product": product,
-        "success": f"Sold {quantity} item"
-    })
+#     # --- RETURN UPDATED ROW ---
+#     return render(request, "partials/product_row.html", {
+#         "product": product,
+#         "success": f"Sold {quantity} item"
+#     })
     
     
 from django.shortcuts import render, get_object_or_404
@@ -715,17 +718,27 @@ from django.views.decorators.http import require_POST
 from django.http import HttpResponse
 from .models import Product  # Adjust based on your app structure
 
+@login_required
 @require_POST
-def product_sell(request, pk):
+def product_sell(request, product_id):
+    print(product_id)
     """
     Decrements product stock and returns the updated table row fragment.
     """
-    product = get_object_or_404(Product, pk=pk)
+    product = get_object_or_404(Product, id=product_id)
+    
+    print(product)
     
     # 1. Logic: Check if stock exists
     if product.quantity_at_hand > 0:
         product.quantity_at_hand -= 1
         product.save()
+        Sale.objects.create(
+            product=product,
+            quantity_sold=1,
+            price_per_unit=product.retail_price or product.buying_price,
+            created_by=request.user
+        )
         
         # 2. Return the updated row fragment
         # This uses the same template logic as your table row
@@ -741,4 +754,201 @@ def product_sell(request, pk):
         return HttpResponse("Out of stock", status=400)
     
     
+   
+@login_required
+def sale_create_htmx(request):
+    products = Product.objects.filter(is_active=True, quantity_at_hand__gt=0)
+    customers = Customer.objects.all()
     
+    if request.headers.get('HX-Request') and 'q' in request.GET:
+        query = request.GET.get('q')
+        products = Product.objects.filter(
+            Q(name__icontains=query) | Q(part_number__icontains=query),
+            is_active=True
+        )[:10]  # Limit to 10 for performance
+        return render(request, "partials/product_search_results.html", {"products": products})
+
+    # Handle HTMX dynamic price/total calculation
+    if request.headers.get('HX-Request') and 'product' in request.GET:
+        product_id = request.GET.get('product')
+        qty = int(request.GET.get('quantity_sold', 1))
+        product = get_object_or_404(Product, id=product_id)
+        
+        total = product.retail_price * qty
+        return render(request, "partials/sale_calculation.html", {
+            "product": product,
+            "quantity": qty,
+            "total": total
+        })
+
+    return render(request, "sale_form_htmx.html", {
+        "products": products,
+        "customers": customers,
+    })
+        
+from django.shortcuts import render, get_object_or_404
+from django.db.models import Q
+from django.http import HttpResponse
+from .models import Product, Customer, Sale
+import json
+
+@login_required 
+def sale_create_view(request):
+    # --- 1. HANDLE LIVE SEARCH (HTMX) ---
+    if request.headers.get('HX-Request') and 'q' in request.GET:
+        query = request.GET.get('q')
+        # Search by name or part number, limit to 10 for speed
+        products = Product.objects.filter(
+            Q(name__icontains=query) | Q(part_number__icontains=query),
+            is_active=True,
+            quantity_at_hand__gt=0
+        )[:10]
+        return render(request, "partials/sale_search_results.html", {"products": products})
+
+    # --- 2. HANDLE PRICE CALCULATION (HTMX) ---
+    if request.headers.get('HX-Request') and 'product_id' in request.GET:
+        p_id = request.GET.get('product_id')
+        qty = int(request.GET.get('quantity_sold', 1) or 1)
+        product = get_object_or_404(Product, id=p_id)
+        
+        total = product.retail_price * qty
+        return render(request, "partials/sale_calc_snippet.html", {
+            "product": product,
+            "quantity": qty,
+            "total": total
+        })
+
+    # --- 3. INITIAL PAGE LOAD ---
+    customers = Customer.objects.all().order_by('name')
+    return render(request, "sale_page.html", {"customers": customers})
+
+@login_required
+def manage_cart(request):
+    cart = request.session.get('cart', {})
+
+    # Action: Add Product
+    if request.method == "POST" and "add_id" in request.POST:
+        p_id = request.POST.get('add_id')
+        product = get_object_or_404(Product, id=p_id)
+        
+        # Add or increment
+        cart[p_id] = cart.get(p_id, 0) + 1
+        request.session['cart'] = cart
+        request.session.modified = True
+
+    # Action: Remove Product
+    elif request.method == "POST" and "remove_id" in request.POST:
+        p_id = request.POST.get('remove_id')
+        if p_id in cart:
+            del cart[p_id]
+            request.session['cart'] = cart
+            request.session.modified = True
+
+    # Prepare data for the template
+    cart_items = []
+    grand_total = 0
+    for p_id, qty in cart.items():
+        product = Product.objects.get(id=p_id)
+        item_total = product.retail_price * qty
+        grand_total += item_total
+        cart_items.append({'product': product, 'quantity': qty, 'total': item_total})
+
+    return render(request, "partials/cart_table.html", {
+        "cart_items": cart_items,
+        "grand_total": grand_total
+    })
+    
+    
+from django.db.models import Sum, F, Count, ExpressionWrapper, DecimalField
+from datetime import timedelta
+from django.utils import timezone
+
+@login_required
+def dashboard(request):
+    period = request.GET.get('period', 'week')
+    today = timezone.now().date()
+    
+    # 1. Date Range Logic
+    if period == 'month':
+        start_date = today.replace(day=1)
+    else:
+        start_date = today - timedelta(days=7)
+
+    # 2. Metric Calculations with Profit Margin
+    sales_qs = Sale.objects.filter(date_sold__date__gte=start_date, aproved=True)
+    
+    total_revenue = sales_qs.aggregate(total=Sum('total_amount'))['total'] or 0
+    
+    # Profit Calculation: Sum((Retail - Buying) * Qty)
+    total_profit = sales_qs.annotate(
+        margin=ExpressionWrapper(
+            (F('price_per_unit') - F('product__buying_price')) * F('quantity_sold'),
+            output_field=DecimalField()
+        )
+    ).aggregate(total=Sum('margin'))['total'] or 0
+
+    # 3. Inventory Health
+    low_stock = Product.objects.filter(quantity_at_hand__lte=F('reorder_point'), is_active=True)
+    
+    # 4. Top Selling Products
+    top_products = Product.objects.filter(sales__aproved=True, sales__date_sold__date__gte=start_date)\
+        .annotate(total_sold=Sum('sales__quantity_sold'))\
+        .order_by('-total_sold')[:5]
+
+    # 5. Chart Data (Dynamic based on period)
+    chart_labels = []
+    chart_revenue = []
+    days_to_track = 30 if period == 'month' else 7
+    
+    for i in range(days_to_track - 1, -1, -1):
+        day = today - timedelta(days=i)
+        chart_labels.append(day.strftime('%d %b'))
+        day_total = Sale.objects.filter(date_sold__date=day).aggregate(Sum('total_amount'))['total_amount__sum'] or 0
+        chart_revenue.append(float(day_total))
+
+    context = {
+        "revenue": total_revenue,
+        "profit": total_profit,
+        "low_stock_count": low_stock.count(),
+        "low_stock_items": low_stock[:3],
+        "top_products": top_products,
+        "chart_labels": json.dumps(chart_labels),
+        "chart_revenue": json.dumps(chart_revenue),
+        "period": period,
+    }
+    
+    if request.headers.get('HX-Request'):
+        return render(request, "partials/dashboard_content.html", context)
+        
+    return render(request, "dashboard.html", context)
+
+
+
+from django.shortcuts import render, get_object_or_404
+from django.db.models import Sum, F
+from .models import Customer, Sale # Assuming your models
+
+@login_required
+def customer_debt_list(request):
+    # Filter only customers who have a balance (debt)
+    customers = Customer.objects.filter(balance__gt=0).order_by('-balance')
+
+    # Handle HTMX Payment (Clear or Decrease)
+    if request.method == "POST" and request.headers.get('HX-Request'):
+        customer_id = request.POST.get('customer_id')
+        amount_paid = float(request.POST.get('amount', 0))
+        customer = get_object_or_404(Customer, id=customer_id)
+
+        # Decrease the balance
+        if amount_paid > 0:
+            customer.balance = F('balance') - amount_paid
+            customer.save()
+            customer.refresh_from_db()
+
+        # If balance becomes 0 or less, we might want to remove them from this specific list view
+        if customer.balance <= 0:
+            return HttpResponse("") # HTMX removes the row
+
+        return render(request, "customer_rows.html", {"c": customer})
+
+    return render(request, "customer_list.html", {"customers": customers})

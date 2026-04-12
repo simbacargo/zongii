@@ -1,0 +1,16 @@
+<div id="calculation-area" class="grid grid-cols-2 gap-4 animate-in fade-in">
+    <div>
+        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Unit Price</label>
+        <div class="text-2xl font-semibold text-gray-700">$ {{ product.retail_price }}</div>
+        <input type="hidden" name="price_per_unit" value="{{ product.retail_price }}">
+    </div>
+    <div class="text-right">
+        <label class="block text-xs font-bold text-indigo-600 uppercase mb-1">Total Amount</label>
+        <div class="text-3xl font-bold text-indigo-700">$ {{ total }}</div>
+    </div>
+    {% if product.quantity_at_hand < quantity %}
+        <div class="col-span-2 p-2 bg-red-100 text-red-700 text-xs rounded-lg">
+            ⚠️ Warning: Only {{ product.quantity_at_hand }} units in stock.
+        </div>
+    {% endif %}
+</div>

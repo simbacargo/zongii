@@ -1,45 +1,199 @@
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-    <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm">
-        <p class="text-slate-400 text-xs font-bold uppercase tracking-widest">Gross Revenue</p>
-        <h2 class="text-3xl font-black text-slate-900 mt-1">${{ revenue|floatformat:2 }}</h2>
+<!-- KPI Row 1: Financial -->
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+
+    <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+        <div class="flex items-center justify-between mb-3">
+            <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center">
+                <i class="bi bi-wallet2 text-lg"></i>
+            </div>
+            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Revenue</span>
+        </div>
+        <p class="text-2xl font-black text-slate-900">TZS {{ revenue|floatformat:0 }}</p>
+        <p class="text-xs text-slate-400 mt-1">Approved sales in period</p>
     </div>
 
-    <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm">
-        <p class="text-slate-400 text-xs font-bold uppercase tracking-widest">Net Profit</p>
-        <h2 class="text-3xl font-black text-emerald-600 mt-1">${{ profit|floatformat:2 }}</h2>
+    <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+        <div class="flex items-center justify-between mb-3">
+            <div class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center">
+                <i class="bi bi-graph-up-arrow text-lg"></i>
+            </div>
+            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Net Profit</span>
+        </div>
+        <p class="text-2xl font-black text-emerald-600">TZS {{ profit|floatformat:0 }}</p>
+        <p class="text-xs text-slate-400 mt-1">Margin: {% widthratio profit revenue 100 %}%</p>
     </div>
 
-    <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm">
-        <p class="text-slate-400 text-xs font-bold uppercase tracking-widest">Restock Alerts</p>
-        <h2 class="text-3xl font-black text-slate-900 mt-1">{{ low_stock_count }}</h2>
+    <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+        <div class="flex items-center justify-between mb-3">
+            <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center">
+                <i class="bi bi-receipt text-lg"></i>
+            </div>
+            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Transactions</span>
+        </div>
+        <p class="text-2xl font-black text-slate-900">{{ total_sales_count }}</p>
+        <p class="text-xs text-slate-400 mt-1">Completed sales</p>
     </div>
 
-    <div class="bg-slate-900 p-6 rounded-[2rem] shadow-xl shadow-slate-200">
-        <p class="text-slate-500 text-xs font-bold uppercase tracking-widest">Avg Margin</p>
-        <h2 class="text-3xl font-black text-white mt-1">{% widthratio profit revenue 100 %}%</h2>
+    <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+        <div class="flex items-center justify-between mb-3">
+            <div class="w-10 h-10 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center">
+                <i class="bi bi-people text-lg"></i>
+            </div>
+            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Customers</span>
+        </div>
+        <p class="text-2xl font-black text-slate-900">{{ total_customers }}</p>
+        <p class="text-xs text-slate-400 mt-1">Total registered</p>
     </div>
 </div>
 
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
-    <div class="lg:col-span-2 bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
-        <h3 class="text-xl font-black text-slate-900 mb-6">Revenue Analytics</h3>
-        <div class="h-[350px]">
+<!-- KPI Row 2: Operational Alerts -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+
+    <div class="{% if pending_count > 0 %}bg-amber-50 border-amber-200{% else %}bg-white border-slate-100{% endif %} p-5 rounded-2xl border shadow-sm">
+        <div class="flex items-center justify-between mb-3">
+            <div class="w-10 h-10 {% if pending_count > 0 %}bg-amber-100 text-amber-600{% else %}bg-slate-50 text-slate-400{% endif %} rounded-xl flex items-center justify-center">
+                <i class="bi bi-hourglass-split text-lg"></i>
+            </div>
+            {% if pending_count > 0 %}
+            <span class="px-2 py-0.5 bg-amber-500 text-white text-xs font-black rounded-full">Action Needed</span>
+            {% endif %}
+        </div>
+        <p class="text-2xl font-black {% if pending_count > 0 %}text-amber-700{% else %}text-slate-900{% endif %}">{{ pending_count }}</p>
+        <p class="text-xs {% if pending_count > 0 %}text-amber-600{% else %}text-slate-400{% endif %} font-semibold mt-1">Pending approvals</p>
+    </div>
+
+    <div class="{% if low_stock_count > 0 %}bg-rose-50 border-rose-200{% else %}bg-white border-slate-100{% endif %} p-5 rounded-2xl border shadow-sm">
+        <div class="flex items-center justify-between mb-3">
+            <div class="w-10 h-10 {% if low_stock_count > 0 %}bg-rose-100 text-rose-600{% else %}bg-slate-50 text-slate-400{% endif %} rounded-xl flex items-center justify-center">
+                <i class="bi bi-exclamation-triangle text-lg"></i>
+            </div>
+            {% if low_stock_count > 0 %}
+            <span class="px-2 py-0.5 bg-rose-500 text-white text-xs font-black rounded-full">Reorder</span>
+            {% endif %}
+        </div>
+        <p class="text-2xl font-black {% if low_stock_count > 0 %}text-rose-700{% else %}text-slate-900{% endif %}">{{ low_stock_count }}</p>
+        <p class="text-xs {% if low_stock_count > 0 %}text-rose-600{% else %}text-slate-400{% endif %} font-semibold mt-1">Products below reorder point</p>
+    </div>
+
+    <div class="{% if total_debt > 0 %}bg-orange-50 border-orange-200{% else %}bg-white border-slate-100{% endif %} p-5 rounded-2xl border shadow-sm">
+        <div class="flex items-center justify-between mb-3">
+            <div class="w-10 h-10 {% if total_debt > 0 %}bg-orange-100 text-orange-600{% else %}bg-slate-50 text-slate-400{% endif %} rounded-xl flex items-center justify-center">
+                <i class="bi bi-cash-coin text-lg"></i>
+            </div>
+            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Receivables</span>
+        </div>
+        <p class="text-2xl font-black {% if total_debt > 0 %}text-orange-700{% else %}text-slate-900{% endif %}">TZS {{ total_debt|floatformat:0 }}</p>
+        <p class="text-xs {% if total_debt > 0 %}text-orange-600{% else %}text-slate-400{% endif %} font-semibold mt-1">Outstanding customer debt</p>
+    </div>
+</div>
+
+<!-- Charts + Top Products -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+    <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-base font-black text-slate-900">Revenue Analytics</h3>
+            <span class="text-xs text-slate-400">{% if period == 'month' %}Last 30 days{% else %}Last 7 days{% endif %}</span>
+        </div>
+        <div class="h-[280px]">
             <canvas id="revenueChart"></canvas>
         </div>
     </div>
 
-    <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm flex flex-col">
-        <h3 class="text-xl font-black text-slate-900 mb-6">Top Sellers</h3>
-        <div class="space-y-6 flex-1">
+    <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col">
+        <h3 class="text-base font-black text-slate-900 mb-4">Top Products</h3>
+        <div class="space-y-4 flex-1">
             {% for p in top_products %}
-            <div class="flex items-center gap-4">
-                <div class="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center font-bold text-slate-400 text-sm">
-                    #{{ forloop.counter }}
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center font-black text-indigo-400 text-xs shrink-0">
+                    {{ forloop.counter }}
                 </div>
-                <div class="flex-1">
-                    <p class="text-sm font-bold text-slate-800">{{ p.name|truncatechars:20 }}</p>
-                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">{{ p.total_sold }} units sold</p>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-bold text-slate-800 truncate">{{ p.name }}</p>
+                    <div class="flex items-center gap-2 mt-0.5">
+                        <div class="h-1.5 bg-indigo-100 rounded-full flex-1">
+                            <div class="h-1.5 bg-indigo-500 rounded-full" style="width: {% widthratio p.total_sold top_products.0.total_sold 100 %}%"></div>
+                        </div>
+                        <span class="text-[10px] text-slate-400 font-bold shrink-0">{{ p.total_sold }} sold</span>
+                    </div>
                 </div>
+            </div>
+            {% empty %}
+            <div class="flex-1 flex items-center justify-center opacity-30">
+                <p class="text-sm font-bold text-slate-500">No sales data</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Recent Transactions + Stock Alerts -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+        <div class="flex items-center justify-between p-5 border-b border-slate-50">
+            <h3 class="text-base font-black text-slate-900">Recent Transactions</h3>
+        </div>
+        <table class="w-full text-left">
+            <thead class="bg-slate-50">
+                <tr>
+                    <th class="px-5 py-3 text-[10px] font-black text-slate-400 uppercase">Product</th>
+                    <th class="px-5 py-3 text-[10px] font-black text-slate-400 uppercase">Customer</th>
+                    <th class="px-5 py-3 text-[10px] font-black text-slate-400 uppercase text-right">Amount</th>
+                    <th class="px-5 py-3 text-[10px] font-black text-slate-400 uppercase text-center">Status</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-50">
+                {% for sale in recent_sales %}
+                <tr class="hover:bg-slate-50/60">
+                    <td class="px-5 py-3">
+                        <p class="text-sm font-bold text-slate-800 truncate max-w-[160px]">{{ sale.product.name }}</p>
+                        <p class="text-[10px] text-slate-400">{{ sale.date_sold|date:"d M, H:i" }} · {{ sale.quantity_sold }} units</p>
+                    </td>
+                    <td class="px-5 py-3 text-sm text-slate-600">
+                        {% if sale.customer %}{{ sale.customer.name }}{% else %}<span class="text-slate-400 italic">Walk-in</span>{% endif %}
+                    </td>
+                    <td class="px-5 py-3 text-right text-sm font-black text-slate-900">TZS {{ sale.total_amount|floatformat:0 }}</td>
+                    <td class="px-5 py-3 text-center">
+                        {% if sale.rejected %}
+                            <span class="px-2 py-0.5 text-[10px] font-bold uppercase bg-red-100 text-red-600 rounded">Rejected</span>
+                        {% elif sale.aproved %}
+                            <span class="px-2 py-0.5 text-[10px] font-bold uppercase bg-green-100 text-green-600 rounded">Approved</span>
+                        {% else %}
+                            <span class="px-2 py-0.5 text-[10px] font-bold uppercase bg-amber-100 text-amber-600 rounded">Pending</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="px-5 py-10 text-center text-slate-400 text-sm">No transactions yet</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+        <div class="flex items-center justify-between p-5 border-b border-slate-50">
+            <h3 class="text-base font-black text-slate-900">Stock Alerts</h3>
+            {% if low_stock_count > 0 %}
+            <span class="px-2 py-0.5 bg-rose-100 text-rose-600 text-xs font-black rounded-full">{{ low_stock_count }}</span>
+            {% endif %}
+        </div>
+        <div class="p-5 space-y-3">
+            {% for item in low_stock_items %}
+            <div class="flex items-center justify-between p-3 bg-rose-50 rounded-xl border border-rose-100">
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-bold text-rose-900 truncate">{{ item.name }}</p>
+                    <p class="text-[10px] text-rose-500">{{ item.brand }}</p>
+                </div>
+                <div class="text-right ml-3 shrink-0">
+                    <span class="text-lg font-black text-rose-700">{{ item.quantity_at_hand }}</span>
+                    <p class="text-[10px] text-rose-400">left</p>
+                </div>
+            </div>
+            {% empty %}
+            <div class="py-6 text-center opacity-30">
+                <i class="bi bi-check-circle text-3xl text-green-500 block mb-2"></i>
+                <p class="text-sm font-bold text-slate-500">All stock OK</p>
             </div>
             {% endfor %}
         </div>
@@ -47,8 +201,5 @@
 </div>
 
 <script id="chart-data" type="application/json">
-    {
-        "labels": {{ chart_labels|safe }},
-        "data": {{ chart_revenue|safe }}
-    }
+    {"labels": {{ chart_labels|safe }}, "data": {{ chart_revenue|safe }}}
 </script>

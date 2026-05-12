@@ -146,16 +146,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 REST_FRAMEWORK = {
- 'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny',  # Allow any user to access the API
-    ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',  # JWT Authentication
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10000,
-
-    }
+    'PAGE_SIZE': 25,
+}
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGIcNS = [
     'http://localhost:8081',  # For React app
@@ -299,19 +298,6 @@ MPESA_API_INITIATE_URL = f'{MPESA_BASE_HOST}/sandbox/ipg/v2/vodacomTZN/c2bPaymen
 
 ALLOWED_HOSTS = ['*']
 
-REST_FRAMEWORK = {
-     'DEFAULT_AUTHENTICATION_CLASSES': [
-#         'knox.auth.TokenAuthentication',
-#         'rest_framework.authentication.SessionAuthentication',
-#         'rest_framework.authentication.TokenAuthentication',
-#         'rest_framework.authentication.BasicAuthentication',
-         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ],
-     'DEFAULT_PERMISSION_CLASSES': [
-         'rest_framework.permissions.AllowAny',
-         'rest_framework.permissions.IsAuthenticated',
-     ]
-} 
 
 INSTALLED_APPS += ['knox']
 

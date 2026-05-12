@@ -2,13 +2,26 @@ import json
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.http import JsonResponse, HttpResponseForbidden
+from django.http import JsonResponse, HttpResponseForbidden, HttpResponse
 from django.views.decorators.http import require_http_methods, require_POST, require_GET
 from django.core.paginator import Paginator
 from django.db import transaction
 from django.db.models import Q
+from django.core.exceptions import PermissionDenied
 
 from .models import Category, Business, Product, Customer, Sale
+from authentication.models import User
+
+
+def admin_required(view_func):
+    """Restrict a view to admin or superuser only."""
+    @login_required
+    def wrapper(request, *args, **kwargs):
+        if not (request.user.is_superuser or request.user.is_admin):
+            raise PermissionDenied
+        return view_func(request, *args, **kwargs)
+    wrapper.__name__ = view_func.__name__
+    return wrapper
 
 
 # ─────────────────────────────────────────────
@@ -40,47 +53,47 @@ def category_list(request):
 @login_required
 @require_http_methods(["GET", "POST"])
 def category_create(request):
-    """GET /categories/create/ — form  |  POST — create."""
     if request.method == "POST":
         name = request.POST.get("name", "").strip()
         if not name:
             messages.error(request, "Category name is required.")
-            return render(request, "category_form.html")
+            return render(request, "category_list.html", {"categories": Category.objects.all().order_by("name")})
 
-        category = Category.objects.create(name=name)
-        messages.success(request, f'Category "{category.name}" created.')
+        Category.objects.create(name=name)
+        categories = Category.objects.all().order_by("name")
+        if request.headers.get("HX-Request"):
+            return render(request, "category_rows.html", {"categories": categories})
         return redirect("category_list")
 
-    return render(request, "category_form.html")
+    return redirect("category_list")
 
 
 @login_required
 @require_http_methods(["GET", "POST"])
 def category_update(request, pk):
-    """GET /categories/<pk>/edit/ — form  |  POST — update."""
     category = get_object_or_404(Category, pk=pk)
 
     if request.method == "POST":
         name = request.POST.get("name", "").strip()
-        if not name:
-            messages.error(request, "Category name is required.")
-            return render(request, "category_form.html", {"category": category})
-
-        category.name = name
-        category.save()
-        messages.success(request, f'Category updated to "{category.name}".')
+        if name:
+            category.name = name
+            category.save()
+        categories = Category.objects.all().order_by("name")
+        if request.headers.get("HX-Request"):
+            return render(request, "category_rows.html", {"categories": categories})
         return redirect("category_list")
 
-    return render(request, "category_form.html", {"category": category})
+    return redirect("category_list")
 
 
 @login_required
 @require_POST
 def category_delete(request, pk):
-    """POST /categories/<pk>/delete/ — delete."""
     category = get_object_or_404(Category, pk=pk)
     category.delete()
-    messages.success(request, "Category deleted.")
+    categories = Category.objects.all().order_by("name")
+    if request.headers.get("HX-Request"):
+        return render(request, "category_rows.html", {"categories": categories})
     return redirect("category_list")
 
 
@@ -276,14 +289,11 @@ def product_update(request, pk):
         data = request.POST
         try:
             product.name = data.get("name", product.name)
-            product.slug = data.get("slug", product.slug)
             product.description = data.get("description", product.description)
             product.brand = data.get("brand", product.brand)
             product.part_number = data.get("part_number", product.part_number)
             product.upc_code = data.get("upc_code", product.upc_code)
             product.material = data.get("material", product.material)
-            product.connection_size = data.get("connection_size", product.connection_size)
-            product.connection_type = data.get("connection_type", product.connection_type)
             product.is_lead_free = data.get("is_lead_free") == "on"
             product.max_pressure_psi = data.get("max_pressure_psi") or None
             product.buying_price = data.get("buying_price", product.buying_price)
@@ -354,7 +364,14 @@ def customer_list(request):
 
     paginator = Paginator(customers.order_by("name"), 25)
     page = paginator.get_page(request.GET.get("page"))
-    return render(request, "customer_list.html", {"page_obj": page, "query": query,"customers":customers})
+    from django.db.models import Sum as _Sum
+    total_debt = Customer.objects.aggregate(total=_Sum('remaining_balance'))['total'] or 0
+    return render(request, "customer_list.html", {
+        "page_obj": page,
+        "query": query,
+        "customers": customers,
+        "total_debt": total_debt,
+    })
 
 
 @login_required
@@ -605,65 +622,6 @@ def sale_reject(request, pk):
 
 
 
-from django.shortcuts import render
-from django.db.models import Sum, Count,F
-from django.db.models.functions import TruncDate
-from .models import Product, Sale, Customer
-import json
-
-@login_required
-def dashboard(request):
-    # --- KPIs ---
-    total_revenue = Sale.objects.aggregate(
-        total=Sum("total_amount")
-    )["total"] or 0
-
-    total_products = Product.objects.count()
-    total_customers = Customer.objects.count()
-
-    low_stock_count = Product.objects.filter(
-        quantity_at_hand__lte=F("reorder_point")
-    ).count()
-
-    # --- SALES OVER TIME ---
-    sales_by_day = (
-        Sale.objects
-        .annotate(date=TruncDate("date_sold"))
-        .values("date")
-        .annotate(total=Sum("total_amount"))
-        .order_by("date")
-    )
-
-    sales_chart = {
-        "labels": [str(x["date"]) for x in sales_by_day],
-        "data": [float(x["total"]) for x in sales_by_day]
-    }
-
-    # --- TOP PRODUCTS ---
-    top_products = (
-        Sale.objects
-        .values("product__name")
-        .annotate(
-            total_qty=Sum("quantity_sold"),
-            total_sales=Sum("total_amount")
-        )
-        .order_by("-total_qty")[:5]
-    )
-    
-    product_chart = {
-        "labels": [x["product__name"] for x in top_products],
-        "data": [float(x["total_qty"]) for x in top_products]
-    }
-
-    return render(request, "dashboard.html", {
-        "total_revenue": total_revenue,
-        "total_products": total_products,
-        "total_customers": total_customers,
-        "low_stock_count": low_stock_count,
-        "top_products": top_products,
-        "sales_chart": json.dumps(sales_chart),
-        "product_chart": json.dumps(product_chart),
-    })
     
     
     
@@ -867,19 +825,17 @@ from django.utils import timezone
 def dashboard(request):
     period = request.GET.get('period', 'week')
     today = timezone.now().date()
-    
-    # 1. Date Range Logic
+
     if period == 'month':
         start_date = today.replace(day=1)
     else:
         start_date = today - timedelta(days=7)
 
-    # 2. Metric Calculations with Profit Margin
     sales_qs = Sale.objects.filter(date_sold__date__gte=start_date, aproved=True)
-    
+
     total_revenue = sales_qs.aggregate(total=Sum('total_amount'))['total'] or 0
-    
-    # Profit Calculation: Sum((Retail - Buying) * Qty)
+    total_sales_count = sales_qs.count()
+
     total_profit = sales_qs.annotate(
         margin=ExpressionWrapper(
             (F('price_per_unit') - F('product__buying_price')) * F('quantity_sold'),
@@ -887,39 +843,54 @@ def dashboard(request):
         )
     ).aggregate(total=Sum('margin'))['total'] or 0
 
-    # 3. Inventory Health
     low_stock = Product.objects.filter(quantity_at_hand__lte=F('reorder_point'), is_active=True)
-    
-    # 4. Top Selling Products
-    top_products = Product.objects.filter(sales__aproved=True, sales__date_sold__date__gte=start_date)\
-        .annotate(total_sold=Sum('sales__quantity_sold'))\
-        .order_by('-total_sold')[:5]
+    pending_count = Sale.objects.filter(aproved=False, rejected=False, deleted=False).count()
+    total_customers = Customer.objects.count()
+    total_debt = Customer.objects.aggregate(total=Sum('remaining_balance'))['total'] or 0
 
-    # 5. Chart Data (Dynamic based on period)
+    top_products = (
+        Product.objects
+        .filter(sales__aproved=True, sales__date_sold__date__gte=start_date)
+        .annotate(total_sold=Sum('sales__quantity_sold'), total_revenue=Sum('sales__total_amount'))
+        .order_by('-total_sold')[:5]
+    )
+
+    recent_sales = (
+        Sale.objects
+        .select_related('product', 'customer', 'created_by')
+        .filter(deleted=False)
+        .order_by('-date_sold')[:10]
+    )
+
     chart_labels = []
     chart_revenue = []
     days_to_track = 30 if period == 'month' else 7
-    
+
     for i in range(days_to_track - 1, -1, -1):
         day = today - timedelta(days=i)
         chart_labels.append(day.strftime('%d %b'))
-        day_total = Sale.objects.filter(date_sold__date=day).aggregate(Sum('total_amount'))['total_amount__sum'] or 0
+        day_total = Sale.objects.filter(date_sold__date=day, aproved=True).aggregate(Sum('total_amount'))['total_amount__sum'] or 0
         chart_revenue.append(float(day_total))
 
     context = {
         "revenue": total_revenue,
         "profit": total_profit,
+        "total_sales_count": total_sales_count,
+        "total_customers": total_customers,
+        "pending_count": pending_count,
+        "total_debt": total_debt,
         "low_stock_count": low_stock.count(),
-        "low_stock_items": low_stock[:3],
+        "low_stock_items": low_stock[:5],
         "top_products": top_products,
+        "recent_sales": recent_sales,
         "chart_labels": json.dumps(chart_labels),
         "chart_revenue": json.dumps(chart_revenue),
         "period": period,
     }
-    
+
     if request.headers.get('HX-Request'):
         return render(request, "partials/dashboard_content.html", context)
-        
+
     return render(request, "dashboard.html", context)
 
 
@@ -930,25 +901,199 @@ from .models import Customer, Sale # Assuming your models
 
 @login_required
 def customer_debt_list(request):
-    # Filter only customers who have a balance (debt)
-    customers = Customer.objects.filter(balance__gt=0).order_by('-balance')
+    customers = Customer.objects.filter(remaining_balance__gt=0).order_by('-remaining_balance')
 
-    # Handle HTMX Payment (Clear or Decrease)
     if request.method == "POST" and request.headers.get('HX-Request'):
         customer_id = request.POST.get('customer_id')
         amount_paid = float(request.POST.get('amount', 0))
         customer = get_object_or_404(Customer, id=customer_id)
 
-        # Decrease the balance
         if amount_paid > 0:
-            customer.balance = F('balance') - amount_paid
+            customer.remaining_balance = F('remaining_balance') - amount_paid
             customer.save()
             customer.refresh_from_db()
 
-        # If balance becomes 0 or less, we might want to remove them from this specific list view
-        if customer.balance <= 0:
-            return HttpResponse("") # HTMX removes the row
+        if customer.remaining_balance <= 0:
+            from django.http import HttpResponse as _HR
+            return _HR("")
 
         return render(request, "customer_rows.html", {"c": customer})
 
-    return render(request, "customer_list.html", {"customers": customers})
+    from django.db.models import Sum as _Sum
+    total_debt = customers.aggregate(total=_Sum('remaining_balance'))['total'] or 0
+    return render(request, "customer_list.html", {"customers": customers, "total_debt": total_debt})
+
+
+# ═════════════════════════════════════════════
+#  USER MANAGEMENT  (admin/superuser only)
+# ═════════════════════════════════════════════
+
+ROLE_MAP = {
+    # role_key: (is_staff, is_admin, is_superuser)
+    "staff":     (True,  False, False),
+    "manager":   (True,  True,  False),
+    "admin":     (True,  True,  True),
+}
+
+def _role_from_user(user):
+    if user.is_superuser:
+        return "admin"
+    if user.is_admin:
+        return "manager"
+    return "staff"
+
+def _apply_role(user, role_key):
+    is_staff, is_admin, is_superuser = ROLE_MAP.get(role_key, (True, False, False))
+    user.is_staff = is_staff
+    user.is_admin = is_admin
+    user.is_superuser = is_superuser
+
+
+@admin_required
+@require_GET
+def user_list(request):
+    query = request.GET.get("q", "").strip()
+    users = User.objects.all()
+    if query:
+        users = users.filter(
+            Q(username__icontains=query)
+            | Q(firstname__icontains=query)
+            | Q(lastname__icontains=query)
+            | Q(email__icontains=query)
+        )
+    users = users.order_by("username")
+    return render(request, "user_list.html", {"users": users, "query": query})
+
+
+@admin_required
+@require_http_methods(["GET", "POST"])
+def user_create(request):
+    if request.method == "POST":
+        data = request.POST
+        username = data.get("username", "").strip()
+        password = data.get("password", "").strip()
+        errors = {}
+
+        if not username:
+            errors["username"] = "Username is required."
+        elif User.objects.filter(username__iexact=username).exists():
+            errors["username"] = "Username already taken."
+        if not password or len(password) < 6:
+            errors["password"] = "Password must be at least 6 characters."
+
+        if errors:
+            return render(request, "user_form.html", {"errors": errors, "data": data})
+
+        user = User(
+            username=username,
+            firstname=data.get("firstname", "").strip(),
+            lastname=data.get("lastname", "").strip(),
+            email=data.get("email", "").strip() or None,
+            mobile=data.get("mobile", "").strip(),
+            gender=data.get("gender", "M"),
+            is_active=data.get("is_active") == "on",
+        )
+        _apply_role(user, data.get("role", "staff"))
+        user.set_password(password)
+        user.save()
+        messages.success(request, f'User "{user.username}" created.')
+        return redirect("user_list")
+
+    return render(request, "user_form.html", {})
+
+
+@admin_required
+@require_GET
+def user_detail(request, pk):
+    profile = get_object_or_404(User, pk=pk)
+    recent_sales = Sale.objects.filter(
+        created_by=profile, deleted=False
+    ).order_by("-date_sold")[:10]
+    return render(request, "user_detail.html", {
+        "profile": profile,
+        "role": _role_from_user(profile),
+        "recent_sales": recent_sales,
+    })
+
+
+@admin_required
+@require_http_methods(["GET", "POST"])
+def user_update(request, pk):
+    profile = get_object_or_404(User, pk=pk)
+
+    if profile.pk == request.user.pk and not request.user.is_superuser:
+        messages.error(request, "Use your profile settings to edit your own account.")
+        return redirect("user_detail", pk=pk)
+
+    if request.method == "POST":
+        data = request.POST
+        username = data.get("username", "").strip()
+        errors = {}
+
+        if not username:
+            errors["username"] = "Username is required."
+        elif User.objects.filter(username__iexact=username).exclude(pk=pk).exists():
+            errors["username"] = "Username already taken."
+
+        if errors:
+            return render(request, "user_form.html", {
+                "profile": profile, "errors": errors, "data": data
+            })
+
+        profile.username = username
+        profile.firstname = data.get("firstname", "").strip()
+        profile.lastname = data.get("lastname", "").strip()
+        profile.email = data.get("email", "").strip() or None
+        profile.mobile = data.get("mobile", "").strip()
+        profile.gender = data.get("gender", profile.gender)
+        profile.is_active = data.get("is_active") == "on"
+        _apply_role(profile, data.get("role", _role_from_user(profile)))
+
+        new_password = data.get("password", "").strip()
+        if new_password:
+            if len(new_password) < 6:
+                errors["password"] = "Password must be at least 6 characters."
+                return render(request, "user_form.html", {
+                    "profile": profile, "errors": errors, "data": data
+                })
+            profile.set_password(new_password)
+
+        profile.save()
+        messages.success(request, f'User "{profile.username}" updated.')
+        return redirect("user_detail", pk=pk)
+
+    return render(request, "user_form.html", {
+        "profile": profile,
+        "role": _role_from_user(profile),
+    })
+
+
+@admin_required
+@require_POST
+def user_toggle_active(request, pk):
+    profile = get_object_or_404(User, pk=pk)
+    if profile.pk == request.user.pk:
+        messages.error(request, "You cannot deactivate your own account.")
+        return redirect("user_detail", pk=pk)
+    profile.is_active = not profile.is_active
+    profile.save(update_fields=["is_active"])
+    status = "activated" if profile.is_active else "deactivated"
+    messages.success(request, f'User "{profile.username}" {status}.')
+    if request.headers.get("HX-Request"):
+        return render(request, "partials/user_status_badge.html", {"profile": profile})
+    return redirect("user_detail", pk=pk)
+
+
+@admin_required
+@require_POST
+def user_delete(request, pk):
+    profile = get_object_or_404(User, pk=pk)
+    if profile.pk == request.user.pk:
+        messages.error(request, "You cannot delete your own account.")
+        return redirect("user_detail", pk=pk)
+    if profile.is_superuser and not request.user.is_superuser:
+        raise PermissionDenied
+    username = profile.username
+    profile.delete()
+    messages.success(request, f'User "{username}" deleted.')
+    return redirect("user_list")

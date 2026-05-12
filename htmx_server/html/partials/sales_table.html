@@ -24,7 +24,7 @@
                 {% if sale.customer %}{{ sale.customer.name }}{% else %}Walk-in{% endif %}
             </td>
             <td class="p-4 text-right">
-                <div class="text-sm font-black text-gray-900">${{ sale.total_amount }}</div>
+                <div class="text-sm font-black text-gray-900">TZS {{ sale.total_amount|floatformat:0 }}</div>
             </td>
             <td class="p-4 text-center">
                 {% if sale.rejected %}

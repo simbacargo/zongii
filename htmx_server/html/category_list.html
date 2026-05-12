@@ -1,28 +1,46 @@
-{% extends "base.html" %}
-{% block title %}Categories{% endblock %}
-{% block page_title %}Categories{% endblock %}
-
-{% block topbar_actions %}
-  <button class="btn-sm"
-    hx-get="{% url 'category_create' %}"
-    hx-target="#modal-content"
-    hx-swap="innerHTML">
-    + New Category
-  </button>
-{% endblock %}
-
 {% block content %}
-<article>
-  <table role="grid">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th style="width:120px">Actions</th>
-      </tr>
-    </thead>
-    <tbody id="category-table-body">
-      {% include "category_rows.html" %}
-    </tbody>
-  </table>
-</article>
+<div class="max-w-3xl mx-auto">
+
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h1 class="text-2xl font-black text-gray-900">Categories</h1>
+            <p class="text-sm text-gray-500">Organise your plumbing product catalogue.</p>
+        </div>
+        <span class="text-sm text-gray-400 font-medium">{{ categories.count }} total</span>
+    </div>
+
+    <!-- Inline Add Form -->
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-5">
+        <h3 class="text-xs font-black text-gray-400 uppercase tracking-wider mb-3">Add New Category</h3>
+        <form hx-post="{% url 'category_create' %}"
+              hx-target="#category-table-body"
+              hx-swap="innerHTML"
+              hx-on::after-request="this.reset()"
+              class="flex gap-3">
+            {% csrf_token %}
+            <input type="text" name="name" required placeholder="e.g. PVC Pipes, Ball Valves, Fittings..."
+                   class="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition bg-gray-50">
+            <button type="submit"
+                    class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl shadow-sm shadow-indigo-100 transition-all flex items-center gap-2">
+                <i class="bi bi-plus-lg"></i> Add
+            </button>
+        </form>
+    </div>
+
+    <!-- Category Table -->
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <table class="w-full text-left">
+            <thead class="bg-gray-50 border-b border-gray-100">
+                <tr>
+                    <th class="px-5 py-4 text-xs font-black text-gray-400 uppercase tracking-wider">Category Name</th>
+                    <th class="px-5 py-4 text-xs font-black text-gray-400 uppercase tracking-wider text-center">Products</th>
+                    <th class="px-5 py-4 text-xs font-black text-gray-400 uppercase tracking-wider"></th>
+                </tr>
+            </thead>
+            <tbody id="category-table-body" class="divide-y divide-gray-50">
+                {% include "category_rows.html" %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock %}

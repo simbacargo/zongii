@@ -1,29 +1,70 @@
 {% for category in categories %}
-<tr id="category-row-{{ category.pk }}">
-  <td>{{ category.name }}</td>
-  <td>
-    <div class="actions">
-      <button class="btn-sm outline"
-        hx-get="{% url 'category_update' category.pk %}"
-        hx-target="#modal-content"
-        hx-swap="innerHTML">
-        Edit
-      </button>
-      <button class="btn-sm outline contrast"
-        hx-post="{% url 'category_delete' category.pk %}"
-        hx-target="#category-table-body"
-        hx-swap="innerHTML"
-        hx-confirm="Delete '{{ category.name }}'?"
-        hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-        Delete
-      </button>
-    </div>
-  </td>
+<tr id="category-row-{{ category.pk }}" class="hover:bg-gray-50/50 transition-colors">
+    <td class="px-5 py-4">
+        <div id="category-display-{{ category.pk }}" class="flex items-center gap-3">
+            <div class="w-8 h-8 bg-indigo-50 text-indigo-500 rounded-lg flex items-center justify-center text-xs font-black">
+                {{ category.name|first|upper }}
+            </div>
+            <span class="text-sm font-bold text-gray-800">{{ category.name }}</span>
+        </div>
+        <!-- Inline edit form (hidden by default) -->
+        <form id="category-edit-{{ category.pk }}"
+              hx-post="{% url 'category_update' category.pk %}"
+              hx-target="#category-table-body"
+              hx-swap="innerHTML"
+              class="hidden flex gap-2">
+            {% csrf_token %}
+            <input type="text" name="name" value="{{ category.name }}" required
+                   class="flex-1 border border-indigo-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+            <button type="submit" class="px-3 py-1.5 bg-indigo-600 text-white text-xs font-bold rounded-lg hover:bg-indigo-700 transition-colors">Save</button>
+            <button type="button" onclick="cancelEdit({{ category.pk }})"
+                    class="px-3 py-1.5 bg-gray-100 text-gray-600 text-xs font-bold rounded-lg hover:bg-gray-200 transition-colors">Cancel</button>
+        </form>
+    </td>
+    <td class="px-5 py-4 text-center">
+        <span class="px-2.5 py-1 bg-gray-100 text-gray-600 text-xs font-bold rounded-lg">
+            {{ category.products.count }}
+        </span>
+    </td>
+    <td class="px-5 py-4">
+        <div class="flex justify-end gap-1">
+            <button onclick="startEdit({{ category.pk }})"
+                    class="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-indigo-50 text-indigo-500 transition-colors text-sm"
+                    title="Edit">
+                <i class="bi bi-pencil"></i>
+            </button>
+            <button hx-post="{% url 'category_delete' category.pk %}"
+                    hx-target="#category-table-body"
+                    hx-swap="innerHTML"
+                    hx-confirm="Delete '{{ category.name }}'? Products in this category will be unlinked."
+                    class="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-red-50 text-red-400 transition-colors text-sm"
+                    title="Delete">
+                <i class="bi bi-trash3"></i>
+            </button>
+        </div>
+    </td>
 </tr>
 {% empty %}
 <tr>
-  <td colspan="2" style="text-align:center;color:var(--pico-muted-color);padding:2rem">
-    No categories yet.
-  </td>
+    <td colspan="3" class="px-5 py-14 text-center">
+        <div class="opacity-30">
+            <i class="bi bi-tags text-5xl block mb-3"></i>
+            <p class="text-sm font-bold">No categories yet. Add one above.</p>
+        </div>
+    </td>
 </tr>
 {% endfor %}
+
+<script>
+function startEdit(pk) {
+    document.getElementById('category-display-' + pk).classList.add('hidden');
+    document.getElementById('category-edit-' + pk).classList.remove('hidden');
+    document.getElementById('category-edit-' + pk).classList.add('flex');
+    document.getElementById('category-edit-' + pk).querySelector('input').focus();
+}
+function cancelEdit(pk) {
+    document.getElementById('category-display-' + pk).classList.remove('hidden');
+    document.getElementById('category-edit-' + pk).classList.add('hidden');
+    document.getElementById('category-edit-' + pk).classList.remove('flex');
+}
+</script>

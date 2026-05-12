@@ -51,5 +51,13 @@ path('cart/manage/', views.manage_cart, name='manage_cart'),
     path("", views.dashboard, name="dashboard"),
     path("dashboard/", views.dashboard, name="dashboard"),
     path("products/<int:product_id>/sell/", views.product_sell, name="product_sell"),
-    
+
+    # ── User Management ─────────────────────────
+    path("users/",                     views.user_list,          name="user_list"),
+    path("users/create/",              views.user_create,        name="user_create"),
+    path("users/<str:pk>/",            views.user_detail,        name="user_detail"),
+    path("users/<str:pk>/edit/",       views.user_update,        name="user_update"),
+    path("users/<str:pk>/toggle/",     views.user_toggle_active, name="user_toggle_active"),
+    path("users/<str:pk>/delete/",     views.user_delete,        name="user_delete"),
+
 ]+ auth_urls

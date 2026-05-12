@@ -1,0 +1,158 @@
+{% block content %}
+<div class="max-w-3xl mx-auto">
+
+    <!-- Header -->
+    <div class="flex items-center gap-4 mb-6">
+        <button hx-get="{% url 'sale_list' %}" hx-target="#main-content"
+                class="w-9 h-9 flex items-center justify-center rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors">
+            <i class="bi bi-arrow-left text-sm"></i>
+        </button>
+        <div>
+            <h1 class="text-2xl font-black text-gray-900">Sale #{{ sale.pk }}</h1>
+            <p class="text-sm text-gray-500">{{ sale.date_sold|date:"d F Y, H:i" }}</p>
+        </div>
+        <div class="ml-auto">
+            {% if sale.rejected %}
+                <span class="px-3 py-1.5 bg-red-100 text-red-700 text-xs font-black uppercase rounded-xl">Rejected</span>
+            {% elif sale.aproved %}
+                <span class="px-3 py-1.5 bg-green-100 text-green-700 text-xs font-black uppercase rounded-xl">Approved</span>
+            {% else %}
+                <span class="px-3 py-1.5 bg-amber-100 text-amber-700 text-xs font-black uppercase rounded-xl">Pending Approval</span>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+
+        <!-- Product Details -->
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+            <h3 class="text-xs font-black text-gray-400 uppercase tracking-wider mb-4">Product</h3>
+            <p class="text-lg font-black text-gray-900">{{ sale.product.name }}</p>
+            <p class="text-sm text-gray-500 mt-1">{{ sale.product.brand }} · {{ sale.product.part_number }}</p>
+
+            <div class="mt-5 grid grid-cols-2 gap-3">
+                <div class="bg-gray-50 rounded-xl p-3">
+                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-wider">Qty Sold</p>
+                    <p class="text-xl font-black text-gray-900 mt-0.5">{{ sale.quantity_sold }}</p>
+                </div>
+                <div class="bg-gray-50 rounded-xl p-3">
+                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-wider">Unit Price</p>
+                    <p class="text-xl font-black text-gray-900 mt-0.5">{{ sale.price_per_unit|floatformat:0 }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Financial Summary -->
+        <div class="bg-indigo-600 rounded-2xl shadow-lg shadow-indigo-100 p-6 text-white">
+            <h3 class="text-xs font-black text-indigo-300 uppercase tracking-wider mb-4">Transaction Total</h3>
+            <p class="text-4xl font-black">TZS {{ sale.total_amount|floatformat:0 }}</p>
+
+            <div class="mt-5 pt-5 border-t border-indigo-500">
+                <div class="flex justify-between text-sm mb-2">
+                    <span class="text-indigo-300">Buying Price</span>
+                    <span class="font-bold">TZS {{ sale.product.buying_price|floatformat:0 }}</span>
+                </div>
+                <div class="flex justify-between text-sm mb-2">
+                    <span class="text-indigo-300">Selling Price</span>
+                    <span class="font-bold">TZS {{ sale.price_per_unit|floatformat:0 }}</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                    <span class="text-indigo-300">Est. Profit</span>
+                    <span class="font-black text-green-300">
+                        TZS {% widthratio sale.price_per_unit 1 1 as sell %}
+                        {{ sale.total_amount|add:"-0"|floatformat:0 }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+
+        <!-- Customer -->
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+            <h3 class="text-xs font-black text-gray-400 uppercase tracking-wider mb-4">Customer</h3>
+            {% if sale.customer %}
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center">
+                    <i class="bi bi-person-fill"></i>
+                </div>
+                <div>
+                    <p class="font-black text-gray-900">{{ sale.customer.name }}</p>
+                    <p class="text-xs text-gray-500">{{ sale.customer.phone|default:"No phone" }}</p>
+                </div>
+            </div>
+            {% if sale.customer.remaining_balance > 0 %}
+            <div class="mt-4 p-3 bg-orange-50 rounded-xl border border-orange-100">
+                <p class="text-xs font-bold text-orange-700">Outstanding Balance: TZS {{ sale.customer.remaining_balance|floatformat:0 }}</p>
+            </div>
+            {% endif %}
+            {% else %}
+            <div class="flex items-center gap-3 text-gray-400">
+                <div class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center">
+                    <i class="bi bi-person text-gray-400"></i>
+                </div>
+                <p class="text-sm font-semibold">Walk-in Customer</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Meta -->
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+            <h3 class="text-xs font-black text-gray-400 uppercase tracking-wider mb-4">Transaction Info</h3>
+            <div class="space-y-3">
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-500">Recorded by</span>
+                    <span class="text-sm font-bold text-gray-800">{{ sale.created_by.username|default:"System" }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-500">Date</span>
+                    <span class="text-sm font-bold text-gray-800">{{ sale.date_sold|date:"d M Y" }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-500">Time</span>
+                    <span class="text-sm font-bold text-gray-800">{{ sale.date_sold|date:"H:i" }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-500">Stock after sale</span>
+                    <span class="text-sm font-bold text-gray-800">{{ sale.product.quantity_at_hand }} units</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions -->
+    {% if not sale.deleted %}
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex flex-wrap gap-3">
+        {% if not sale.aproved and not sale.rejected %}
+        <form hx-post="{% url 'sale_approve' sale.pk %}" hx-target="#main-content">
+            {% csrf_token %}
+            <button type="submit"
+                    class="flex items-center gap-2 px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white text-sm font-bold rounded-xl shadow-sm shadow-green-100 transition-all">
+                <i class="bi bi-check-circle"></i> Approve Sale
+            </button>
+        </form>
+        <form hx-post="{% url 'sale_reject' sale.pk %}" hx-target="#main-content"
+              hx-confirm="Reject this sale?">
+            {% csrf_token %}
+            <button type="submit"
+                    class="flex items-center gap-2 px-5 py-2.5 bg-red-50 hover:bg-red-100 text-red-700 text-sm font-bold rounded-xl transition-all">
+                <i class="bi bi-x-circle"></i> Reject
+            </button>
+        </form>
+        {% endif %}
+
+        <form hx-post="{% url 'sale_delete' sale.pk %}" hx-target="#main-content"
+              hx-confirm="Permanently delete this sale record?"
+              class="ml-auto">
+            {% csrf_token %}
+            <button type="submit"
+                    class="flex items-center gap-2 px-5 py-2.5 text-gray-400 hover:text-red-600 text-sm font-bold rounded-xl transition-all">
+                <i class="bi bi-trash3"></i> Delete
+            </button>
+        </form>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

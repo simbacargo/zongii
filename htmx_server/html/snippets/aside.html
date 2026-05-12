@@ -1,101 +1,156 @@
 {% if user.is_authenticated %}
-<aside class="w-72 h-screen flex flex-col bg-white border-r border-gray-100 p-8 sticky top-0">
-  <div class="mb-12 px-2">
+<aside class="w-64 h-screen flex flex-col bg-white border-r border-gray-100 sticky top-0 shrink-0">
+
+  <!-- Logo -->
+  <div class="px-6 py-5 border-b border-gray-50">
     <div class="flex items-center gap-3">
-      <div class="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-100">
-        <i class="bi bi-box-seam-fill"></i>
+      <div class="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-md shadow-indigo-100">
+        <i class="bi bi-box-seam-fill text-sm"></i>
       </div>
-      <span class="text-xl font-black text-gray-900 tracking-tight">Msaidizi</span>
+      <div>
+        <span class="text-base font-black text-gray-900 tracking-tight">Msaidizi</span>
+        <p class="text-[10px] text-gray-400 font-medium">Plumbing Operations</p>
+      </div>
     </div>
   </div>
 
-  <div class="mb-6 px-4">
-    <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
-      Main Menu
-    </h2>
-  </div>
+  <nav class="flex-1 overflow-y-auto px-4 py-4 space-y-6"
+       hx-target="#main-content"
+       hx-push-url="false"
+       hx-indicator="#loading-spinner">
 
-  <nav class="flex-1">
-    <ul class="space-y-1.5" 
-        hx-target="#main-content" 
-        hx-push-url="false" 
-        hx-indicator="#loading-spinner">
-      
-      {# 1. Dashboard #}
-      <li>
-        <a href=""
-           class="w-full flex items-center gap-4 px-4 py-3 rounded-2xl transition-all duration-300 group text-gray-600 hover:bg-gray-50 hover:text-gray-900">
-          <i class="bi bi-grid-1x2 text-lg group-hover:text-blue-600"></i>
-          <span class="text-sm font-medium">Dashboard</span>
-        </a>
-      </li>
-
-      {# 2. Register Product #}
-      <li>
-        <button hx-get="{% url 'product_create' %}"
-           class="w-full flex items-center gap-4 px-4 py-3 rounded-2xl transition-all duration-300 group text-gray-600 hover:bg-gray-50 hover:text-gray-900">
-          <i class="bi bi-plus-circle text-lg group-hover:text-blue-600"></i>
-          <span class="text-sm font-medium">Register Product</span>
-        </button>
-      </li>
-
-      {# 3. Product List #}
-      <li>
-        <button hx-get="{% url 'product_list' %}"
-           class="w-full flex items-center gap-4 px-4 py-3 rounded-2xl transition-all duration-300 group text-gray-600 hover:bg-gray-50 hover:text-gray-900">
-          <i class="bi bi-list-ul text-lg group-hover:text-blue-600"></i>
-          <span class="text-sm font-medium">Product List</span>
-        </button>
-      </li>
-
-      {# 4. Record Sale #}
-      <li>
-        <button hx-get="{% url 'sale_create' %}"
-           class="w-full flex items-center gap-4 px-4 py-3 rounded-2xl transition-all duration-300 group text-gray-600 hover:bg-gray-50 hover:text-gray-900">
-          <i class="bi bi-cart-plus text-lg group-hover:text-blue-600"></i>
-          <span class="text-sm font-medium">Record Sale</span>
-        </button>
-      </li>
-
-      {# 5. Sales #}
-      <li>
-        <button hx-get="{% url 'sales_list' %}"
-           class="w-full flex items-center gap-4 px-4 py-3 rounded-2xl transition-all duration-300 group text-gray-600 hover:bg-gray-50 hover:text-gray-900">
-          <i class="bi bi-graph-up-arrow text-lg group-hover:text-blue-600"></i>
-          <span class="text-sm font-medium">Sales</span>
-        </button>
-      </li>
-
-      {# 6. Verify Sales (ADMIN ONLY) #}
-      {% if user.is_staff %}
+    <!-- Dashboard -->
+    <div>
+      <ul class="space-y-1">
         <li>
-          <button hx-get="{ % url 'verify_sales' %}"
-             class="w-full flex items-center gap-4 px-4 py-3 rounded-2xl transition-all duration-300 group text-gray-600 hover:bg-gray-50 hover:text-gray-900">
-            <i class="bi bi-patch-check text-lg group-hover:text-blue-600"></i>
-            <span class="text-sm font-medium">Verify Sales</span>
+          <a href="{% url 'dashboard' %}"
+             class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group text-gray-600 hover:bg-gray-50 hover:text-gray-900">
+            <i class="bi bi-grid-1x2 text-base group-hover:text-indigo-600"></i>
+            <span class="text-sm font-semibold">Dashboard</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Inventory -->
+    <div>
+      <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em] mb-2 px-3">Inventory</p>
+      <ul class="space-y-1">
+        <li>
+          <button hx-get="{% url 'product_list' %}"
+             class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group text-gray-600 hover:bg-gray-50 hover:text-gray-900">
+            <i class="bi bi-boxes text-base group-hover:text-indigo-600"></i>
+            <span class="text-sm font-semibold">Products</span>
           </button>
         </li>
-      {% endif %}
+        <li>
+          <button hx-get="{% url 'product_create' %}"
+             class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group text-gray-600 hover:bg-gray-50 hover:text-gray-900">
+            <i class="bi bi-plus-circle text-base group-hover:text-indigo-600"></i>
+            <span class="text-sm font-semibold">Add Product</span>
+          </button>
+        </li>
+        <li>
+          <button hx-get="{% url 'category_list' %}"
+             class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group text-gray-600 hover:bg-gray-50 hover:text-gray-900">
+            <i class="bi bi-tags text-base group-hover:text-indigo-600"></i>
+            <span class="text-sm font-semibold">Categories</span>
+          </button>
+        </li>
+      </ul>
+    </div>
 
-      {# 7. Customers #}
-      <li>
-        <button hx-get="{% url 'customer_list' %}"
-           class="w-full flex items-center gap-4 px-4 py-3 rounded-2xl transition-all duration-300 group text-gray-600 hover:bg-gray-50 hover:text-gray-900">
-          <i class="bi bi-people text-lg group-hover:text-blue-600"></i>
-          <span class="text-sm font-medium">Customers</span>
-        </button>
-      </li>
-    </ul>
+    <!-- Sales -->
+    <div>
+      <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em] mb-2 px-3">Sales</p>
+      <ul class="space-y-1">
+        <li>
+          <button hx-get="{% url 'sale_create' %}"
+             class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group text-gray-600 hover:bg-gray-50 hover:text-gray-900">
+            <i class="bi bi-cart-plus text-base group-hover:text-indigo-600"></i>
+            <span class="text-sm font-semibold">New Sale</span>
+          </button>
+        </li>
+        <li>
+          <button hx-get="{% url 'sale_list' %}"
+             class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group text-gray-600 hover:bg-gray-50 hover:text-gray-900">
+            <i class="bi bi-receipt text-base group-hover:text-indigo-600"></i>
+            <span class="text-sm font-semibold">All Sales</span>
+          </button>
+        </li>
+        {% if user.is_staff %}
+        <li>
+          <button hx-get="{% url 'sale_list' %}?status=pending"
+             class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group text-gray-600 hover:bg-amber-50 hover:text-amber-800">
+            <i class="bi bi-patch-check text-base group-hover:text-amber-600"></i>
+            <span class="text-sm font-semibold">Approve Sales</span>
+          </button>
+        </li>
+        {% endif %}
+      </ul>
+    </div>
+
+    <!-- Customers -->
+    <div>
+      <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em] mb-2 px-3">Customers</p>
+      <ul class="space-y-1">
+        <li>
+          <button hx-get="{% url 'customer_list' %}"
+             class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group text-gray-600 hover:bg-gray-50 hover:text-gray-900">
+            <i class="bi bi-people text-base group-hover:text-indigo-600"></i>
+            <span class="text-sm font-semibold">Customers</span>
+          </button>
+        </li>
+        <li>
+          <button hx-get="{% url 'customer_create' %}"
+             class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group text-gray-600 hover:bg-gray-50 hover:text-gray-900">
+            <i class="bi bi-person-plus text-base group-hover:text-indigo-600"></i>
+            <span class="text-sm font-semibold">Add Customer</span>
+          </button>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Admin: User Management -->
+    {% if user.is_admin or user.is_superuser %}
+    <div>
+      <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em] mb-2 px-3">Administration</p>
+      <ul class="space-y-1">
+        <li>
+          <button hx-get="{% url 'user_list' %}"
+             class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group text-gray-600 hover:bg-purple-50 hover:text-purple-900">
+            <i class="bi bi-shield-lock text-base group-hover:text-purple-600"></i>
+            <span class="text-sm font-semibold">Users & Permissions</span>
+          </button>
+        </li>
+        <li>
+          <button hx-get="{% url 'user_create' %}"
+             class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group text-gray-600 hover:bg-purple-50 hover:text-purple-900">
+            <i class="bi bi-person-badge text-base group-hover:text-purple-600"></i>
+            <span class="text-sm font-semibold">Add Staff Member</span>
+          </button>
+        </li>
+      </ul>
+    </div>
+    {% endif %}
+
   </nav>
 
-  <div class="pt-6 border-t border-gray-50">
-    <button hx-get="{ % url 'profile' %}" hx-target="#main-content" hx-push-url="false"
-       class="w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all text-gray-600 hover:bg-gray-50">
-      <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
-         <i class="bi bi-person-fill text-gray-400"></i>
+  <!-- User footer -->
+  <div class="px-4 py-4 border-t border-gray-50">
+    <div class="flex items-center gap-3 px-3 py-2.5 rounded-xl">
+      <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center shrink-0">
+        <i class="bi bi-person-fill text-indigo-500 text-sm"></i>
       </div>
-      <span class="text-sm font-bold">Settings</span>
-    </button>
+      <div class="flex-1 min-w-0">
+        <p class="text-sm font-bold text-gray-800 truncate">{{ user.username }}</p>
+        <p class="text-[10px] text-gray-400 truncate">{% if user.is_superuser %}Super Admin{% elif user.is_staff %}Staff{% else %}User{% endif %}</p>
+      </div>
+      <a href="{% url 'logout' %}" class="text-gray-400 hover:text-red-500 transition-colors" title="Logout">
+        <i class="bi bi-box-arrow-right text-sm"></i>
+      </a>
+    </div>
   </div>
+
 </aside>
 {% endif %}

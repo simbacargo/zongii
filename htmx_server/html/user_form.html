@@ -1,0 +1,186 @@
+{% block content %}
+<div class="max-w-2xl mx-auto">
+
+    <div class="flex items-center gap-4 mb-6">
+        <button hx-get="{% if profile %}{% url 'user_detail' profile.pk %}{% else %}{% url 'user_list' %}{% endif %}"
+                hx-target="#main-content"
+                class="w-9 h-9 flex items-center justify-center rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors">
+            <i class="bi bi-arrow-left text-sm"></i>
+        </button>
+        <div>
+            <h1 class="text-2xl font-black text-gray-900">
+                {% if profile %}Edit User{% else %}New User{% endif %}
+            </h1>
+            <p class="text-sm text-gray-500">
+                {% if profile %}Update account details and permissions.{% else %}Register a new staff member.{% endif %}
+            </p>
+        </div>
+    </div>
+
+    <form hx-post="{% if profile %}{% url 'user_update' profile.pk %}{% else %}{% url 'user_create' %}{% endif %}"
+          hx-target="#main-content"
+          class="space-y-5">
+        {% csrf_token %}
+
+        <!-- Error summary -->
+        {% if errors %}
+        <div class="bg-red-50 border border-red-200 rounded-2xl p-4">
+            <p class="text-sm font-bold text-red-700 mb-2 flex items-center gap-2">
+                <i class="bi bi-exclamation-circle"></i> Please fix the following:
+            </p>
+            <ul class="text-sm text-red-600 space-y-1 list-disc list-inside">
+                {% for field, msg in errors.items %}
+                <li>{{ msg }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <!-- Basic Information -->
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-4">
+            <h3 class="text-xs font-black text-gray-400 uppercase tracking-wider">Basic Information</h3>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1.5">First Name</label>
+                    <input type="text" name="firstname"
+                           value="{ { data.firstname|default:profile.firstname|default:'' }}"
+                           placeholder="e.g. John"
+                           class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition bg-gray-50">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1.5">Last Name</label>
+                    <input type="text" name="lastname"
+                           value="{ { data.lastname|default:profile.lastname|default:'' }}"
+                           placeholder="e.g. Doe"
+                           class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition bg-gray-50">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-gray-500 uppercase mb-1.5">
+                    Username <span class="text-red-500">*</span>
+                </label>
+                <input type="text" name="username" required
+                       value="{ { data.username|default:profile.username|default:'' }}"
+                       placeholder="e.g. john_doe"
+                       class="w-full border {% if errors.username %}border-red-400 bg-red-50{% else %}border-gray-200 bg-gray-50{% endif %} rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition">
+                {% if errors.username %}
+                <p class="text-xs text-red-600 mt-1">{{ errors.username }}</p>
+                {% endif %}
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1.5">Email</label>
+                    <input type="email" name="email"
+                           value="{ { data.email|default:profile.email|default:'' }}"
+                           placeholder="john@example.com"
+                           class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition bg-gray-50">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1.5">Mobile</label>
+                    <input type="text" name="mobile"
+                           value="{ { data.mobile|default:profile.mobile|default:'' }}"
+                           placeholder="+255 7XX XXX XXX"
+                           class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition bg-gray-50">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-gray-500 uppercase mb-1.5">Gender</label>
+                <select name="gender"
+                        class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition bg-gray-50">
+                    <option value="M" {% if profile.gender == 'M' or data.gender == 'M' %}selected{% endif %}>Male</option>
+                    <option value="F" {% if profile.gender == 'F' or data.gender == 'F' %}selected{% endif %}>Female</option>
+                    <option value="N" {% if profile.gender == 'N' or data.gender == 'N' %}selected{% endif %}>Non-Binary</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Role & Permissions -->
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-4">
+            <h3 class="text-xs font-black text-gray-400 uppercase tracking-wider">Role & Permissions</h3>
+
+            <div class="grid grid-cols-1 gap-3">
+
+                <label class="flex items-start gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all
+                              {% if role == 'staff' or data.role == 'staff' %}border-gray-400 bg-gray-50{% else %}border-gray-100 hover:border-gray-200{% endif %}">
+                    <input type="radio" name="role" value="staff"
+                           {% if role == 'staff' or not role %}checked{% endif %}
+                           class="mt-0.5 accent-gray-600">
+                    <div>
+                        <p class="text-sm font-black text-gray-800">Staff</p>
+                        <p class="text-xs text-gray-500 mt-0.5">Can view dashboard, create sales and manage products. Cannot approve sales or manage users.</p>
+                    </div>
+                </label>
+
+                <label class="flex items-start gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all
+                              {% if role == 'manager' or data.role == 'manager' %}border-indigo-400 bg-indigo-50{% else %}border-gray-100 hover:border-indigo-200{% endif %}">
+                    <input type="radio" name="role" value="manager"
+                           {% if role == 'manager' %}checked{% endif %}
+                           class="mt-0.5 accent-indigo-600">
+                    <div>
+                        <p class="text-sm font-black text-gray-800">Manager</p>
+                        <p class="text-xs text-gray-500 mt-0.5">All Staff permissions, plus: approve/reject sales, manage customers, view full financial reports.</p>
+                    </div>
+                </label>
+
+                <label class="flex items-start gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all
+                              {% if role == 'admin' or data.role == 'admin' %}border-purple-400 bg-purple-50{% else %}border-gray-100 hover:border-purple-200{% endif %}">
+                    <input type="radio" name="role" value="admin"
+                           {% if role == 'admin' %}checked{% endif %}
+                           class="mt-0.5 accent-purple-600">
+                    <div>
+                        <p class="text-sm font-black text-gray-800">Admin</p>
+                        <p class="text-xs text-gray-500 mt-0.5">Full access. Can manage users, change roles, delete records, and configure the system.</p>
+                    </div>
+                </label>
+            </div>
+
+            <div class="flex items-center gap-3 pt-2">
+                <input type="checkbox" name="is_active" id="is_active"
+                       {% if profile.is_active or not profile %}checked{% endif %}
+                       class="w-4 h-4 rounded accent-indigo-600">
+                <label for="is_active" class="text-sm font-semibold text-gray-700">
+                    Account is active (user can log in)
+                </label>
+            </div>
+        </div>
+
+        <!-- Password -->
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-4">
+            <h3 class="text-xs font-black text-gray-400 uppercase tracking-wider">
+                Password {% if profile %}<span class="normal-case font-normal text-gray-400">— leave blank to keep current</span>{% endif %}
+            </h3>
+            <div>
+                <label class="block text-xs font-bold text-gray-500 uppercase mb-1.5">
+                    {% if profile %}New Password{% else %}Password <span class="text-red-500">*</span>{% endif %}
+                </label>
+                <input type="password" name="password"
+                       {% if not profile %}required{% endif %}
+                       placeholder="Minimum 6 characters"
+                       class="w-full border {% if errors.password %}border-red-400 bg-red-50{% else %}border-gray-200 bg-gray-50{% endif %} rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition">
+                {% if errors.password %}
+                <p class="text-xs text-red-600 mt-1">{{ errors.password }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Submit -->
+        <div class="flex gap-3">
+            <button type="submit"
+                    class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl shadow-sm shadow-indigo-100 transition-all flex items-center justify-center gap-2">
+                <i class="bi bi-{% if profile %}check-lg{% else %}person-plus{% endif %}"></i>
+                {% if profile %}Save Changes{% else %}Create User{% endif %}
+            </button>
+            <button type="button"
+                    hx-get="{% if profile %}{% url 'user_detail' profile.pk %}{% else %}{% url 'user_list' %}{% endif %}"
+                    hx-target="#main-content"
+                    class="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-xl transition-all">
+                Cancel
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

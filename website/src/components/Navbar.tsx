@@ -94,7 +94,7 @@ export default function Navbar() {
               News
             </Link>
 
-            <a href='https://nsaro.com'
+            <a href='https://www.zongii.com'
               className="ml-2 bg-amber-500 text-navy-900 font-bold text-sm px-5 py-2.5 rounded-full hover:bg-amber-400 transition-all duration-200 shadow-amber-glow hover:scale-105"
             >
               Get a Quote

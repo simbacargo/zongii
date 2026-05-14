@@ -127,7 +127,7 @@ function ServiceCard({ icon, title, desc }) {
   );
 }
 
-function NavBar() {
+function NavBar():any {
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
@@ -154,13 +154,13 @@ function NavBar() {
           </li>
         ))}
       </ul>
-      <button style={{
+      <a href="#" style={{
         background: COLORS.accent, color: "#E6F1FB",
         border: "none", padding: "8px 20px", borderRadius: 8,
         fontSize: 14, fontWeight: 500, cursor: "pointer",
       }}>
         Get a quote
-      </button>
+      </a>
     </nav>
   );
 }

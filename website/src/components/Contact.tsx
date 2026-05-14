@@ -1,12 +1,6 @@
 import React, { useState } from 'react'
+import { CONTACT_INFO } from '../data/content'
 import AnimatedSection from '../ui/AnimatedSection'
-
-const INFO = [
-  { icon: '📍', label: 'Address',   value: 'Dar es Salaam, Tanzania' },
-  { icon: '📞', label: 'Phone',     value: '+255 700 000 000' },
-  { icon: '✉️', label: 'Email',     value: 'info@zongii.co.tz' },
-  { icon: '🕐', label: 'Hours',     value: 'Mon – Fri  ·  8:00 am – 5:00 pm EAT' },
-]
 
 export default function Contact() {
   const [form, setForm] = useState({ name: '', company: '', phone: '', email: '', message: '' })
@@ -130,22 +124,60 @@ export default function Contact() {
             <div className="bg-navy-600 rounded-3xl p-8 sm:p-10 h-full">
               <h3 className="font-display text-2xl font-black text-white mb-2">Contact Info</h3>
               <p className="text-navy-200 text-sm mb-8 leading-relaxed">
-                Reach us directly — we're happy to help with quotes, product availability
-                and technical advice.
+                Reach us directly — we're happy to help with quotes, product availability and technical advice.
               </p>
 
               <div className="space-y-6">
-                {INFO.map(item => (
-                  <div key={item.label} className="flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center flex-shrink-0 text-lg">
-                      {item.icon}
-                    </div>
-                    <div>
-                      <p className="text-navy-300 text-xs font-bold uppercase tracking-widest mb-0.5">{item.label}</p>
-                      <p className="text-white font-semibold text-sm">{item.value}</p>
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center flex-shrink-0 text-lg">
+                    📍
+                  </div>
+                  <div>
+                    <p className="text-navy-300 text-xs font-bold uppercase tracking-widest mb-0.5">Address</p>
+                    <p className="text-white font-semibold text-sm">{CONTACT_INFO.address}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center flex-shrink-0 text-lg">
+                    📞
+                  </div>
+                  <div>
+                    <p className="text-navy-300 text-xs font-bold uppercase tracking-widest mb-1">Phone</p>
+                    <div className="space-y-1">
+                      {CONTACT_INFO.phones.map(p => (
+                        <a key={p} href={`tel:${p.replace(/\s/g, '')}`} className="block text-white font-semibold text-sm hover:text-amber-400 transition-colors">
+                          {p}
+                        </a>
+                      ))}
                     </div>
                   </div>
-                ))}
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center flex-shrink-0 text-lg">
+                    ✉️
+                  </div>
+                  <div>
+                    <p className="text-navy-300 text-xs font-bold uppercase tracking-widest mb-1">Email</p>
+                    <a href={`mailto:${CONTACT_INFO.emailGeneral}`} className="block text-white font-semibold text-sm hover:text-amber-400 transition-colors">
+                      {CONTACT_INFO.emailGeneral}
+                    </a>
+                    <a href={`mailto:${CONTACT_INFO.emailSales}`} className="block text-navy-300 text-xs mt-0.5 hover:text-amber-400 transition-colors">
+                      Sales: {CONTACT_INFO.emailSales}
+                    </a>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center flex-shrink-0 text-lg">
+                    🕐
+                  </div>
+                  <div>
+                    <p className="text-navy-300 text-xs font-bold uppercase tracking-widest mb-0.5">Hours</p>
+                    <p className="text-white font-semibold text-sm">{CONTACT_INFO.hours}</p>
+                  </div>
+                </div>
               </div>
 
               <div className="mt-10 pt-8 border-t border-navy-500">

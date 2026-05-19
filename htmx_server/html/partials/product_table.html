@@ -20,8 +20,16 @@
         <div class="text-[10px] font-mono text-gray-400 uppercase">{{ product.part_number }}</div>
     </td>
     <td class="p-4">
-        <div class="text-sm font-bold text-gray-900">${{ product.retail_price }}</div>
-        <div class="text-[10px] text-gray-400">Cost: ${{ product.buying_price }}</div>
+        {% if product.min_price or product.max_price %}
+        <div class="text-sm font-bold text-gray-900">
+            TZS {{ product.min_price|default:"?" }}{% if product.max_price %} – {{ product.max_price }}{% endif %}
+        </div>
+        {% else %}
+        <div class="text-sm text-gray-400 italic">No price set</div>
+        {% endif %}
+        {% if product.buying_price %}
+        <div class="text-[10px] text-gray-400">Cost: TZS {{ product.buying_price }}</div>
+        {% endif %}
     </td>
     <td class="p-4 text-center">
         <div class="inline-flex flex-col items-center">

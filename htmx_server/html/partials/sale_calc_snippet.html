@@ -6,7 +6,7 @@
     
     <div class="flex justify-between items-center">
         <span class="opacity-70">Price per unit</span>
-        <span class="font-bold">${{ product.retail_price }}</span>
+        <span class="font-bold">TZS {{ product.min_price|default:"—" }}</span>
     </div>
 
     <div class="flex justify-between items-center">
@@ -21,5 +21,5 @@
         </div>
     </div>
     
-    <input type="hidden" name="price_per_unit" value="{{ product.retail_price }}">
+    <input type="hidden" name="price_per_unit" value="{{ product.min_price|default:0 }}">
 </div>

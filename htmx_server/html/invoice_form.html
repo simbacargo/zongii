@@ -1,0 +1,279 @@
+{% block content %}
+<div class="max-w-5xl mx-auto">
+
+    <!-- Header -->
+    <div class="flex items-center gap-4 mb-7">
+        <button hx-get="{% url 'document_list' %}" hx-target="#main-content"
+                class="w-9 h-9 flex items-center justify-center rounded-xl bg-white border border-gray-200 hover:bg-gray-50 text-gray-500 transition-colors shrink-0 shadow-sm">
+            <i class="bi bi-arrow-left text-sm"></i>
+        </button>
+        <div class="flex-1">
+            <h1 class="text-2xl font-black text-gray-900">New Document</h1>
+            <p class="text-sm text-gray-400 mt-0.5">Create an invoice or quotation for a customer.</p>
+        </div>
+        <!-- Doc type toggle -->
+        <div class="flex bg-gray-100 rounded-2xl p-1 gap-1" id="type-toggle">
+            <button type="button" onclick="setDocType('invoice')" id="btn-invoice"
+                    class="px-5 py-2 rounded-xl text-sm font-black transition-all bg-indigo-600 text-white shadow-sm">
+                <i class="bi bi-receipt mr-1.5"></i>Invoice
+            </button>
+            <button type="button" onclick="setDocType('quotation')" id="btn-quotation"
+                    class="px-5 py-2 rounded-xl text-sm font-black transition-all text-gray-400 hover:text-gray-600">
+                <i class="bi bi-file-earmark-text mr-1.5"></i>Quotation
+            </button>
+        </div>
+    </div>
+
+    <form method="post" action="{% url 'document_create' %}" id="doc-form">
+        {% csrf_token %}
+        <input type="hidden" name="doc_type" id="doc-type-input" value="invoice">
+
+        <div class="grid grid-cols-3 gap-5 mb-5">
+
+            <!-- Left: Customer + Dates -->
+            <div class="col-span-2 space-y-4">
+
+                <!-- Customer -->
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">
+                        <i class="bi bi-person-fill mr-1 text-indigo-400"></i>Customer <span class="text-red-400">*</span>
+                    </label>
+                    <select name="customer" required
+                            class="w-full border-2 border-gray-100 focus:border-indigo-400 rounded-xl px-4 py-3 text-sm font-medium outline-none transition bg-gray-50 focus:bg-white">
+                        <option value="">— Select a customer —</option>
+                        {% for c in customers %}
+                        <option value="{{ c.pk }}" {% if data.customer == c.pk|stringformat:'s' %}selected{% endif %}>
+                            {{ c.name }}{% if c.phone %} · {{ c.phone }}{% endif %}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Dates -->
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">
+                        <i class="bi bi-calendar3 mr-1 text-indigo-400"></i>Dates
+                    </label>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs text-gray-400 font-semibold mb-1.5">Issue Date</label>
+                            <input type="date" name="issue_date" value="{{ today|date:'Y-m-d' }}"
+                                   class="w-full border-2 border-gray-100 focus:border-indigo-400 rounded-xl px-4 py-3 text-sm outline-none transition bg-gray-50 focus:bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 font-semibold mb-1.5" id="due-label">Due Date</label>
+                            <input type="date" name="due_date"
+                                   class="w-full border-2 border-gray-100 focus:border-indigo-400 rounded-xl px-4 py-3 text-sm outline-none transition bg-gray-50 focus:bg-white">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right: Discount + Notes + Terms -->
+            <div class="space-y-4">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-5">
+
+                    <div>
+                        <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">
+                            <i class="bi bi-tag-fill mr-1 text-indigo-400"></i>Discount
+                        </label>
+                        <div class="relative">
+                            <input type="number" name="discount_percent" id="discount-input"
+                                   value="0" min="0" max="100" step="0.1"
+                                   oninput="recalcTotal()"
+                                   class="w-full border-2 border-gray-100 focus:border-indigo-400 rounded-xl px-4 pr-10 py-3 text-sm font-bold outline-none transition bg-gray-50 focus:bg-white">
+                            <span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">%</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">
+                            <i class="bi bi-chat-left-text mr-1 text-indigo-400"></i>Notes
+                        </label>
+                        <textarea name="notes" rows="3"
+                                  placeholder="Payment instructions, conditions…"
+                                  class="w-full border-2 border-gray-100 focus:border-indigo-400 rounded-xl px-4 py-3 text-sm outline-none transition bg-gray-50 focus:bg-white resize-none"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">
+                            <i class="bi bi-file-text mr-1 text-indigo-400"></i>Terms
+                        </label>
+                        <textarea name="terms" rows="2"
+                                  placeholder="e.g. Payment due within 30 days"
+                                  class="w-full border-2 border-gray-100 focus:border-indigo-400 rounded-xl px-4 py-3 text-sm outline-none transition bg-gray-50 focus:bg-white resize-none"></textarea>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Line Items -->
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden mb-5">
+            <div class="px-6 py-4 border-b border-gray-50 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 bg-indigo-50 rounded-xl flex items-center justify-center">
+                        <i class="bi bi-list-ul text-indigo-500 text-sm"></i>
+                    </div>
+                    <h3 class="text-sm font-black text-gray-700">Line Items</h3>
+                </div>
+                <button type="button" onclick="addItem()"
+                        class="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-black rounded-xl transition-all active:scale-[.98] shadow-sm shadow-indigo-200">
+                    <i class="bi bi-plus-lg"></i> Add Item
+                </button>
+            </div>
+
+            <table class="w-full">
+                <thead class="bg-gray-50/80 border-b border-gray-100">
+                    <tr>
+                        <th class="pl-5 pr-2 py-3 w-14"></th>
+                        <th class="px-2 py-3 text-left text-[9px] font-black text-gray-400 uppercase tracking-widest">Description</th>
+                        <th class="px-2 py-3 text-center text-[9px] font-black text-gray-400 uppercase tracking-widest w-24">Qty</th>
+                        <th class="px-2 py-3 text-center text-[9px] font-black text-gray-400 uppercase tracking-widest w-24">Unit</th>
+                        <th class="px-2 py-3 text-right text-[9px] font-black text-gray-400 uppercase tracking-widest w-36">Unit Price</th>
+                        <th class="px-3 py-3 text-right text-[9px] font-black text-gray-400 uppercase tracking-widest w-36">Total</th>
+                        <th class="px-3 py-3 w-10"></th>
+                    </tr>
+                </thead>
+                <tbody id="item-rows"></tbody>
+            </table>
+
+            <!-- Empty state -->
+            <div id="empty-items" class="py-14 text-center">
+                <div class="w-14 h-14 bg-gray-50 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                    <i class="bi bi-box-seam text-2xl text-gray-200"></i>
+                </div>
+                <p class="text-sm text-gray-400 font-semibold">No items yet.</p>
+                <p class="text-xs text-gray-300 mt-1">Click <strong class="text-gray-400">Add Item</strong> to get started.</p>
+            </div>
+
+            <!-- Totals -->
+            <div class="border-t border-gray-100 px-6 py-5 bg-gray-50/50 hidden" id="totals-section">
+                <div class="flex justify-end">
+                    <div class="w-80 space-y-2.5">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-500">Subtotal</span>
+                            <span class="font-bold text-gray-700">TZS <span id="subtotal">0</span></span>
+                        </div>
+                        <div class="flex justify-between text-sm transition-opacity" id="discount-row" style="opacity:0.3">
+                            <span class="text-gray-500">Discount (<span id="discount-pct">0</span>%)</span>
+                            <span class="font-bold text-red-500">− TZS <span id="discount-amount">0</span></span>
+                        </div>
+                        <div class="bg-indigo-600 rounded-2xl px-5 py-3.5 flex justify-between items-center mt-1">
+                            <span class="text-white/80 text-xs font-black uppercase tracking-widest">Total</span>
+                            <span class="text-white font-black text-base">TZS <span id="grand-total">0</span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex gap-3 justify-end">
+            <button type="button" hx-get="{% url 'document_list' %}" hx-target="#main-content"
+                    class="px-6 py-3 bg-white border border-gray-200 hover:bg-gray-50 text-gray-600 font-bold rounded-xl transition-all text-sm shadow-sm">
+                Cancel
+            </button>
+            <button type="submit"
+                    class="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-xl shadow-sm shadow-indigo-200 transition-all active:scale-[.98] flex items-center gap-2 text-sm">
+                <i class="bi bi-send-fill"></i>
+                <span id="submit-label">Create Invoice</span>
+            </button>
+        </div>
+    </form>
+
+    <datalist id="unit-options">
+        <option value="PCS">
+        <option value="SET">
+        <option value="BOX">
+        <option value="ROLL">
+        <option value="KG">
+        <option value="TON">
+        <option value="MTR">
+        <option value="BAG">
+        <option value="PAIR">
+        <option value="LENGTH">
+    </datalist>
+</div>
+
+<script>
+let itemIndex = 0;
+
+function setDocType(type) {
+    document.getElementById('doc-type-input').value = type;
+    const isInvoice = type === 'invoice';
+    const active  = 'px-5 py-2 rounded-xl text-sm font-black transition-all bg-indigo-600 text-white shadow-sm';
+    const passive = 'px-5 py-2 rounded-xl text-sm font-black transition-all text-gray-400 hover:text-gray-600';
+    document.getElementById('btn-invoice').className   = isInvoice  ? active : passive;
+    document.getElementById('btn-quotation').className = !isInvoice ? active : passive;
+    document.getElementById('due-label').textContent   = isInvoice ? 'Due Date' : 'Valid Until';
+    document.getElementById('submit-label').textContent = isInvoice ? 'Create Invoice' : 'Create Quotation';
+}
+
+function addItem() {
+    document.getElementById('empty-items').classList.add('hidden');
+    document.getElementById('totals-section').classList.remove('hidden');
+    fetch(`{% url 'document_item_row' %}?index=${itemIndex}`)
+        .then(r => r.text())
+        .then(html => {
+            document.getElementById('item-rows').insertAdjacentHTML('beforeend', html);
+            htmx.process(document.getElementById('item-row-' + itemIndex));
+            document.getElementById('item-desc-' + itemIndex).focus();
+            itemIndex++;
+        });
+}
+
+function removeItem(index) {
+    document.getElementById('item-row-' + index)?.remove();
+    const rows = document.querySelectorAll('.item-row');
+    if (!rows.length) {
+        document.getElementById('empty-items').classList.remove('hidden');
+        document.getElementById('totals-section').classList.add('hidden');
+    }
+    recalcTotal();
+}
+
+function recalcRow(index) {
+    const qty   = parseFloat(document.getElementById('item-qty-'   + index)?.value) || 0;
+    const price = parseFloat(document.getElementById('item-price-' + index)?.value) || 0;
+    const total = qty * price;
+    document.getElementById('item-total-' + index).textContent =
+        total.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0});
+    recalcTotal();
+}
+
+function recalcTotal() {
+    let subtotal = 0;
+    document.querySelectorAll('.item-row').forEach(row => {
+        const idx   = row.id.replace('item-row-', '');
+        const qty   = parseFloat(document.getElementById('item-qty-'   + idx)?.value) || 0;
+        const price = parseFloat(document.getElementById('item-price-' + idx)?.value) || 0;
+        subtotal   += qty * price;
+    });
+    const discountPct    = parseFloat(document.getElementById('discount-input')?.value) || 0;
+    const discountAmount = subtotal * discountPct / 100;
+    const total          = subtotal - discountAmount;
+    const fmt = n => n.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0});
+
+    document.getElementById('subtotal').textContent        = fmt(subtotal);
+    document.getElementById('discount-pct').textContent    = discountPct;
+    document.getElementById('discount-amount').textContent = fmt(discountAmount);
+    document.getElementById('grand-total').textContent     = fmt(total);
+    document.getElementById('discount-row').style.opacity  = discountPct > 0 ? '1' : '0.3';
+}
+
+function selectProduct(index, productId, name, price, photoUrl) {
+    document.getElementById('item-pid-'   + index).value = productId;
+    document.getElementById('item-desc-'  + index).value = name;
+    document.getElementById('item-price-' + index).value = price;
+    const photoEl = document.getElementById('item-photo-' + index);
+    photoEl.innerHTML = photoUrl
+        ? `<img src="${photoUrl}" class="w-full h-full object-cover">`
+        : '<i class="bi bi-box text-gray-300 text-sm"></i>';
+    recalcRow(index);
+}
+
+addItem();
+</script>
+{% endblock %}

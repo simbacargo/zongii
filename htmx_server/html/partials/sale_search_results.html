@@ -8,7 +8,9 @@
             <p class="font-bold text-gray-800">{{ p.name }}</p>
             <p class="text-xs text-gray-400">SN: {{ p.part_number }} | Stock: {{ p.quantity_at_hand }}</p>
         </div>
-        <span class="text-indigo-600 font-bold">${{ p.retail_price }}</span>
+        <span class="text-indigo-600 font-bold">
+            {% if p.min_price %}TZS {{ p.min_price }}{% if p.max_price %} – {{ p.max_price }}{% endif %}{% else %}—{% endif %}
+        </span>
     </div>
     {% endfor %}
 </div>

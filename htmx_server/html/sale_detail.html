@@ -50,7 +50,7 @@
             <div class="mt-5 pt-5 border-t border-indigo-500">
                 <div class="flex justify-between text-sm mb-2">
                     <span class="text-indigo-300">Buying Price</span>
-                    <span class="font-bold">TZS {{ sale.product.buying_price|floatformat:0 }}</span>
+                    <span class="font-bold">{% if sale.product.buying_price %}TZS {{ sale.product.buying_price|floatformat:0 }}{% else %}—{% endif %}</span>
                 </div>
                 <div class="flex justify-between text-sm mb-2">
                     <span class="text-indigo-300">Selling Price</span>

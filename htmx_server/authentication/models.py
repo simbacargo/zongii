@@ -103,6 +103,11 @@ class User(AbstractBaseUser,PermissionsMixin):
     facebook_account = models.URLField(_("Facebook profile"), max_length=255, blank=True, null=True)
     USERNAME_FIELD = 'username'
     objects = UserAccountManager()
+    #given_name = lastname
+    def family_name(self):
+        return str(self.lastname)
+    def given_name(self):
+        return str(self.lastname)
 
     REQUIRED_FIELDS = []
     def get_absolute_url(self):

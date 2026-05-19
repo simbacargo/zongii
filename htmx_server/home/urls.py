@@ -48,6 +48,16 @@ path('cart/manage/', views.manage_cart, name='manage_cart'),
     
     
     
+    # ── Documents (Invoices & Quotations) ───────
+    path("invoices/",                   views.document_list,           name="document_list"),
+    path("invoices/create/",            views.document_create,         name="document_create"),
+    path("invoices/<int:pk>/",          views.document_detail,         name="document_detail"),
+    path("invoices/<int:pk>/status/",   views.document_status,         name="document_status"),
+    path("invoices/<int:pk>/delete/",   views.document_delete,         name="document_delete"),
+    path("invoices/<int:pk>/pdf/",      views.document_pdf,            name="document_pdf"),
+    path("invoices/item-row/",          views.document_item_row,       name="document_item_row"),
+    path("invoices/product-search/",    views.document_product_search, name="document_product_search"),
+
     path("", views.dashboard, name="dashboard"),
     path("dashboard/", views.dashboard, name="dashboard"),
     path("products/<int:product_id>/sell/", views.product_sell, name="product_sell"),

@@ -27,7 +27,7 @@ class ProductListSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'name', 'brand', 'part_number', 'upc_code',
             'material', 'is_lead_free', 'max_pressure_psi',
-            'buying_price', 'wholesale_price', 'retail_price', 'tax_rate',
+            'buying_price', 'wholesale_price', 'min_price', 'max_price', 'tax_rate',
             'unit_of_measure', 'quantity_at_hand', 'quantity_allocated',
             'reorder_point', 'available_stock', 'stock_value_at_cost',
             'bin_location', 'supplier', 'weight',
@@ -46,7 +46,7 @@ class ProductWriteSerializer(serializers.ModelSerializer):
         fields = [
             'name', 'brand', 'part_number', 'upc_code', 'description',
             'material', 'is_lead_free', 'max_pressure_psi',
-            'buying_price', 'wholesale_price', 'retail_price', 'tax_rate',
+            'buying_price', 'wholesale_price', 'min_price', 'max_price', 'tax_rate',
             'unit_of_measure', 'quantity_at_hand', 'reorder_point',
             'bin_location', 'supplier', 'weight', 'is_active',
             'category_ids', 'product_photo',

@@ -1,0 +1,249 @@
+{% block content %}
+<div class="max-w-4xl mx-auto" id="doc-detail">
+
+    <!-- Toolbar (screen only) -->
+    <div class="no-print flex items-center gap-2 mb-6 flex-wrap">
+        <button hx-get="{% url 'document_list' %}" hx-target="#main-content"
+                class="w-9 h-9 flex items-center justify-center rounded-xl bg-white border border-gray-200 hover:bg-gray-50 text-gray-500 transition-colors shrink-0 shadow-sm">
+            <i class="bi bi-arrow-left text-sm"></i>
+        </button>
+        <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 flex-wrap">
+                <h1 class="text-lg font-black text-gray-900">{{ doc.number }}</h1>
+                {% with s=doc.status %}
+                <span class="px-2 py-0.5 text-[10px] font-black uppercase tracking-wider rounded-md
+                    {% if s == 'paid' or s == 'accepted' %}bg-green-100 text-green-700
+                    {% elif s == 'sent' %}bg-blue-100 text-blue-700
+                    {% elif s == 'rejected' or s == 'cancelled' %}bg-red-100 text-red-500
+                    {% else %}bg-gray-100 text-gray-500{% endif %}">{{ s }}</span>
+                {% endwith %}
+            </div>
+            <p class="text-xs text-gray-400 mt-0.5">{{ doc.issue_date|date:"d F Y" }}{% if doc.created_by %} · {{ doc.created_by.username }}{% endif %}</p>
+        </div>
+
+        {% if next_statuses %}
+        <div class="flex gap-2 flex-wrap">
+            {% for ns in next_statuses %}
+            <form method="post" action="{% url 'document_status' doc.pk %}">
+                {% csrf_token %}
+                <input type="hidden" name="status" value="{{ ns }}">
+                <button type="submit" class="px-4 py-2 text-xs font-black rounded-xl border transition-all
+                    {% if ns == 'paid' or ns == 'accepted' %}bg-green-600 hover:bg-green-700 text-white border-transparent
+                    {% elif ns == 'sent' %}bg-blue-600 hover:bg-blue-700 text-white border-transparent
+                    {% elif ns == 'rejected' or ns == 'cancelled' %}bg-white hover:bg-red-50 text-red-500 border-red-200
+                    {% else %}bg-white hover:bg-gray-50 text-gray-700 border-gray-200{% endif %}">
+                    {{ ns|title }}
+                </button>
+            </form>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <a href="{% url 'document_pdf' doc.pk %}"
+           class="h-9 px-4 flex items-center gap-2 rounded-xl bg-white border border-gray-200 hover:bg-gray-50 text-gray-600 text-xs font-bold transition-colors shadow-sm no-underline">
+            <i class="bi bi-file-earmark-pdf"></i> Download PDF
+        </a>
+        <form method="post" action="{% url 'document_delete' doc.pk %}"
+              onsubmit="return confirm('Delete {{ doc.number }}? This cannot be undone.')">
+            {% csrf_token %}
+            <button type="submit"
+                    class="h-9 w-9 flex items-center justify-center rounded-xl bg-white border border-red-200 hover:bg-red-50 text-red-400 transition-colors shadow-sm">
+                <i class="bi bi-trash3 text-sm"></i>
+            </button>
+        </form>
+    </div>
+
+    <!-- ─── PRINTABLE DOCUMENT ─────────────────────────────────────────── -->
+    <div class="bg-white print-card" style="font-family: Arial, sans-serif; font-size: 12px; color: #111; border: 1px solid #ccc;">
+
+        <!-- Header: logo + company name + title -->
+        <div style="display:flex; align-items:center; gap:16px; padding:18px 24px 10px; border-bottom:2px solid #333;">
+            <!-- Logo mark -->
+            <div style="width:56px; height:56px; background:#1a3a5c; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                <span style="color:#fff; font-size:24px;">🔧</span>
+            </div>
+            <div style="flex:1; text-align:center;">
+                <div style="font-size:20px; font-weight:900; letter-spacing:0.5px; text-transform:uppercase;">ZONGII PLUMBING &amp; GENERAL SUPPLY LTD</div>
+                <div style="font-size:16px; font-weight:700; margin-top:2px; letter-spacing:1px;">
+                    {% if doc.doc_type == 'invoice' %}COMMERCIAL INVOICE{% else %}QUOTATION{% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Info block: To (left) | Doc details (right) -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0; padding:12px 24px; border-bottom:1px solid #aaa;">
+            <div style="border-right:1px solid #ddd; padding-right:20px;">
+                <table style="width:100%; border-collapse:collapse; font-size:11.5px;">
+                    <tr><td style="padding:2px 6px 2px 0; color:#555; white-space:nowrap; font-weight:600;">To:</td><td style="padding:2px 0; font-weight:700;">{{ doc.customer.name }}</td></tr>
+                    {% if doc.customer.phone %}<tr><td style="padding:2px 6px 2px 0; color:#555; white-space:nowrap; font-weight:600;">Tel:</td><td style="padding:2px 0;">{{ doc.customer.phone }}</td></tr>{% endif %}
+                    {% if doc.customer.email %}<tr><td style="padding:2px 6px 2px 0; color:#555; white-space:nowrap; font-weight:600;">Email:</td><td style="padding:2px 0;">{{ doc.customer.email }}</td></tr>{% endif %}
+                    <tr><td style="padding:2px 6px 2px 0; color:#555; white-space:nowrap; font-weight:600;">Address:</td><td style="padding:2px 0;">Mwanza / Dar es Salaam, Tanzania</td></tr>
+                </table>
+            </div>
+            <div style="padding-left:20px;">
+                <table style="width:100%; border-collapse:collapse; font-size:11.5px;">
+                    <tr><td style="padding:2px 6px 2px 0; color:#555; white-space:nowrap; font-weight:600;">INV NO.:</td><td style="padding:2px 0; font-weight:700;">{{ doc.number }}</td></tr>
+                    <tr><td style="padding:2px 6px 2px 0; color:#555; white-space:nowrap; font-weight:600;">Date:</td><td style="padding:2px 0;">{{ doc.issue_date|date:"M jS, Y" }}</td></tr>
+                    {% if doc.due_date %}<tr><td style="padding:2px 6px 2px 0; color:#555; white-space:nowrap; font-weight:600;">{% if doc.doc_type == 'invoice' %}Due Date:{% else %}Valid Until:{% endif %}</td><td style="padding:2px 0;">{{ doc.due_date|date:"M jS, Y" }}</td></tr>{% endif %}
+                    <tr><td style="padding:2px 6px 2px 0; color:#555; white-space:nowrap; font-weight:600;">Prepared by:</td><td style="padding:2px 0;">{% if doc.created_by %}{{ doc.created_by.get_full_name|default:doc.created_by.username }}{% endif %}</td></tr>
+                    <tr><td style="padding:2px 6px 2px 0; color:#555; white-space:nowrap; font-weight:600;">Status:</td>
+                        <td style="padding:2px 0; font-weight:700;
+                            {% if doc.status == 'paid' or doc.status == 'accepted' %}color:#16a34a;
+                            {% elif doc.status == 'sent' %}color:#2563eb;
+                            {% elif doc.status == 'rejected' or doc.status == 'cancelled' %}color:#dc2626;
+                            {% else %}color:#6b7280;{% endif %}">
+                            {{ doc.status|upper }}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Items table -->
+        <div style="padding:0 24px;">
+            <table style="width:100%; border-collapse:collapse; margin-top:0;">
+                <thead>
+                    <tr style="background:#f59e0b; color:#1c1917;">
+                        <th style="border:1px solid #92400e; padding:8px 6px; text-align:center; font-weight:800; font-size:11px; width:36px;">No.</th>
+                        <th style="border:1px solid #92400e; padding:8px 6px; text-align:left; font-weight:800; font-size:11px;">Description of Goods</th>
+                        <th style="border:1px solid #92400e; padding:8px 6px; text-align:center; font-weight:800; font-size:11px; width:70px;">Picture</th>
+                        <th style="border:1px solid #92400e; padding:8px 6px; text-align:center; font-weight:800; font-size:11px; width:40px;">Qty</th>
+                        <th style="border:1px solid #92400e; padding:8px 6px; text-align:center; font-weight:800; font-size:11px; width:48px;">Unit</th>
+                        <th style="border:1px solid #92400e; padding:8px 6px; text-align:right; font-weight:800; font-size:11px; width:90px;">Unit Price<br>(TZS)</th>
+                        <th style="border:1px solid #92400e; padding:8px 6px; text-align:right; font-weight:800; font-size:11px; width:90px;">Total<br>(TZS)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in doc.items.all %}
+                    <tr style="{% if forloop.counter|divisibleby:2 %}background:#fffbeb;{% endif %}">
+                        <td style="border:1px solid #d1d5db; padding:8px 6px; text-align:center; font-weight:700; vertical-align:top;">{{ forloop.counter }}</td>
+                        <td style="border:1px solid #d1d5db; padding:8px 6px; vertical-align:top;">
+                            <div style="font-weight:700; white-space:pre-line;">{{ item.description }}</div>
+                            {% if item.product and item.product.brand %}<div style="color:#6b7280; font-size:10px; margin-top:2px;">{{ item.product.brand }}{% if item.product.part_number %} · {{ item.product.part_number }}{% endif %}</div>{% endif %}
+                        </td>
+                        <td style="border:1px solid #d1d5db; padding:6px; text-align:center; vertical-align:middle;">
+                            {% if item.product and item.product.product_photo %}
+                            <img src="{{ item.product.product_photo.url }}" style="width:60px; height:60px; object-fit:cover; display:block; margin:0 auto;">
+                            {% else %}
+                            <div style="width:60px; height:60px; background:#f3f4f6; display:flex; align-items:center; justify-content:center; margin:0 auto; color:#d1d5db; font-size:20px;">📦</div>
+                            {% endif %}
+                        </td>
+                        <td style="border:1px solid #d1d5db; padding:8px 6px; text-align:center; vertical-align:top; font-weight:700;">{{ item.quantity|floatformat:"-2" }}</td>
+                        <td style="border:1px solid #d1d5db; padding:8px 6px; text-align:center; vertical-align:top; color:#374151;">{{ item.unit }}</td>
+                        <td style="border:1px solid #d1d5db; padding:8px 6px; text-align:right; vertical-align:top;">{{ item.unit_price|floatformat:0 }}</td>
+                        <td style="border:1px solid #d1d5db; padding:8px 6px; text-align:right; vertical-align:top; font-weight:700;">{{ item.total|floatformat:0 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Total row -->
+        <div style="padding:0 24px;">
+            <table style="width:100%; border-collapse:collapse;">
+                <tr style="background:#f3f4f6;">
+                    <td colspan="5" style="border:1px solid #d1d5db; padding:10px 12px; font-weight:800; font-size:13px; text-align:center; letter-spacing:0.5px;">
+                        {% if doc.discount_percent %}Subtotal: TZS {{ doc.subtotal|floatformat:0 }} &nbsp;|&nbsp; Discount ({{ doc.discount_percent|floatformat:"-2" }}%): TZS {{ doc.discount_amount|floatformat:0 }}{% else %}Factory / Shop Price{% endif %}
+                    </td>
+                    <td style="border:1px solid #d1d5db; padding:10px 8px; font-weight:800; font-size:13px; text-align:right; white-space:nowrap; background:#f59e0b;">TOTAL TZS</td>
+                    <td style="border:1px solid #d1d5db; padding:10px 8px; font-weight:900; font-size:14px; text-align:right; white-space:nowrap; background:#f59e0b;">{{ doc.total|floatformat:0 }}</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Amount in words -->
+        <div style="padding:10px 24px 0; font-size:11px;">
+            <span style="font-weight:800;">SAYS </span><span id="amount-words" style="font-weight:600; text-transform:uppercase;"></span><span style="font-weight:800;"> TANZANIAN SHILLINGS ONLY.</span>
+        </div>
+
+        <!-- Notes / Terms -->
+        {% if doc.notes or doc.terms %}
+        <div style="padding:12px 24px 0;">
+            {% if doc.notes %}
+            <div style="margin-bottom:6px;">
+                <div style="font-weight:800; color:#b45309; margin-bottom:4px;">NOTES:</div>
+                <div style="white-space:pre-line; color:#374151; font-size:11px;">{{ doc.notes }}</div>
+            </div>
+            {% endif %}
+            {% if doc.terms %}
+            <div>
+                <div style="font-weight:800; color:#b45309; margin-bottom:4px;">TERMS &amp; CONDITIONS:</div>
+                <div style="white-space:pre-line; color:#374151; font-size:11px;">{{ doc.terms }}</div>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- Payment / Bank details -->
+        <div style="padding:12px 24px 0;">
+            <div style="font-weight:800; color:#b45309; margin-bottom:4px; font-size:11px;">PAYMENT DETAILS</div>
+            <table style="width:100%; border-collapse:collapse; font-size:11px;">
+                <tr><td style="border:1px solid #d1d5db; padding:5px 10px;">BENEFICIARY: ZONGII PLUMBING &amp; GENERAL SUPPLY LTD</td></tr>
+                <tr><td style="border:1px solid #d1d5db; padding:5px 10px;">BANK: CRDB Bank / NMB Bank – Tanzania</td></tr>
+                <tr><td style="border:1px solid #d1d5db; padding:5px 10px;">MOBILE MONEY: M-Pesa / Airtel Money – +255 786 421 150</td></tr>
+            </table>
+        </div>
+
+        <!-- Signature section -->
+        <div style="display:grid; grid-template-columns:1fr auto 1fr; gap:20px; padding:20px 24px 10px; align-items:start;">
+            <div>
+                <div style="font-size:11px; font-weight:700; margin-bottom:6px;">Buyer: {{ doc.customer.name }}</div>
+                <div style="font-size:11px; color:#6b7280; margin-bottom:30px;">Signature &amp; Stamp:</div>
+                <div style="border-top:1px solid #333; padding-top:4px; font-size:11px; color:#6b7280;">Signing Date: {{ doc.issue_date|date:"Y-m-d" }}</div>
+            </div>
+            <!-- Stamp placeholder -->
+            <div style="text-align:center; padding:0 10px;">
+                <div style="width:80px; height:80px; border-radius:50%; border:2px dashed #9ca3af; display:flex; align-items:center; justify-content:center; margin:0 auto; color:#d1d5db; font-size:10px; text-align:center; line-height:1.4;">Company<br>Stamp</div>
+            </div>
+            <div style="text-align:right;">
+                <div style="font-size:11px; font-weight:700; margin-bottom:6px;">Seller: Zongii Plumbing &amp; General Supply Ltd</div>
+                <div style="font-size:11px; color:#6b7280; margin-bottom:30px;">Signature &amp; Stamp:</div>
+                <div style="border-top:1px solid #333; padding-top:4px; font-size:11px; color:#6b7280;">Signing Date: {{ doc.issue_date|date:"Y-m-d" }}</div>
+            </div>
+        </div>
+
+        <!-- Footer address -->
+        <div style="text-align:center; padding:8px 24px 14px; border-top:1px solid #d1d5db; margin:0 24px; font-size:10px; font-weight:700; color:#374151; margin-top:10px;">
+            Mwanza / Dar es Salaam, Tanzania &nbsp;|&nbsp; info@zongii.co.tz &nbsp;|&nbsp; +255 786 421 150
+        </div>
+
+    </div><!-- end printable document -->
+</div>
+
+<script>
+(function () {
+    const ones  = ['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine',
+                   'Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen',
+                   'Seventeen','Eighteen','Nineteen'];
+    const tens  = ['','','Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];
+    function toWords(n) {
+        n = Math.floor(n);
+        if (n === 0) return 'Zero';
+        if (n < 0)   return 'Minus ' + toWords(-n);
+        let w = '';
+        if (n >= 1e9)  { w += toWords(Math.floor(n / 1e9)) + ' Billion ';  n %= 1e9; }
+        if (n >= 1e6)  { w += toWords(Math.floor(n / 1e6)) + ' Million ';  n %= 1e6; }
+        if (n >= 1e3)  { w += toWords(Math.floor(n / 1e3)) + ' Thousand '; n %= 1e3; }
+        if (n >= 100)  { w += ones[Math.floor(n / 100)] + ' Hundred ';      n %= 100; }
+        if (n >= 20)   { w += tens[Math.floor(n / 10)] + ' '; n %= 10; }
+        if (n > 0)     { w += ones[n] + ' '; }
+        return w.trim();
+    }
+    const total = parseFloat("{{ doc.total }}") || 0;
+    const el = document.getElementById('amount-words');
+    if (el) el.textContent = toWords(total);
+})();
+</script>
+
+<style>
+@media print {
+    .no-print { display: none !important; }
+    body > *:not(#doc-detail) { display: none; }
+    aside, header, nav, #sidebar { display: none !important; }
+    .print-card { box-shadow: none !important; }
+    #doc-detail { max-width: 100% !important; margin: 0 !important; }
+    #main-content { padding: 0 !important; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+</style>
+{% endblock %}

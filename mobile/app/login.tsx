@@ -39,7 +39,7 @@ export default function LoginScreen() {
           <View style={styles.logoBox}>
             <Text style={styles.logoIcon}>📦</Text>
           </View>
-          <Text style={styles.appName}>Msaidizi</Text>
+          <Text style={styles.appName}>Zongii</Text>
           <Text style={styles.appSub}>Plumbing Operations</Text>
         </View>
 
@@ -49,7 +49,7 @@ export default function LoginScreen() {
 
           <View style={styles.field}>
             <Text style={styles.label}>Username</Text>
-            <TextInput style={styles.input} value={username} onChangeText={setUsername} placeholder="e.g. john_doe" placeholderTextColor={C.textFaint} autoCapitalize="none" autoCorrect={false} />
+            <TextInput style={styles.input} value={username} onChangeText={setUsername} placeholder="e.g. Joseph" placeholderTextColor={C.textFaint} autoCapitalize="none" autoCorrect={false} />
           </View>
 
           <View style={styles.field}>
@@ -62,7 +62,7 @@ export default function LoginScreen() {
           </TouchableOpacity>
         </View>
 
-        <Text style={styles.footer}>Msaidizi v1.0 · Secure Access</Text>
+        <Text style={styles.footer}>Zongii v1.0 · Secure Access</Text>
       </ScrollView>
     </KeyboardAvoidingView>
   );

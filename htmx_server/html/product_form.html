@@ -74,26 +74,37 @@
         </div>
 
         {# Inventory & Pricing Section #}
-        <div class="md:col-span-6 grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-indigo-50 rounded-xl">
+        <div class="md:col-span-6 grid grid-cols-1 md:grid-cols-4 gap-4 p-4 bg-indigo-50 rounded-xl">
             <div>
                 <label class="block text-xs font-bold text-indigo-600 uppercase mb-1">Stock on Hand</label>
                 <input type="number" name="quantity_at_hand" value="{{ product.quantity_at_hand|default:0 }}"
                        class="w-full border-indigo-200 border rounded-lg p-2.5 bg-white font-bold text-indigo-900 focus:ring-2 focus:ring-indigo-500 outline-none transition">
             </div>
             <div>
-                <label class="block text-xs font-bold text-indigo-600 uppercase mb-1">Buying Price</label>
+                <label class="block text-xs font-bold text-indigo-600 uppercase mb-1">Buying Price <span class="font-normal normal-case text-indigo-400">(optional)</span></label>
                 <div class="relative">
-                    <span class="absolute left-3 top-2.5 text-indigo-400">$</span>
+                    <span class="absolute left-3 top-2.5 text-indigo-400">TZS</span>
                     <input type="number" step="0.01" name="buying_price" value="{{ product.buying_price }}"
-                           class="w-full border-indigo-200 border rounded-lg p-2.5 pl-7 bg-white focus:ring-2 focus:ring-indigo-500 outline-none transition">
+                           placeholder="—"
+                           class="w-full border-indigo-200 border rounded-lg p-2.5 pl-12 bg-white focus:ring-2 focus:ring-indigo-500 outline-none transition">
                 </div>
             </div>
             <div>
-                <label class="block text-xs font-bold text-indigo-600 uppercase mb-1">Retail Price</label>
+                <label class="block text-xs font-bold text-indigo-600 uppercase mb-1">Min Selling Price</label>
                 <div class="relative">
-                    <span class="absolute left-3 top-2.5 text-indigo-400">$</span>
-                    <input type="number" step="0.01" name="retail_price" value="{{ product.retail_price }}"
-                           class="w-full border-indigo-200 border rounded-lg p-2.5 pl-7 bg-white focus:ring-2 focus:ring-indigo-500 outline-none transition">
+                    <span class="absolute left-3 top-2.5 text-indigo-400">TZS</span>
+                    <input type="number" step="0.01" name="min_price" value="{{ product.min_price }}"
+                           placeholder="—"
+                           class="w-full border-indigo-200 border rounded-lg p-2.5 pl-12 bg-white focus:ring-2 focus:ring-indigo-500 outline-none transition">
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-indigo-600 uppercase mb-1">Max Selling Price</label>
+                <div class="relative">
+                    <span class="absolute left-3 top-2.5 text-indigo-400">TZS</span>
+                    <input type="number" step="0.01" name="max_price" value="{{ product.max_price }}"
+                           placeholder="—"
+                           class="w-full border-indigo-200 border rounded-lg p-2.5 pl-12 bg-white focus:ring-2 focus:ring-indigo-500 outline-none transition">
                 </div>
             </div>
         </div>

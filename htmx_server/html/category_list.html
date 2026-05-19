@@ -6,25 +6,15 @@
             <h1 class="text-2xl font-black text-gray-900">Categories</h1>
             <p class="text-sm text-gray-500">Organise your plumbing product catalogue.</p>
         </div>
-        <span class="text-sm text-gray-400 font-medium">{{ categories.count }} total</span>
-    </div>
-
-    <!-- Inline Add Form -->
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-5">
-        <h3 class="text-xs font-black text-gray-400 uppercase tracking-wider mb-3">Add New Category</h3>
-        <form hx-post="{% url 'category_create' %}"
-              hx-target="#category-table-body"
-              hx-swap="innerHTML"
-              hx-on::after-request="this.reset()"
-              class="flex gap-3">
-            {% csrf_token %}
-            <input type="text" name="name" required placeholder="e.g. PVC Pipes, Ball Valves, Fittings..."
-                   class="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition bg-gray-50">
-            <button type="submit"
+        <div class="flex items-center gap-3">
+            <span class="text-sm text-gray-400 font-medium">{{ categories.count }} total</span>
+            <button hx-get="{% url 'category_create' %}"
+                    hx-target="#modal-content"
+                    hx-swap="innerHTML"
                     class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl shadow-sm shadow-indigo-100 transition-all flex items-center gap-2">
-                <i class="bi bi-plus-lg"></i> Add
+                <i class="bi bi-plus-lg"></i> New Category
             </button>
-        </form>
+        </div>
     </div>
 
     <!-- Category Table -->

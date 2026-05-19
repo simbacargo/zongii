@@ -11,8 +11,11 @@ SECRET_KEY = 'django-insecure-0*&#!sej456s12n%p+fk(u#*(rpfqrin!8*dqn+lx)56@o9@q&
 DEBUG = 1
 
 ALLOWED_HOSTS = ["*"]
-ALLOWED_SIGNUP_DOMAINS = ["*"]
 
+ALLOWED_SIGNUP_DOMAINS = ["http://127.0.0.1","https://www.zongii.tz","https://zongii.tz"]
+CSRF_TRUSTED_ORIGINS = ["http://127.0.0.1","https://www.zongii.tz","https://zongii.tz"]
+
+ALLOWED_SIGNUP_DOMAINS = ["https://zongii.com"]
 # Application definition
 
 INSTALLED_APPS = [
@@ -229,7 +232,7 @@ STATICFILES_DIRS = [
 LOGIN_URL ="/login"
 LOGIN_REDIRECT_URL ="/"
 LOGOUT_REDIRECT_URL ="/"
-CSRF_TRUSTED_ORIGINS = ["*"]  # Add your frontend domain here
+#CSRF_TRUSTED_ORIGINS = ["*"]  # Add your frontend domain here
 
 
 AUTH_USER_MODEL = 'authentication.User'

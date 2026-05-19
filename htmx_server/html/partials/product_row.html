@@ -24,7 +24,7 @@
     </td>
 
     <td class="px-8 py-6 text-right font-black text-gray-900">
-        {{ product.retail_price }} <span class="text-[10px] text-gray-400">TZS</span>
+        {% if product.min_price %}{{ product.min_price }}{% if product.max_price %} – {{ product.max_price }}{% endif %}{% else %}—{% endif %} <span class="text-[10px] text-gray-400">TZS</span>
     </td>
 
     <td class="px-8 py-6 text-center">
@@ -57,8 +57,8 @@
 
             <button 
                 hx-post="{% url 'product_delete' product.id %}"
-                hx-target="#product-{{ product.id }}"
-                hx-swap="delete"
+                hx-target="#inventory"
+                hx-swap="innerHTML"
                 hx-confirm="Are you sure you want to deactivate {{ product.name }}?"
                 class="p-2 text-gray-400 hover:text-red-600 transition-colors"
                 title="Deactivate Product"

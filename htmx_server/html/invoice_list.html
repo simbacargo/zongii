@@ -1,0 +1,172 @@
+{% block content %}
+<div class="max-w-5xl mx-auto">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-7">
+        <div>
+            <h1 class="text-3xl font-black text-gray-900">Documents</h1>
+            <p class="text-sm text-gray-400 mt-1">Invoices and quotations for your customers.</p>
+        </div>
+        <button hx-get="{% url 'document_create' %}" hx-target="#main-content"
+                class="flex items-center gap-2 px-5 py-3 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-black rounded-xl shadow-sm shadow-indigo-200 transition-all active:scale-[.98]">
+            <i class="bi bi-plus-lg"></i> New Document
+        </button>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-2 gap-4 mb-6">
+        <button hx-get="{% url 'document_list' %}?type=invoice" hx-target="#main-content"
+                class="bg-white rounded-2xl border shadow-sm p-5 text-left transition-all group
+                    {% if doc_type == 'invoice' %}border-indigo-300 ring-1 ring-indigo-200{% else %}border-gray-100 hover:border-indigo-200{% endif %}">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0
+                    {% if doc_type == 'invoice' %}bg-indigo-600 text-white{% else %}bg-indigo-50 text-indigo-500 group-hover:bg-indigo-100{% endif %} transition-colors">
+                    <i class="bi bi-receipt text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-3xl font-black text-gray-900">{{ invoice_count }}</p>
+                    <p class="text-xs text-gray-400 font-semibold mt-0.5">Invoices</p>
+                </div>
+            </div>
+        </button>
+        <button hx-get="{% url 'document_list' %}?type=quotation" hx-target="#main-content"
+                class="bg-white rounded-2xl border shadow-sm p-5 text-left transition-all group
+                    {% if doc_type == 'quotation' %}border-emerald-300 ring-1 ring-emerald-200{% else %}border-gray-100 hover:border-emerald-200{% endif %}">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0
+                    {% if doc_type == 'quotation' %}bg-emerald-600 text-white{% else %}bg-emerald-50 text-emerald-500 group-hover:bg-emerald-100{% endif %} transition-colors">
+                    <i class="bi bi-file-earmark-text text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-3xl font-black text-gray-900">{{ quotation_count }}</p>
+                    <p class="text-xs text-gray-400 font-semibold mt-0.5">Quotations</p>
+                </div>
+            </div>
+        </button>
+    </div>
+
+    <!-- Filters -->
+    <div class="flex flex-wrap gap-2 mb-5">
+        <button hx-get="{% url 'document_list' %}" hx-target="#main-content"
+                class="px-3.5 py-1.5 text-xs font-bold rounded-lg transition-colors
+                    {% if not doc_type and not status_filter %}bg-gray-900 text-white{% else %}bg-white border border-gray-200 text-gray-500 hover:border-gray-300{% endif %}">
+            All
+        </button>
+        <button hx-get="{% url 'document_list' %}?type=invoice" hx-target="#main-content"
+                class="px-3.5 py-1.5 text-xs font-bold rounded-lg transition-colors
+                    {% if doc_type == 'invoice' and not status_filter %}bg-indigo-600 text-white{% else %}bg-white border border-gray-200 text-gray-500 hover:border-indigo-200{% endif %}">
+            Invoices
+        </button>
+        <button hx-get="{% url 'document_list' %}?type=quotation" hx-target="#main-content"
+                class="px-3.5 py-1.5 text-xs font-bold rounded-lg transition-colors
+                    {% if doc_type == 'quotation' and not status_filter %}bg-emerald-600 text-white{% else %}bg-white border border-gray-200 text-gray-500 hover:border-emerald-200{% endif %}">
+            Quotations
+        </button>
+        <div class="h-6 w-px bg-gray-200 self-center mx-1"></div>
+        {% for s in statuses %}
+        <button hx-get="{% url 'document_list' %}?{% if doc_type %}type={{ doc_type }}&{% endif %}status={{ s }}"
+                hx-target="#main-content"
+                class="px-3.5 py-1.5 text-xs font-bold rounded-lg capitalize transition-colors
+                    {% if status_filter == s %}bg-gray-800 text-white{% else %}bg-white border border-gray-200 text-gray-500 hover:border-gray-300{% endif %}">
+            {{ s }}
+        </button>
+        {% endfor %}
+    </div>
+
+    <!-- Document list -->
+    <div class="space-y-2">
+        {% for doc in page_obj %}
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-gray-200 transition-all group">
+            <button hx-get="{% url 'document_detail' doc.pk %}" hx-target="#main-content"
+                    class="w-full text-left">
+                <div class="flex items-center gap-4 px-5 py-4">
+
+                    <!-- Icon -->
+                    <div class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0
+                        {% if doc.doc_type == 'invoice' %}bg-indigo-50 text-indigo-500{% else %}bg-emerald-50 text-emerald-500{% endif %}
+                        group-hover:scale-105 transition-transform">
+                        <i class="bi bi-{% if doc.doc_type == 'invoice' %}receipt{% else %}file-earmark-text{% endif %}"></i>
+                    </div>
+
+                    <!-- Number + customer -->
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 mb-0.5">
+                            <p class="text-sm font-black text-gray-900">{{ doc.number }}</p>
+                            {% with s=doc.status %}
+                            <span class="px-2 py-0.5 text-[9px] font-black uppercase rounded-md
+                                {% if s == 'paid' or s == 'accepted' %}bg-green-100 text-green-700
+                                {% elif s == 'sent' %}bg-blue-100 text-blue-600
+                                {% elif s == 'rejected' or s == 'cancelled' %}bg-red-50 text-red-500
+                                {% else %}bg-gray-100 text-gray-400{% endif %}">
+                                {{ s }}
+                            </span>
+                            {% endwith %}
+                        </div>
+                        <p class="text-xs text-gray-500 truncate">{{ doc.customer.name }}{% if doc.customer.phone %} · {{ doc.customer.phone }}{% endif %}</p>
+                    </div>
+
+                    <!-- Date -->
+                    <div class="text-right shrink-0 hidden sm:block">
+                        <p class="text-xs font-semibold text-gray-700">{{ doc.issue_date|date:"d M Y" }}</p>
+                        {% if doc.due_date %}
+                        <p class="text-[10px] text-gray-400 mt-0.5">Due {{ doc.due_date|date:"d M Y" }}</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Items count -->
+                    <div class="text-center shrink-0 hidden md:block w-16">
+                        <p class="text-xs text-gray-400">{{ doc.items.count }} item{{ doc.items.count|pluralize }}</p>
+                    </div>
+
+                    <!-- Amount -->
+                    <div class="text-right shrink-0 w-36">
+                        <p class="text-base font-black text-gray-900">TZS {{ doc.total|floatformat:0 }}</p>
+                        {% if doc.discount_percent %}
+                        <p class="text-[10px] text-red-400 mt-0.5">{{ doc.discount_percent|floatformat:"-2" }}% off</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Arrow -->
+                    <div class="shrink-0 w-6 text-gray-300 group-hover:text-indigo-400 transition-colors">
+                        <i class="bi bi-chevron-right text-sm"></i>
+                    </div>
+
+                </div>
+            </button>
+        </div>
+        {% empty %}
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm py-20 text-center">
+            <div class="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <i class="bi bi-receipt text-3xl text-gray-200"></i>
+            </div>
+            <p class="text-sm font-bold text-gray-400">No documents found.</p>
+            <p class="text-xs text-gray-300 mt-1">Try a different filter or create a new document.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+    <div class="mt-5 flex justify-between items-center">
+        <span class="text-xs text-gray-400">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        <div class="flex gap-2">
+            {% if page_obj.has_previous %}
+            <button hx-get="?page={{ page_obj.previous_page_number }}{% if doc_type %}&type={{ doc_type }}{% endif %}"
+                    hx-target="#main-content"
+                    class="px-4 py-2 bg-white border border-gray-200 rounded-xl text-xs font-bold hover:bg-gray-50 transition-colors shadow-sm">
+                <i class="bi bi-arrow-left mr-1"></i>Prev
+            </button>
+            {% endif %}
+            {% if page_obj.has_next %}
+            <button hx-get="?page={{ page_obj.next_page_number }}{% if doc_type %}&type={{ doc_type }}{% endif %}"
+                    hx-target="#main-content"
+                    class="px-4 py-2 bg-white border border-gray-200 rounded-xl text-xs font-bold hover:bg-gray-50 transition-colors shadow-sm">
+                Next<i class="bi bi-arrow-right ml-1"></i>
+            </button>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

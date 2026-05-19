@@ -8,8 +8,12 @@ from django.core.paginator import Paginator
 from django.db import transaction
 from django.db.models import Q
 from django.core.exceptions import PermissionDenied
+from django.template.loader import render_to_string
 
-from .models import Category, Business, Product, Customer, Sale
+from decimal import Decimal
+from datetime import date
+
+from .models import Category, Business, Product, Customer, Sale, Document, DocumentItem
 from authentication.models import User
 
 
@@ -65,6 +69,8 @@ def category_create(request):
             return render(request, "category_rows.html", {"categories": categories})
         return redirect("category_list")
 
+    if request.headers.get("HX-Request"):
+        return render(request, "category_form.html")
     return redirect("category_list")
 
 
@@ -240,8 +246,9 @@ def product_create(request):
                 material=data.get("material", ""),
                 is_lead_free=data.get("is_lead_free") == "on",
                 max_pressure_psi=data.get("max_pressure_psi") or None,
-                buying_price=data["buying_price"],
-                retail_price=data["retail_price"],
+                buying_price=data.get("buying_price") or None,
+                min_price=data.get("min_price") or None,
+                max_price=data.get("max_price") or None,
                 tax_rate=data.get("tax_rate", 0),
                 unit_of_measure=data.get("unit_of_measure", "UNIT"),
                 quantity_at_hand=data.get("quantity_at_hand", 0),
@@ -296,9 +303,10 @@ def product_update(request, pk):
             product.material = data.get("material", product.material)
             product.is_lead_free = data.get("is_lead_free") == "on"
             product.max_pressure_psi = data.get("max_pressure_psi") or None
-            product.buying_price = data.get("buying_price", product.buying_price)
-            product.wholesale_price = data.get("wholesale_price", product.wholesale_price)
-            product.retail_price = data.get("retail_price", product.retail_price)
+            product.buying_price = data.get("buying_price") or None
+            product.wholesale_price = data.get("wholesale_price") or None
+            product.min_price = data.get("min_price") or None
+            product.max_price = data.get("max_price") or None
             product.tax_rate = data.get("tax_rate", product.tax_rate)
             product.unit_of_measure = data.get("unit_of_measure", product.unit_of_measure)
             product.quantity_at_hand = data.get("quantity_at_hand", product.quantity_at_hand)
@@ -343,6 +351,8 @@ def product_delete(request, pk):
     product.is_active = False
     product.save(update_fields=["is_active"])
     messages.success(request, f'Product "{product.name}" deactivated.')
+    if request.headers.get("HX-Request"):
+        return HttpResponse("")
     return redirect("product_list")
 
 
@@ -405,7 +415,7 @@ def customer_create(request):
         messages.success(request, f'Customer "{customer.name}" created.')
         return redirect("customer_detail", pk=customer.pk)
 
-    return render(request, "customer_form.html")
+    return render(request, "customer_form.html", {"customer": Customer()})
 
 
 @login_required
@@ -694,7 +704,7 @@ def product_sell(request, product_id):
         Sale.objects.create(
             product=product,
             quantity_sold=1,
-            price_per_unit=product.retail_price or product.buying_price,
+            price_per_unit=product.min_price or product.buying_price or 0,
             created_by=request.user
         )
         
@@ -732,7 +742,7 @@ def sale_create_htmx(request):
         qty = int(request.GET.get('quantity_sold', 1))
         product = get_object_or_404(Product, id=product_id)
         
-        total = product.retail_price * qty
+        total = (product.min_price or 0) * qty
         return render(request, "partials/sale_calculation.html", {
             "product": product,
             "quantity": qty,
@@ -769,7 +779,7 @@ def sale_create_view(request):
         qty = int(request.GET.get('quantity_sold', 1) or 1)
         product = get_object_or_404(Product, id=p_id)
         
-        total = product.retail_price * qty
+        total = (product.min_price or 0) * qty
         return render(request, "partials/sale_calc_snippet.html", {
             "product": product,
             "quantity": qty,
@@ -807,7 +817,7 @@ def manage_cart(request):
     grand_total = 0
     for p_id, qty in cart.items():
         product = Product.objects.get(id=p_id)
-        item_total = product.retail_price * qty
+        item_total = (product.min_price or 0) * qty
         grand_total += item_total
         cart_items.append({'product': product, 'quantity': qty, 'total': item_total})
 
@@ -817,7 +827,8 @@ def manage_cart(request):
     })
     
     
-from django.db.models import Sum, F, Count, ExpressionWrapper, DecimalField
+from django.db.models import Sum, F, Count, ExpressionWrapper, DecimalField, Value
+from django.db.models.functions import Coalesce
 from datetime import timedelta
 from django.utils import timezone
 
@@ -838,7 +849,7 @@ def dashboard(request):
 
     total_profit = sales_qs.annotate(
         margin=ExpressionWrapper(
-            (F('price_per_unit') - F('product__buying_price')) * F('quantity_sold'),
+            (F('price_per_unit') - Coalesce(F('product__buying_price'), Value(0, output_field=DecimalField()))) * F('quantity_sold'),
             output_field=DecimalField()
         )
     ).aggregate(total=Sum('margin'))['total'] or 0
@@ -935,6 +946,27 @@ ROLE_MAP = {
     "admin":     (True,  True,  True),
 }
 
+def _user_vals(profile=None, data=None):
+    """Flatten user field values into a plain dict safe for template use."""
+    vals = {
+        "firstname": "", "lastname": "", "username": "",
+        "email": "", "mobile": "", "gender": "M",
+    }
+    if profile and profile.pk:
+        vals.update({
+            "firstname": profile.firstname or "",
+            "lastname":  profile.lastname  or "",
+            "username":  profile.username  or "",
+            "email":     profile.email     or "",
+            "mobile":    profile.mobile    or "",
+            "gender":    profile.gender    or "M",
+        })
+    if data:
+        for key in vals:
+            if data.get(key):
+                vals[key] = data[key]
+    return vals
+
 def _role_from_user(user):
     if user.is_superuser:
         return "admin"
@@ -982,7 +1014,9 @@ def user_create(request):
             errors["password"] = "Password must be at least 6 characters."
 
         if errors:
-            return render(request, "user_form.html", {"errors": errors, "data": data})
+            return render(request, "user_form.html", {
+                "profile": None, "errors": errors, "vals": _user_vals(data=data),
+            })
 
         user = User(
             username=username,
@@ -999,7 +1033,7 @@ def user_create(request):
         messages.success(request, f'User "{user.username}" created.')
         return redirect("user_list")
 
-    return render(request, "user_form.html", {})
+    return render(request, "user_form.html", {"profile": None, "vals": _user_vals()})
 
 
 @admin_required
@@ -1037,7 +1071,8 @@ def user_update(request, pk):
 
         if errors:
             return render(request, "user_form.html", {
-                "profile": profile, "errors": errors, "data": data
+                "profile": profile, "errors": errors,
+                "vals": _user_vals(profile, data), "role": data.get("role", _role_from_user(profile)),
             })
 
         profile.username = username
@@ -1065,6 +1100,7 @@ def user_update(request, pk):
     return render(request, "user_form.html", {
         "profile": profile,
         "role": _role_from_user(profile),
+        "vals": _user_vals(profile),
     })
 
 
@@ -1097,3 +1133,177 @@ def user_delete(request, pk):
     profile.delete()
     messages.success(request, f'User "{username}" deleted.')
     return redirect("user_list")
+
+
+# ═════════════════════════════════════════════
+#  DOCUMENTS  (Invoices & Quotations)
+# ═════════════════════════════════════════════
+
+@login_required
+@require_GET
+def document_list(request):
+    doc_type = request.GET.get('type', '')
+    status   = request.GET.get('status', '')
+    docs = Document.objects.select_related('customer', 'created_by')
+    if doc_type:
+        docs = docs.filter(doc_type=doc_type)
+    if status:
+        docs = docs.filter(status=status)
+    paginator = Paginator(docs, 25)
+    page = paginator.get_page(request.GET.get('page'))
+    return render(request, 'invoice_list.html', {
+        'page_obj': page,
+        'doc_type': doc_type,
+        'status_filter': status,
+        'invoice_count':   Document.objects.filter(doc_type='invoice').count(),
+        'quotation_count': Document.objects.filter(doc_type='quotation').count(),
+        'statuses': ['draft', 'sent', 'paid', 'accepted', 'rejected', 'cancelled'],
+    })
+
+
+@login_required
+@require_http_methods(['GET', 'POST'])
+def document_create(request):
+    if request.method == 'POST':
+        data        = request.POST
+        doc_type    = data.get('doc_type', 'invoice')
+        customer_id = data.get('customer')
+
+        if not customer_id:
+            messages.error(request, 'Please select a customer.')
+            return render(request, 'invoice_form.html', {
+                'customers': Customer.objects.order_by('name'),
+                'today': date.today(),
+                'data': data,
+            })
+
+        doc = Document.objects.create(
+            doc_type         = doc_type,
+            customer_id      = customer_id,
+            created_by       = request.user,
+            status           = 'draft',
+            issue_date       = data.get('issue_date') or date.today(),
+            due_date         = data.get('due_date') or None,
+            notes            = data.get('notes', ''),
+            terms            = data.get('terms', ''),
+            discount_percent = Decimal(data.get('discount_percent') or '0'),
+        )
+
+        descriptions = data.getlist('description[]')
+        quantities   = data.getlist('quantity[]')
+        prices       = data.getlist('unit_price[]')
+        product_ids  = data.getlist('product_id[]')
+        units        = data.getlist('unit[]')
+
+        for i, desc in enumerate(descriptions):
+            if not desc.strip():
+                continue
+            try:
+                qty   = Decimal(quantities[i] or '1')
+                price = Decimal(prices[i]     or '0')
+            except Exception:
+                continue
+            pid  = product_ids[i] if i < len(product_ids) else ''
+            unit = units[i].strip() if i < len(units) and units[i].strip() else 'PCS'
+            DocumentItem.objects.create(
+                document    = doc,
+                product_id  = pid or None,
+                description = desc.strip(),
+                unit        = unit,
+                quantity    = qty,
+                unit_price  = price,
+            )
+
+        doc.recompute_totals()
+        messages.success(request, f'{doc.get_doc_type_display()} {doc.number} created.')
+        return redirect('document_detail', pk=doc.pk)
+
+    return render(request, 'invoice_form.html', {
+        'customers': Customer.objects.order_by('name'),
+        'today': date.today(),
+    })
+
+
+@login_required
+@require_GET
+def document_detail(request, pk):
+    doc = get_object_or_404(
+        Document.objects.select_related('customer', 'created_by')
+                        .prefetch_related('items__product'),
+        pk=pk,
+    )
+    next_statuses = {
+        'draft':    ['sent', 'cancelled'],
+        'sent':     ['paid', 'accepted', 'rejected', 'cancelled'],
+        'paid':     [],
+        'accepted': ['paid', 'cancelled'],
+        'rejected': [],
+        'cancelled': [],
+    }
+    return render(request, 'invoice_detail.html', {
+        'doc': doc,
+        'next_statuses': next_statuses.get(doc.status, []),
+    })
+
+
+@login_required
+@require_POST
+def document_status(request, pk):
+    doc        = get_object_or_404(Document, pk=pk)
+    new_status = request.POST.get('status')
+    valid      = [s[0] for s in Document.STATUSES]
+    if new_status in valid:
+        doc.status = new_status
+        doc.save(update_fields=['status'])
+        messages.success(request, f'Status updated to {new_status}.')
+    return redirect('document_detail', pk=pk)
+
+
+@login_required
+@require_POST
+def document_delete(request, pk):
+    doc = get_object_or_404(Document, pk=pk)
+    doc.delete()
+    messages.success(request, 'Document deleted.')
+    return redirect('document_list')
+
+
+@login_required
+@require_GET
+def document_pdf(request, pk):
+    from weasyprint import HTML
+    doc = get_object_or_404(
+        Document.objects.select_related('customer', 'created_by')
+                        .prefetch_related('items__product'),
+        pk=pk,
+    )
+    html = render_to_string('invoice_pdf.html', {'doc': doc}, request=request)
+    pdf  = HTML(string=html, base_url=request.build_absolute_uri('/')).write_pdf()
+    filename = f"{doc.number}.pdf"
+    response = HttpResponse(pdf, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    return response
+
+
+@login_required
+@require_GET
+def document_item_row(request):
+    index = int(request.GET.get('index', 0))
+    return render(request, 'partials/invoice_item_row.html', {'index': index})
+
+
+@login_required
+@require_GET
+def document_product_search(request):
+    q     = request.GET.get('q', '').strip()
+    index = request.GET.get('index', 0)
+    products = []
+    if len(q) >= 2:
+        products = Product.objects.filter(
+            Q(name__icontains=q) | Q(part_number__icontains=q) | Q(brand__icontains=q),
+            is_active=True,
+        ).select_related()[:8]
+    return render(request, 'partials/invoice_product_results.html', {
+        'products': products,
+        'index': index,
+    })

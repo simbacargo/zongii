@@ -1,0 +1,78 @@
+<tr id="item-row-{{ index }}" class="item-row border-b border-gray-50 hover:bg-amber-50/30 transition-colors">
+
+    <!-- Photo -->
+    <td class="pl-5 pr-2 py-3 w-14">
+        <div id="item-photo-{{ index }}"
+             class="w-10 h-10 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center overflow-hidden shrink-0">
+            <i class="bi bi-box text-gray-300 text-sm"></i>
+        </div>
+        <input type="hidden" name="product_id[]" id="item-pid-{{ index }}" value="">
+    </td>
+
+    <!-- Description / search -->
+    <td class="px-2 py-3">
+        <div class="relative">
+            <input type="text"
+                   name="description[]"
+                   id="item-desc-{{ index }}"
+                   placeholder="Search product or type description…"
+                   autocomplete="off"
+                   hx-get="{% url 'document_product_search' %}"
+                   hx-vals='js:{"q": event.target.value, "index": "{{ index }}"}'
+                   hx-trigger="keyup changed delay:250ms"
+                   hx-target="#item-results-{{ index }}"
+                   hx-swap="innerHTML"
+                   class="w-full border-2 border-gray-100 focus:border-amber-400 rounded-xl px-3 py-2.5 text-sm outline-none transition bg-gray-50 focus:bg-white">
+            <div id="item-results-{{ index }}" class="absolute z-30 left-0 right-0 top-full mt-0.5"></div>
+        </div>
+    </td>
+
+    <!-- Qty -->
+    <td class="px-2 py-3 w-24">
+        <input type="number"
+               name="quantity[]"
+               id="item-qty-{{ index }}"
+               value="1" min="0.01" step="0.01"
+               oninput="recalcRow({{ index }})"
+               class="w-full border-2 border-gray-100 focus:border-amber-400 rounded-xl px-3 py-2.5 text-sm text-center font-bold outline-none transition bg-gray-50 focus:bg-white">
+    </td>
+
+    <!-- Unit -->
+    <td class="px-2 py-3 w-24">
+        <input type="text"
+               name="unit[]"
+               id="item-unit-{{ index }}"
+               value="PCS"
+               placeholder="PCS"
+               list="unit-options"
+               class="w-full border-2 border-gray-100 focus:border-amber-400 rounded-xl px-3 py-2.5 text-sm text-center outline-none transition bg-gray-50 focus:bg-white uppercase">
+    </td>
+
+    <!-- Unit price -->
+    <td class="px-2 py-3 w-36">
+        <div class="relative">
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[9px] font-black text-gray-300 tracking-wide">TZS</span>
+            <input type="number"
+                   name="unit_price[]"
+                   id="item-price-{{ index }}"
+                   value="0" min="0" step="0.01"
+                   oninput="recalcRow({{ index }})"
+                   class="w-full border-2 border-gray-100 focus:border-amber-400 rounded-xl pl-10 pr-2 py-2.5 text-sm text-right font-bold outline-none transition bg-gray-50 focus:bg-white">
+        </div>
+    </td>
+
+    <!-- Row total -->
+    <td class="px-3 py-3 w-36 text-right">
+        <p class="text-sm font-black text-gray-800"><span id="item-total-{{ index }}">0</span></p>
+        <p class="text-[9px] text-gray-300 font-bold tracking-wide mt-0.5">TZS</p>
+    </td>
+
+    <!-- Remove -->
+    <td class="px-3 py-3 w-10">
+        <button type="button"
+                onclick="removeItem({{ index }})"
+                class="w-8 h-8 flex items-center justify-center rounded-xl hover:bg-red-50 text-gray-200 hover:text-red-400 transition-colors">
+            <i class="bi bi-x-lg text-sm"></i>
+        </button>
+    </td>
+</tr>

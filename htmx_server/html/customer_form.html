@@ -1,25 +1,214 @@
-<form
-  hx-post="{% if category %}{% url 'category_update' category.pk %}{% else %}{% url 'category_create' %}{% endif %}"
-  hx-target="#category-table-body"
-  hx-swap="innerHTML"
-  hx-on:htmx:after-swap="closeModal()"
-  hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
->
-  <h3>{% if category %}Edit Category{% else %}New Category{% endif %}</h3>
+<div class="bg-white rounded-2xl shadow-2xl overflow-hidden w-full">
 
-  {% if messages %}
-    {% for m in messages %}
-      <p style="color:var(--pico-del-color)">{{ m }}</p>
-    {% endfor %}
-  {% endif %}
+    <!-- Header -->
+    <div class="relative bg-gradient-to-br from-violet-600 to-purple-700 px-7 pt-8 pb-14">
+        <button onclick="closeModal()"
+                class="absolute top-4 right-4 h-8 w-8 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 text-white transition-colors">
+            <i class="bi bi-x-lg text-sm"></i>
+        </button>
+        <div class="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center mb-4">
+            <i class="bi bi-person-plus-fill text-white text-2xl"></i>
+        </div>
+        <h2 class="text-2xl font-black text-white">
+            {% if customer.pk %}Edit Customer{% else %}New Customer{% endif %}
+        </h2>
+        <p class="text-purple-200 text-sm mt-1">
+            {% if customer.pk %}Update customer details{% else %}Add a customer to your records{% endif %}
+        </p>
+    </div>
 
-  <label>
-    Name
-    <input type="text" name="name" value="{{ category.name|default:'' }}" required autofocus placeholder="e.g. Valves">
-  </label>
+    <!-- Avatar preview card -->
+    <div class="mx-6 -mt-6 bg-white rounded-2xl shadow-lg border border-gray-100 px-5 py-4 flex items-center gap-4">
+        <div id="cust-avatar"
+             class="w-12 h-12 rounded-2xl bg-purple-100 text-purple-600 font-black text-xl flex items-center justify-center shrink-0 transition-all select-none">
+            <i class="bi bi-person text-purple-300 text-lg"></i>
+        </div>
+        <div class="min-w-0 flex-1">
+            <p id="cust-preview-name" class="text-sm font-bold text-gray-400 italic truncate">Enter customer name…</p>
+            <p id="cust-preview-contact" class="text-xs text-gray-400 mt-0.5 truncate">No contact yet</p>
+        </div>
+        <div id="cust-preview-balance" class="shrink-0 hidden">
+            <span class="px-2.5 py-1 text-[10px] font-black rounded-lg bg-rose-100 text-rose-600 uppercase tracking-wide">
+                Owes <span id="cust-balance-val"></span>
+            </span>
+        </div>
+    </div>
 
-  <div class="actions" style="justify-content:flex-end;margin-top:1rem">
-    <button type="button" class="outline" onclick="closeModal()">Cancel</button>
-    <button type="submit">{% if category %}Save{% else %}Create{% endif %}</button>
-  </div>
-</form>
+    <!-- Form -->
+    <form hx-post="{% if customer.pk %}{% url 'customer_update' customer.pk %}{% else %}{% url 'customer_create' %}{% endif %}"
+          hx-target="#main-content"
+          hx-on::after-request="if(event.detail.successful){ closeModal(); }"
+          class="px-6 pt-6 pb-7 space-y-4">
+        {% csrf_token %}
+
+        <!-- Name -->
+        <div>
+            <label class="block text-xs font-black text-gray-500 uppercase tracking-wider mb-2">
+                Full Name <span class="text-red-400">*</span>
+            </label>
+            <div class="relative">
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300">
+                    <i class="bi bi-person text-base"></i>
+                </span>
+                <input type="text"
+                       name="name"
+                       id="cust-name-input"
+                       value="{{ customer.name|default:'' }}"
+                       required
+                       autofocus
+                       maxlength="100"
+                       autocomplete="off"
+                       placeholder="e.g. Juma Hassan"
+                       class="w-full border-2 border-gray-200 focus:border-violet-500 rounded-xl pl-11 py-3.5 text-sm font-medium outline-none transition-all bg-gray-50 focus:bg-white">
+            </div>
+        </div>
+
+        <!-- Phone + Email side by side -->
+        <div class="grid grid-cols-2 gap-3">
+            <div>
+                <label class="block text-xs font-black text-gray-500 uppercase tracking-wider mb-2">Phone</label>
+                <div class="relative">
+                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300">
+                        <i class="bi bi-telephone text-sm"></i>
+                    </span>
+                    <input type="tel"
+                           name="phone"
+                           id="cust-phone-input"
+                           value="{{ customer.phone|default:'' }}"
+                           maxlength="15"
+                           autocomplete="off"
+                           placeholder="+255 7XX XXX XXX"
+                           class="w-full border-2 border-gray-200 focus:border-violet-500 rounded-xl pl-11 py-3.5 text-sm font-medium outline-none transition-all bg-gray-50 focus:bg-white">
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-black text-gray-500 uppercase tracking-wider mb-2">Email</label>
+                <div class="relative">
+                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300">
+                        <i class="bi bi-envelope text-sm"></i>
+                    </span>
+                    <input type="email"
+                           name="email"
+                           id="cust-email-input"
+                           value="{{ customer.email|default:'' }}"
+                           autocomplete="off"
+                           placeholder="email@example.com"
+                           class="w-full border-2 border-gray-200 focus:border-violet-500 rounded-xl pl-11 py-3.5 text-sm font-medium outline-none transition-all bg-gray-50 focus:bg-white">
+                </div>
+            </div>
+        </div>
+
+        <!-- Opening balance -->
+        <div>
+            <label class="block text-xs font-black text-gray-500 uppercase tracking-wider mb-2">
+                Opening Balance
+                <span class="font-normal normal-case text-gray-400 ml-1">(leave 0 if none)</span>
+            </label>
+            <div class="relative">
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-xs font-black text-gray-400">TZS</span>
+                <input type="number"
+                       name="remaining_balance"
+                       id="cust-balance-input"
+                       value="{{ customer.remaining_balance|default:0 }}"
+                       min="0"
+                       step="1"
+                       class="w-full border-2 border-gray-200 focus:border-violet-500 rounded-xl pl-14 py-3.5 text-sm font-medium outline-none transition-all bg-gray-50 focus:bg-white">
+            </div>
+            <p class="text-[10px] text-gray-400 mt-1.5">
+                <i class="bi bi-info-circle mr-1"></i>
+                Any amount this customer already owes from before today.
+            </p>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex gap-3 pt-2">
+            <button type="button" onclick="closeModal()"
+                    class="flex-1 py-3 text-sm font-bold text-gray-500 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">
+                Cancel
+            </button>
+            <button type="submit"
+                    class="flex-1 py-3 text-sm font-black text-white bg-gradient-to-r from-violet-600 to-purple-700 hover:from-violet-700 hover:to-purple-800 rounded-xl shadow-lg shadow-purple-200 transition-all active:scale-[.98] flex items-center justify-center gap-2">
+                <i class="bi bi-person-check-fill"></i>
+                {% if customer.pk %}Save Changes{% else %}Add Customer{% endif %}
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+(function () {
+    const nameInput    = document.getElementById('cust-name-input');
+    const phoneInput   = document.getElementById('cust-phone-input');
+    const emailInput   = document.getElementById('cust-email-input');
+    const balanceInput = document.getElementById('cust-balance-input');
+
+    const avatar       = document.getElementById('cust-avatar');
+    const previewName  = document.getElementById('cust-preview-name');
+    const previewContact = document.getElementById('cust-preview-contact');
+    const previewBalance = document.getElementById('cust-preview-balance');
+    const balanceVal   = document.getElementById('cust-balance-val');
+
+    const avatarColors = [
+        ['bg-violet-100', 'text-violet-600'],
+        ['bg-purple-100', 'text-purple-600'],
+        ['bg-indigo-100', 'text-indigo-600'],
+        ['bg-fuchsia-100','text-fuchsia-600'],
+        ['bg-pink-100',   'text-pink-600'],
+        ['bg-blue-100',   'text-blue-600'],
+    ];
+
+    function colorFor(name) {
+        return avatarColors[name.charCodeAt(0) % avatarColors.length];
+    }
+
+    function updatePreview() {
+        const name    = nameInput.value.trim();
+        const phone   = phoneInput.value.trim();
+        const email   = emailInput.value.trim();
+        const balance = parseInt(balanceInput.value) || 0;
+
+        // Avatar + name
+        if (name) {
+            const [bg, text] = colorFor(name);
+            avatar.className = `w-12 h-12 rounded-2xl ${bg} ${text} font-black text-xl flex items-center justify-center shrink-0 transition-all select-none`;
+            avatar.textContent = name[0].toUpperCase();
+            previewName.textContent = name;
+            previewName.classList.remove('text-gray-400', 'italic');
+            previewName.classList.add('text-gray-800');
+        } else {
+            avatar.className = 'w-12 h-12 rounded-2xl bg-purple-100 text-purple-600 font-black text-xl flex items-center justify-center shrink-0 transition-all select-none';
+            avatar.innerHTML = '<i class="bi bi-person text-purple-300 text-lg"></i>';
+            previewName.textContent = 'Enter customer name…';
+            previewName.classList.add('text-gray-400', 'italic');
+            previewName.classList.remove('text-gray-800');
+        }
+
+        // Contact line
+        if (phone && email) {
+            previewContact.textContent = phone + ' · ' + email;
+        } else if (phone) {
+            previewContact.textContent = phone;
+        } else if (email) {
+            previewContact.textContent = email;
+        } else {
+            previewContact.textContent = 'No contact yet';
+        }
+
+        // Balance badge
+        if (balance > 0) {
+            balanceVal.textContent = 'TZS ' + balance.toLocaleString();
+            previewBalance.classList.remove('hidden');
+        } else {
+            previewBalance.classList.add('hidden');
+        }
+    }
+
+    [nameInput, phoneInput, emailInput, balanceInput].forEach(el =>
+        el.addEventListener('input', updatePreview)
+    );
+
+    // Run once on load for edit mode
+    updatePreview();
+    nameInput.focus();
+})();
+</script>

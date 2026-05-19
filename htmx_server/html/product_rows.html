@@ -16,7 +16,7 @@
       {% endif %}
     {% endwith %}
   </td>
-  <td>${{ product.retail_price }}</td>
+  <td>{% if product.min_price %}TZS {{ product.min_price }}{% if product.max_price %} – {{ product.max_price }}{% endif %}{% else %}—{% endif %}</td>
   <td>
     {% if product.is_active %}
       <span class="badge badge-success">Active</span>

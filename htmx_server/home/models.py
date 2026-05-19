@@ -41,9 +41,10 @@ class Product(models.Model):
     max_pressure_psi = models.PositiveIntegerField(null=True, blank=True, verbose_name="Max Pressure (PSI)")
 
     # --- Financials ---
-    buying_price = models.DecimalField(max_digits=12, decimal_places=2, validators=[MinValueValidator(Decimal('0.00'))])
+    buying_price = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(Decimal('0.00'))])
     wholesale_price = models.DecimalField(max_digits=12, decimal_places=2, verbose_name="Contractor Price", null=True, blank=True)
-    retail_price = models.DecimalField(max_digits=12, decimal_places=2, verbose_name="Public Price", null=True, blank=True)
+    min_price = models.DecimalField(max_digits=12, decimal_places=2, verbose_name="Min Selling Price", null=True, blank=True)
+    max_price = models.DecimalField(max_digits=12, decimal_places=2, verbose_name="Max Selling Price", null=True, blank=True)
     amount_collected = models.DecimalField(max_digits=15, decimal_places=2, default=0.00, editable=False)
     tax_rate = models.DecimalField(max_digits=5, decimal_places=2, default=0.00, help_text="Percentage e.g. 15.00")
 
@@ -86,6 +87,8 @@ class Product(models.Model):
     @property
     def stock_value_at_cost(self):
         """Total capital tied up in this product."""
+        if self.buying_price is None:
+            return None
         return self.quantity_at_hand * self.buying_price
 
     def update_stock_on_sale(self, quantity, total_price):
@@ -142,6 +145,87 @@ class Sale(models.Model):
         # Update product after saving sale
         self.product.update_stock_on_sale(self.quantity_sold, self.total_amount)
         
+
+
+class Document(models.Model):
+    DOC_TYPES = [('invoice', 'Invoice'), ('quotation', 'Quotation')]
+    STATUSES  = [
+        ('draft',     'Draft'),
+        ('sent',      'Sent'),
+        ('paid',      'Paid'),
+        ('accepted',  'Accepted'),
+        ('rejected',  'Rejected'),
+        ('cancelled', 'Cancelled'),
+    ]
+
+    doc_type         = models.CharField(max_length=10, choices=DOC_TYPES, default='invoice')
+    number           = models.CharField(max_length=30, unique=True, editable=False)
+    customer         = models.ForeignKey('Customer', on_delete=models.PROTECT, related_name='documents')
+    created_by       = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    status           = models.CharField(max_length=20, choices=STATUSES, default='draft')
+    issue_date       = models.DateField()
+    due_date         = models.DateField(null=True, blank=True)
+    notes            = models.TextField(blank=True)
+    terms            = models.TextField(blank=True)
+    discount_percent = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    subtotal         = models.DecimalField(max_digits=15, decimal_places=2, default=0, editable=False)
+    discount_amount  = models.DecimalField(max_digits=15, decimal_places=2, default=0, editable=False)
+    total            = models.DecimalField(max_digits=15, decimal_places=2, default=0, editable=False)
+    created_at       = models.DateTimeField(auto_now_add=True)
+    updated_at       = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def save(self, *args, **kwargs):
+        if not self.number:
+            self.number = self._generate_number()
+        super().save(*args, **kwargs)
+
+    def _generate_number(self):
+        from django.utils import timezone
+        year   = timezone.now().year
+        prefix = 'INV' if self.doc_type == 'invoice' else 'QUO'
+        seq    = Document.objects.filter(doc_type=self.doc_type).count() + 1
+        return f'{prefix}-{year}-{seq:04d}'
+
+    def recompute_totals(self):
+        subtotal = sum(item.total for item in self.items.all())
+        discount = subtotal * (self.discount_percent /Decimal(100) )
+        self.subtotal       = subtotal
+        self.discount_amount = discount
+        self.total          = subtotal - discount
+        self.save(update_fields=['subtotal', 'discount_amount', 'total'])
+
+    def status_color(self):
+        return {
+            'draft':     'gray',
+            'sent':      'blue',
+            'paid':      'green',
+            'accepted':  'green',
+            'rejected':  'red',
+            'cancelled': 'red',
+        }.get(self.status, 'gray')
+
+    def __str__(self):
+        return f'{self.number} — {self.customer.name}'
+
+
+class DocumentItem(models.Model):
+    document    = models.ForeignKey(Document, on_delete=models.CASCADE, related_name='items')
+    product     = models.ForeignKey('Product', on_delete=models.SET_NULL, null=True, blank=True)
+    description = models.CharField(max_length=255)
+    unit        = models.CharField(max_length=20, default='PCS')
+    quantity    = models.DecimalField(max_digits=10, decimal_places=2, default=1)
+    unit_price  = models.DecimalField(max_digits=12, decimal_places=2)
+    total       = models.DecimalField(max_digits=15, decimal_places=2, default=0, editable=False)
+
+    def save(self, *args, **kwargs):
+        self.total = self.quantity * self.unit_price
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f'{self.description} ×{self.quantity}'
 
 
 @receiver(post_save, sender=Product)

@@ -51,9 +51,10 @@
     <article>
       <header><strong>Pricing</strong></header>
       <dl style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.25rem .5rem">
-        <dt>Cost</dt><dd>${{ product.buying_price }}</dd>
-        <dt>Wholesale</dt><dd>${{ product.wholesale_price }}</dd>
-        <dt>Retail</dt><dd>${{ product.retail_price }}</dd>
+        <dt>Cost</dt><dd>{% if product.buying_price %}TZS {{ product.buying_price }}{% else %}—{% endif %}</dd>
+        <dt>Wholesale</dt><dd>{% if product.wholesale_price %}TZS {{ product.wholesale_price }}{% else %}—{% endif %}</dd>
+        <dt>Min Price</dt><dd>{% if product.min_price %}TZS {{ product.min_price }}{% else %}—{% endif %}</dd>
+        <dt>Max Price</dt><dd>{% if product.max_price %}TZS {{ product.max_price }}{% else %}—{% endif %}</dd>
         <dt>Tax rate</dt><dd>{{ product.tax_rate }}%</dd>
         <dt>Collected</dt><dd>${{ product.amount_collected }}</dd>
       </dl>

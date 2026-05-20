@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load currency %}
 {% block title %}{{ product.name }}{% endblock %}
 {% block page_title %}{{ product.brand }} — {{ product.name }}{% endblock %}
 
@@ -51,10 +52,10 @@
     <article>
       <header><strong>Pricing</strong></header>
       <dl style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.25rem .5rem">
-        <dt>Cost</dt><dd>{% if product.buying_price %}TZS {{ product.buying_price }}{% else %}—{% endif %}</dd>
-        <dt>Wholesale</dt><dd>{% if product.wholesale_price %}TZS {{ product.wholesale_price }}{% else %}—{% endif %}</dd>
-        <dt>Min Price</dt><dd>{% if product.min_price %}TZS {{ product.min_price }}{% else %}—{% endif %}</dd>
-        <dt>Max Price</dt><dd>{% if product.max_price %}TZS {{ product.max_price }}{% else %}—{% endif %}</dd>
+        <dt>Cost</dt><dd>{% if product.buying_price %}{{ product.buying_price|tzs }}{% else %}—{% endif %}</dd>
+        <dt>Wholesale</dt><dd>{% if product.wholesale_price %}{{ product.wholesale_price|tzs }}{% else %}—{% endif %}</dd>
+        <dt>Min Price</dt><dd>{% if product.min_price %}{{ product.min_price|tzs }}{% else %}—{% endif %}</dd>
+        <dt>Max Price</dt><dd>{% if product.max_price %}{{ product.max_price|tzs }}{% else %}—{% endif %}</dd>
         <dt>Tax rate</dt><dd>{{ product.tax_rate }}%</dd>
         <dt>Collected</dt><dd>${{ product.amount_collected }}</dd>
       </dl>

@@ -1,3 +1,4 @@
+{% load currency %}
 <tr id="product-{{ product.id }}" 
     class="hover:bg-blue-50/30 transition-colors cursor-pointer group border-b border-gray-100"
     hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
@@ -24,7 +25,7 @@
     </td>
 
     <td class="px-8 py-6 text-right font-black text-gray-900">
-        {% if product.min_price %}{{ product.min_price }}{% if product.max_price %} – {{ product.max_price }}{% endif %}{% else %}—{% endif %} <span class="text-[10px] text-gray-400">TZS</span>
+        {% if product.min_price %}{{ product.min_price|tzs }}{% if product.max_price %} – {{ product.max_price|tzs }}{% endif %}{% else %}—{% endif %}
     </td>
 
     <td class="px-8 py-6 text-center">

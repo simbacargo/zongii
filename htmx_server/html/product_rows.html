@@ -1,3 +1,4 @@
+{% load currency %}
 {% for product in page_obj %}
 <tr>
   <td>
@@ -16,7 +17,7 @@
       {% endif %}
     {% endwith %}
   </td>
-  <td>{% if product.min_price %}TZS {{ product.min_price }}{% if product.max_price %} – {{ product.max_price }}{% endif %}{% else %}—{% endif %}</td>
+  <td>{% if product.min_price %}{{ product.min_price|tzs }}{% if product.max_price %} – {{ product.max_price|tzs }}{% endif %}{% else %}—{% endif %}</td>
   <td>
     {% if product.is_active %}
       <span class="badge badge-success">Active</span>

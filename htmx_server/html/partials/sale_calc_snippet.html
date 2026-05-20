@@ -1,3 +1,4 @@
+{% load currency %}
 <div class="space-y-6 animate-in fade-in slide-in-from-bottom-2">
     <div class="border-b border-white/20 pb-4">
         <h3 class="text-lg font-medium opacity-80">Order Summary</h3>
@@ -6,7 +7,7 @@
     
     <div class="flex justify-between items-center">
         <span class="opacity-70">Price per unit</span>
-        <span class="font-bold">TZS {{ product.min_price|default:"—" }}</span>
+        <span class="font-bold">{% if product.min_price %}{{ product.min_price|tzs }}{% else %}—{% endif %}</span>
     </div>
 
     <div class="flex justify-between items-center">
@@ -17,7 +18,7 @@
     <div class="pt-6 border-t border-white/20">
         <div class="flex justify-between items-end">
             <span class="text-xl font-bold">Total</span>
-            <span class="text-4xl font-black">${{ total }}</span>
+            <span class="text-4xl font-black">{{ total|tzs }}</span>
         </div>
     </div>
     

@@ -1,3 +1,4 @@
+{% load currency %}
 <table class="w-full text-left border-collapse">
     <thead class="bg-gray-50 border-b border-gray-100">
         <tr>
@@ -24,7 +25,7 @@
                 {% if sale.customer %}{{ sale.customer.name }}{% else %}Walk-in{% endif %}
             </td>
             <td class="p-4 text-right">
-                <div class="text-sm font-black text-gray-900">TZS {{ sale.total_amount|floatformat:0 }}</div>
+                <div class="text-sm font-black text-gray-900">{{ sale.total_amount|tzs }}</div>
             </td>
             <td class="p-4 text-center">
                 {% if sale.rejected %}

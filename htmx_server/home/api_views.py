@@ -6,7 +6,7 @@ from django.utils import timezone
 
 from rest_framework import status, viewsets, filters
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated, BasePermission
+from rest_framework.permissions import IsAuthenticated, BasePermission,AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -70,7 +70,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     POST /api/products/{id}/deactivate/
     GET  /api/products/low_stock/
     """
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
         qs = Product.objects.prefetch_related('categories').filter(is_active=True)

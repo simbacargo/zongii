@@ -231,6 +231,7 @@ LOGOUT_REDIRECT_URL ="/"
 CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1:8080',"https://msaidizi.nsaro.com", "https://nsaro.com",
     'https://kdcharite.com', 'https://www.kdcharite.com',
+    "https://zongii.tz", "https://www.zongii.tz",
     ]  # Add your frontend domain here
 
 

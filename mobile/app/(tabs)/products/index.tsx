@@ -1,12 +1,13 @@
 import React, { useCallback, useState } from 'react';
 import {
   View, Text, FlatList, StyleSheet, TouchableOpacity,
-  RefreshControl, ActivityIndicator, TextInput,
+  RefreshControl, ActivityIndicator, TextInput, Image,
 } from 'react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { productAPI } from '@/lib/api';
 import { useColors } from '@/lib/theme';
 import StatusBadge from '@/components/StatusBadge';
+import { SERVER_BASE } from '@/lib/constants';
 
 const fmt = (n: any) => `TZS ${Number(n).toLocaleString()}`;
 
@@ -63,6 +64,10 @@ export default function ProductsListScreen() {
         renderItem={({ item }) => (
           <TouchableOpacity style={styles.card} onPress={() => router.push(`/products/${item.id}`)}>
             <View style={styles.cardTop}>
+              {item.product_photo
+                ? <Image source={{ uri: item.product_photo.startsWith('http') ? item.product_photo : `${SERVER_BASE}${item.product_photo}` }} style={styles.thumb} />
+                : <View style={styles.thumbPlaceholder}><Text style={styles.thumbPlaceholderText}>📦</Text></View>
+              }
               <View style={styles.flex1}>
                 <Text style={styles.productName} numberOfLines={1}>{item.name}</Text>
                 {item.part_number ? <Text style={styles.partNumber}>{item.part_number}</Text> : null}
@@ -107,8 +112,11 @@ const makeStyles = (C: ReturnType<typeof useColors>) => StyleSheet.create({
   fabText:      { color: '#fff', fontWeight: '800', fontSize: 14 },
   list:         { padding: 12, paddingBottom: 100, gap: 10 },
   card:         { backgroundColor: C.card, borderRadius: 16, padding: 14, borderWidth: 1, borderColor: C.border },
-  cardTop:      { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 },
-  flex1:        { flex: 1, marginRight: 8 },
+  cardTop:      { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10, gap: 10 },
+  flex1:        { flex: 1 },
+  thumb:        { width: 48, height: 48, borderRadius: 10, backgroundColor: '#f1f5f9' },
+  thumbPlaceholder: { width: 48, height: 48, borderRadius: 10, backgroundColor: '#f1f5f9', alignItems: 'center', justifyContent: 'center' },
+  thumbPlaceholderText: { fontSize: 22 },
   productName:  { fontSize: 14, fontWeight: '700', color: C.text },
   partNumber:   { fontSize: 11, color: C.textMuted, marginTop: 2 },
   cardBottom:   { flexDirection: 'row', alignItems: 'center', gap: 10 },

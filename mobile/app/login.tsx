@@ -38,7 +38,7 @@ export default function LoginScreen() {
 
         <View style={styles.logoWrap}>
           <View style={styles.logoBox}>
-		  <Image source={require('./assets/logo.png')} />
+		  <Image source={'../assets/logo.png'} />
             <Text style={styles.logoIcon}>📦</Text>
           </View>
           <Text style={styles.appName}>Zongii</Text>

@@ -1,4 +1,6 @@
 from django.urls import include, path
+from django.conf import settings
+from django.conf.urls.static import static
 from rest_framework import routers
 from home import views
 from django.contrib import admin
@@ -138,3 +140,5 @@ urlpatterns += [
     path('google_login_api/', GoogleLoginView.as_view(), name='google_login'),
     path('redis-status/', redis_status_view, name='redis_status'),
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

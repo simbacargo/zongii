@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import {
   View, Text, ScrollView, StyleSheet, TouchableOpacity,
-  ActivityIndicator, Alert, TextInput, Switch,
+  ActivityIndicator, Alert, TextInput, Switch, Image,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { productAPI, categoryAPI } from '@/lib/api';
 import { useColors } from '@/lib/theme';
 import StatusBadge from '@/components/StatusBadge';
 import { useAuth } from '@/context/AuthContext';
+import { SERVER_BASE } from '@/lib/constants';
 
 const fmt = (n: any) => `TZS ${Number(n).toLocaleString()}`;
 
@@ -178,6 +179,13 @@ export default function ProductDetailScreen() {
   return (
     <ScrollView style={styles.root} contentContainerStyle={styles.content}>
       <View style={styles.headerCard}>
+        {product.product_photo && (
+          <Image
+            source={{ uri: product.product_photo.startsWith('http') ? product.product_photo : `${SERVER_BASE}${product.product_photo}` }}
+            style={styles.heroImage}
+            resizeMode="contain"
+          />
+        )}
         <View style={styles.headerRow}>
           <Text style={styles.productName} numberOfLines={2}>{product.name}</Text>
           <StatusBadge status={product.is_active ? 'active' : 'inactive'} />
@@ -241,6 +249,7 @@ const makeStyles = (C: ReturnType<typeof useColors>) => StyleSheet.create({
   content:         { padding: 16, paddingBottom: 40 },
   center:          { flex: 1, alignItems: 'center', justifyContent: 'center' },
   headerCard:      { backgroundColor: C.card, borderRadius: 16, padding: 16, marginBottom: 14, borderWidth: 1, borderColor: C.border },
+  heroImage:       { width: '100%', height: 200, borderRadius: 10, marginBottom: 14, backgroundColor: C.bg },
   headerRow:       { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 },
   productName:     { fontSize: 18, fontWeight: '800', color: C.text, flex: 1, marginRight: 8 },
   brand:           { fontSize: 13, color: C.textMuted, marginBottom: 2 },

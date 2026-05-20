@@ -21,6 +21,12 @@ class ProductListSerializer(serializers.ModelSerializer):
     categories = CategorySerializer(many=True, read_only=True)
     available_stock = serializers.ReadOnlyField()
     stock_value_at_cost = serializers.ReadOnlyField()
+    product_photo = serializers.SerializerMethodField()
+
+    def get_product_photo(self, obj):
+        if obj.product_photo:
+            return obj.product_photo.url  # relative path, e.g. /inventory/products/...
+        return None
 
     class Meta:
         model = Product

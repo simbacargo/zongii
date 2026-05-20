@@ -17,16 +17,14 @@ class BusinessSerializer(serializers.ModelSerializer):
 class ProductSerializer(serializers.ModelSerializer):
     available_stock = serializers.ReadOnlyField()
     stock_value_at_cost = serializers.ReadOnlyField()
-    product_photo = serializers.ImageField(required=True)
-    
+    product_photo = serializers.ImageField(required=False, allow_null=True)
+
     class Meta:
         model = Product
         fields = '__all__'
         read_only_fields = ['created_by', 'amount_collected']
 
     def create(self, validated_data):
-        # Automatically assign the creator from the request context
-        # validated_data['created_by'] = self.context['request'].user
         print(self.context)
         return super().create(validated_data)
 
@@ -38,6 +36,7 @@ class CustomerSerializer(serializers.ModelSerializer):
 class SaleSerializer(serializers.ModelSerializer):
     total_amount = serializers.ReadOnlyField()
     product_name = serializers.ReadOnlyField(source='product.name')
+    customer_name = serializers.ReadOnlyField(source='customer.name')
 
     class Meta:
         model = Sale

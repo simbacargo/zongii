@@ -19,7 +19,8 @@ export default function NewProductScreen() {
   const [partNumber, setPartNumber] = useState('');
   const [brand, setBrand] = useState('');
   const [buyingPrice, setBuyingPrice] = useState('');
-  const [retailPrice, setRetailPrice] = useState('');
+  const [minPrice, setMinPrice] = useState('');
+  const [maxPrice, setMaxPrice] = useState('');
   const [stock, setStock] = useState('0');
   const [reorderPoint, setReorderPoint] = useState('5');
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
@@ -42,16 +43,16 @@ export default function NewProductScreen() {
 
   async function submit() {
     if (!name.trim()) return Alert.alert('Error', 'Product name is required.');
-    if (!buyingPrice || Number(buyingPrice) <= 0) return Alert.alert('Error', 'Enter a valid buying price.');
-    if (!retailPrice || Number(retailPrice) <= 0) return Alert.alert('Error', 'Enter a valid retail price.');
+    if (!minPrice && !maxPrice) return Alert.alert('Error', 'Enter at least a min or max selling price.');
     setSaving(true);
     try {
       await productAPI.create({
         name: name.trim(),
         part_number: partNumber.trim() || undefined,
         brand: brand.trim() || undefined,
-        buying_price: Number(buyingPrice),
-        retail_price: Number(retailPrice),
+        buying_price: buyingPrice ? Number(buyingPrice) : null,
+        min_price: minPrice ? Number(minPrice) : null,
+        max_price: maxPrice ? Number(maxPrice) : null,
         available_stock: Number(stock),
         reorder_point: Number(reorderPoint),
         category_ids: selectedCategories,
@@ -86,21 +87,25 @@ export default function NewProductScreen() {
         <Text style={styles.sectionTitle}>Pricing</Text>
         <View style={styles.row}>
           <View style={styles.flex1}>
-            <Text style={styles.label}>Buying Price (TZS) *</Text>
-            <TextInput style={styles.input} value={buyingPrice} onChangeText={setBuyingPrice} keyboardType="numeric" placeholder="0" placeholderTextColor={C.textFaint} />
+            <Text style={styles.label}>Min Price (TZS) *</Text>
+            <TextInput style={styles.input} value={minPrice} onChangeText={setMinPrice} keyboardType="numeric" placeholder="0" placeholderTextColor={C.textFaint} />
           </View>
           <View style={{ width: 12 }} />
           <View style={styles.flex1}>
-            <Text style={styles.label}>Retail Price (TZS) *</Text>
-            <TextInput style={styles.input} value={retailPrice} onChangeText={setRetailPrice} keyboardType="numeric" placeholder="0" placeholderTextColor={C.textFaint} />
+            <Text style={styles.label}>Max Price (TZS)</Text>
+            <TextInput style={styles.input} value={maxPrice} onChangeText={setMaxPrice} keyboardType="numeric" placeholder="0" placeholderTextColor={C.textFaint} />
           </View>
         </View>
-        {buyingPrice && retailPrice ? (
+        <View style={{ marginTop: 12 }}>
+          <Text style={styles.label}>Buying Price (TZS)</Text>
+          <TextInput style={styles.input} value={buyingPrice} onChangeText={setBuyingPrice} keyboardType="numeric" placeholder="optional" placeholderTextColor={C.textFaint} />
+        </View>
+        {buyingPrice && (minPrice || maxPrice) ? (
           <View style={styles.marginCard}>
-            <Text style={styles.marginLabel}>Margin</Text>
+            <Text style={styles.marginLabel}>Margin (vs max)</Text>
             <Text style={styles.marginValue}>
-              TZS {(Number(retailPrice) - Number(buyingPrice)).toLocaleString()}
-              {' '}({Number(buyingPrice) > 0 ? (((Number(retailPrice) - Number(buyingPrice)) / Number(buyingPrice)) * 100).toFixed(1) : 0}%)
+              TZS {(Number(maxPrice || minPrice) - Number(buyingPrice)).toLocaleString()}
+              {' '}({Number(buyingPrice) > 0 ? (((Number(maxPrice || minPrice) - Number(buyingPrice)) / Number(buyingPrice)) * 100).toFixed(1) : 0}%)
             </Text>
           </View>
         ) : null}

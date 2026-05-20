@@ -1269,6 +1269,24 @@ def document_delete(request, pk):
 
 
 @login_required
+def document_pdf(request, pk):
+    import weasyprint
+    doc = get_object_or_404(
+        Document.objects.select_related('customer', 'created_by')
+                        .prefetch_related('items__product'),
+        pk=pk,
+    )
+    html_string = render_to_string('invoice_pdf.html', {'doc': doc}, request=request)
+    pdf_bytes = weasyprint.HTML(
+        string=html_string,
+        base_url=request.build_absolute_uri('/'),
+    ).write_pdf()
+    response = HttpResponse(pdf_bytes, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="{doc.number}.pdf"'
+    return response
+
+
+@login_required
 @require_GET
 def document_pdf(request, pk):
     from weasyprint import HTML

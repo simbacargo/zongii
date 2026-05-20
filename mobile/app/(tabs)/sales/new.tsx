@@ -38,7 +38,7 @@ export default function NewSaleScreen() {
 
   function selectProduct(p: any) {
     setProductId(String(p.id));
-    setPrice(String(p.retail_price ?? p.buying_price ?? ''));
+    setPrice(String(p.min_price ?? p.buying_price ?? ''));
     setProductSearch(p.name);
   }
 
@@ -77,7 +77,7 @@ export default function NewSaleScreen() {
             {filteredProducts.slice(0, 8).map(p => (
               <TouchableOpacity key={p.id} style={styles.dropItem} onPress={() => selectProduct(p)}>
                 <Text style={styles.dropName}>{p.name}</Text>
-                <Text style={styles.dropSub}>{p.brand} · {p.available_stock} in stock · TZS {Number(p.retail_price).toLocaleString()}</Text>
+                <Text style={styles.dropSub}>{p.brand} · {p.available_stock} in stock{p.min_price != null ? ` · TZS ${Number(p.min_price).toLocaleString()}` : ''}</Text>
               </TouchableOpacity>
             ))}
             {filteredProducts.length === 0 && <Text style={styles.dropEmpty}>No products found</Text>}

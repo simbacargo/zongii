@@ -70,13 +70,19 @@ export default function ProductsListScreen() {
               <StatusBadge status={item.is_active ? 'active' : 'inactive'} />
             </View>
             <View style={styles.cardBottom}>
-              <View style={styles.priceRow}>
-                <Text style={styles.priceLabel}>Buy</Text>
-                <Text style={styles.priceValue}>{fmt(item.buying_price)}</Text>
-              </View>
+              {item.buying_price != null && (
+                <View style={styles.priceRow}>
+                  <Text style={styles.priceLabel}>Buy</Text>
+                  <Text style={styles.priceValue}>{fmt(item.buying_price)}</Text>
+                </View>
+              )}
               <View style={styles.priceRow}>
                 <Text style={styles.priceLabel}>Sell</Text>
-                <Text style={[styles.priceValue, { color: C.primary }]}>{fmt(item.retail_price)}</Text>
+                <Text style={[styles.priceValue, { color: C.primary }]}>
+                  {item.min_price != null && item.max_price != null && String(item.min_price) !== String(item.max_price)
+                    ? `${fmt(item.min_price)} – ${fmt(item.max_price)}`
+                    : fmt(item.min_price ?? item.max_price ?? 0)}
+                </Text>
               </View>
               <View style={[styles.stockBadge, item.available_stock <= (item.reorder_point ?? 5) && styles.stockLow]}>
                 <Text style={[styles.stockText, item.available_stock <= (item.reorder_point ?? 5) && styles.stockTextLow]}>

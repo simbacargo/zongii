@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  View, Text, TextInput, TouchableOpacity,
+  View, Text, TextInput, TouchableOpacity,Image,
   StyleSheet, ActivityIndicator, KeyboardAvoidingView,
   Platform, ScrollView, Alert,
 } from 'react-native';
@@ -13,6 +13,7 @@ export default function LoginScreen() {
   const styles = makeStyles(C);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   async function handleLogin() {
@@ -37,6 +38,7 @@ export default function LoginScreen() {
 
         <View style={styles.logoWrap}>
           <View style={styles.logoBox}>
+		  <Image source={require('./assets/logo.png')} />
             <Text style={styles.logoIcon}>📦</Text>
           </View>
           <Text style={styles.appName}>Zongii</Text>
@@ -54,7 +56,12 @@ export default function LoginScreen() {
 
           <View style={styles.field}>
             <Text style={styles.label}>Password</Text>
-            <TextInput style={styles.input} value={password} onChangeText={setPassword} placeholder="••••••••" placeholderTextColor={C.textFaint} secureTextEntry />
+            <View style={styles.passwordWrap}>
+              <TextInput style={styles.passwordInput} value={password} onChangeText={setPassword} placeholder="••••••••" placeholderTextColor={C.textFaint} secureTextEntry={!showPassword} autoCapitalize="none" autoCorrect={false} />
+              <TouchableOpacity style={styles.eyeBtn} onPress={() => setShowPassword(v => !v)}>
+                <Text style={styles.eyeText}>{showPassword ? '🙈' : '👁'}</Text>
+              </TouchableOpacity>
+            </View>
           </View>
 
           <TouchableOpacity style={[styles.btn, loading && styles.btnDisabled]} onPress={handleLogin} disabled={loading}>
@@ -81,7 +88,11 @@ const makeStyles = (C: ReturnType<typeof useColors>) => StyleSheet.create({
   subHeading:  { fontSize: 13, color: C.textMuted, marginBottom: 24 },
   field:       { marginBottom: 16 },
   label:       { fontSize: 11, fontWeight: '700', color: C.textMuted, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 6 },
-  input:       { backgroundColor: C.bg, borderWidth: 1, borderColor: C.border, borderRadius: 12, paddingHorizontal: 14, paddingVertical: 12, fontSize: 15, color: C.text },
+  input:        { backgroundColor: C.bg, borderWidth: 1, borderColor: C.border, borderRadius: 12, paddingHorizontal: 14, paddingVertical: 12, fontSize: 15, color: C.text },
+  passwordWrap: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.bg, borderWidth: 1, borderColor: C.border, borderRadius: 12 },
+  passwordInput:{ flex: 1, paddingHorizontal: 14, paddingVertical: 12, fontSize: 15, color: C.text },
+  eyeBtn:       { paddingHorizontal: 14, paddingVertical: 12 },
+  eyeText:      { fontSize: 18 },
   btn:         { backgroundColor: C.primary, borderRadius: 14, paddingVertical: 14, alignItems: 'center', marginTop: 8 },
   btnDisabled: { opacity: 0.6 },
   btnText:     { color: '#fff', fontWeight: '800', fontSize: 16 },

@@ -29,7 +29,8 @@ export default function ProductDetailScreen() {
   const [partNumber, setPartNumber] = useState('');
   const [brand, setBrand] = useState('');
   const [buyingPrice, setBuyingPrice] = useState('');
-  const [retailPrice, setRetailPrice] = useState('');
+  const [minPrice, setMinPrice] = useState('');
+  const [maxPrice, setMaxPrice] = useState('');
   const [reorderPoint, setReorderPoint] = useState('');
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const [isActive, setIsActive] = useState(true);
@@ -43,8 +44,9 @@ export default function ProductDetailScreen() {
       setName(p.name);
       setPartNumber(p.part_number ?? '');
       setBrand(p.brand ?? '');
-      setBuyingPrice(String(p.buying_price));
-      setRetailPrice(String(p.retail_price));
+      setBuyingPrice(p.buying_price != null ? String(p.buying_price) : '');
+      setMinPrice(p.min_price != null ? String(p.min_price) : '');
+      setMaxPrice(p.max_price != null ? String(p.max_price) : '');
       setReorderPoint(String(p.reorder_point ?? 5));
       setSelectedCategories((p.categories ?? []).map((c: any) => c.id ?? c));
       setIsActive(p.is_active);
@@ -69,8 +71,9 @@ export default function ProductDetailScreen() {
         name: name.trim(),
         part_number: partNumber.trim() || null,
         brand: brand.trim() || null,
-        buying_price: Number(buyingPrice),
-        retail_price: Number(retailPrice),
+        buying_price: buyingPrice ? Number(buyingPrice) : null,
+        min_price: minPrice ? Number(minPrice) : null,
+        max_price: maxPrice ? Number(maxPrice) : null,
         reorder_point: Number(reorderPoint),
         category_ids: selectedCategories,
         is_active: isActive,
@@ -101,8 +104,10 @@ export default function ProductDetailScreen() {
   if (loading) return <View style={styles.center}><ActivityIndicator size="large" color={C.primary} /></View>;
   if (!product) return null;
 
-  const margin = Number(product.retail_price) - Number(product.buying_price);
-  const marginPct = Number(product.buying_price) > 0 ? ((margin / Number(product.buying_price)) * 100).toFixed(1) : '0';
+  const sellRef = product.max_price ?? product.min_price ?? 0;
+  const margin = Number(product.buying_price) != null ? Number(sellRef) - Number(product.buying_price) : null;
+  const marginPct = product.buying_price && Number(product.buying_price) > 0 && margin != null
+    ? ((margin / Number(product.buying_price)) * 100).toFixed(1) : null;
 
   if (editing) {
     return (
@@ -120,14 +125,18 @@ export default function ProductDetailScreen() {
           <Text style={styles.sectionTitle}>Pricing</Text>
           <View style={styles.row}>
             <View style={styles.flex1}>
-              <Text style={styles.label}>Buying Price</Text>
-              <TextInput style={styles.input} value={buyingPrice} onChangeText={setBuyingPrice} keyboardType="numeric" placeholderTextColor={C.textFaint} />
+              <Text style={styles.label}>Min Price (TZS)</Text>
+              <TextInput style={styles.input} value={minPrice} onChangeText={setMinPrice} keyboardType="numeric" placeholder="0" placeholderTextColor={C.textFaint} />
             </View>
             <View style={{ width: 12 }} />
             <View style={styles.flex1}>
-              <Text style={styles.label}>Retail Price</Text>
-              <TextInput style={styles.input} value={retailPrice} onChangeText={setRetailPrice} keyboardType="numeric" placeholderTextColor={C.textFaint} />
+              <Text style={styles.label}>Max Price (TZS)</Text>
+              <TextInput style={styles.input} value={maxPrice} onChangeText={setMaxPrice} keyboardType="numeric" placeholder="0" placeholderTextColor={C.textFaint} />
             </View>
+          </View>
+          <View style={{ marginTop: 12 }}>
+            <Text style={styles.label}>Buying Price (TZS)</Text>
+            <TextInput style={styles.input} value={buyingPrice} onChangeText={setBuyingPrice} keyboardType="numeric" placeholder="optional" placeholderTextColor={C.textFaint} />
           </View>
         </View>
         <View style={styles.section}>
@@ -180,9 +189,10 @@ export default function ProductDetailScreen() {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Pricing</Text>
         <View style={styles.statGrid}>
-          <View style={styles.statBox}><Text style={styles.statLabel}>Buying Price</Text><Text style={styles.statValue}>{fmt(product.buying_price)}</Text></View>
-          <View style={styles.statBox}><Text style={styles.statLabel}>Retail Price</Text><Text style={[styles.statValue, { color: C.primary }]}>{fmt(product.retail_price)}</Text></View>
-          <View style={styles.statBox}><Text style={styles.statLabel}>Margin</Text><Text style={styles.statValue}>{fmt(margin)} ({marginPct}%)</Text></View>
+          {product.min_price != null && <View style={styles.statBox}><Text style={styles.statLabel}>Min Price</Text><Text style={[styles.statValue, { color: C.primary }]}>{fmt(product.min_price)}</Text></View>}
+          {product.max_price != null && <View style={styles.statBox}><Text style={styles.statLabel}>Max Price</Text><Text style={[styles.statValue, { color: C.primary }]}>{fmt(product.max_price)}</Text></View>}
+          {product.buying_price != null && <View style={styles.statBox}><Text style={styles.statLabel}>Buying Price</Text><Text style={styles.statValue}>{fmt(product.buying_price)}</Text></View>}
+          {marginPct != null && <View style={styles.statBox}><Text style={styles.statLabel}>Margin</Text><Text style={styles.statValue}>{fmt(margin)} ({marginPct}%)</Text></View>}
         </View>
       </View>
 

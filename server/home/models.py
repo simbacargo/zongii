@@ -41,9 +41,10 @@ class Product(models.Model):
     max_pressure_psi = models.PositiveIntegerField(null=True, blank=True, verbose_name="Max Pressure (PSI)")
 
     # --- Financials ---
-    buying_price = models.DecimalField(max_digits=12, decimal_places=2, validators=[MinValueValidator(Decimal('0.00'))])
+    buying_price = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(Decimal('0.00'))])
     wholesale_price = models.DecimalField(max_digits=12, decimal_places=2, verbose_name="Contractor Price", null=True, blank=True)
-    retail_price = models.DecimalField(max_digits=12, decimal_places=2, verbose_name="Public Price", null=True, blank=True)
+    min_price = models.DecimalField(max_digits=12, decimal_places=2, verbose_name="Min Selling Price", null=True, blank=True)
+    max_price = models.DecimalField(max_digits=12, decimal_places=2, verbose_name="Max Selling Price", null=True, blank=True)
     amount_collected = models.DecimalField(max_digits=15, decimal_places=2, default=0.00, editable=False)
     tax_rate = models.DecimalField(max_digits=5, decimal_places=2, default=0.00, help_text="Percentage e.g. 15.00")
 
@@ -86,6 +87,8 @@ class Product(models.Model):
     @property
     def stock_value_at_cost(self):
         """Total capital tied up in this product."""
+        if self.buying_price is None:
+            return None
         return self.quantity_at_hand * self.buying_price
 
     def update_stock_on_sale(self, quantity, total_price):

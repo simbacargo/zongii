@@ -9,7 +9,12 @@ import { useColors } from '@/lib/theme';
 import StatusBadge from '@/components/StatusBadge';
 import { SERVER_BASE } from '@/lib/constants';
 
-const fmt = (n: any) => `TZS ${Number(n).toLocaleString()}`;
+const fmt = (n: any) => {
+  const v = Number(n);
+  if (v >= 1_000_000) return `TZS ${(v / 1_000_000).toFixed(1).replace(/\.0$/, '')}M`;
+  if (v >= 1_000) return `TZS ${(v / 1_000).toFixed(1).replace(/\.0$/, '')}K`;
+  return `TZS ${v.toLocaleString()}`;
+};
 
 export default function ProductsListScreen() {
   const router = useRouter();
@@ -114,9 +119,9 @@ const makeStyles = (C: ReturnType<typeof useColors>) => StyleSheet.create({
   card:         { backgroundColor: C.card, borderRadius: 16, padding: 14, borderWidth: 1, borderColor: C.border },
   cardTop:      { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10, gap: 10 },
   flex1:        { flex: 1 },
-  thumb:        { width: 48, height: 48, borderRadius: 10, backgroundColor: '#f1f5f9' },
-  thumbPlaceholder: { width: 48, height: 48, borderRadius: 10, backgroundColor: '#f1f5f9', alignItems: 'center', justifyContent: 'center' },
-  thumbPlaceholderText: { fontSize: 22 },
+  thumb:        { width: 96, height: 96, borderRadius: 10, backgroundColor: '#f1f5f9' },
+  thumbPlaceholder: { width: 96, height: 96, borderRadius: 10, backgroundColor: '#f1f5f9', alignItems: 'center', justifyContent: 'center' },
+  thumbPlaceholderText: { fontSize: 38 },
   productName:  { fontSize: 14, fontWeight: '700', color: C.text },
   partNumber:   { fontSize: 11, color: C.textMuted, marginTop: 2 },
   cardBottom:   { flexDirection: 'row', alignItems: 'center', gap: 10 },

@@ -7,7 +7,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { saleAPI } from '@/lib/api';
 import { useColors } from '@/lib/theme';
 import StatusBadge from '@/components/StatusBadge';
-import { useAuth } from '@/context/AuthContext';
+import { usePermissions } from '@/context/AuthContext';
 
 const fmt = (n: any) => `TZS ${Number(n).toLocaleString()}`;
 
@@ -16,12 +16,10 @@ export default function SaleDetailScreen() {
   const router = useRouter();
   const C = useColors();
   const styles = makeStyles(C);
-  const { user } = useAuth();
+  const { isManager: isManagerOrAdmin } = usePermissions();
   const [sale, setSale] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [acting, setActing] = useState(false);
-
-  const isManagerOrAdmin = user?.role === 'manager' || user?.role === 'admin';
 
   useEffect(() => {
     (async () => {

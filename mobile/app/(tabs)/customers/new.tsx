@@ -17,6 +17,7 @@ export default function NewCustomerScreen() {
   const [email, setEmail] = useState('');
   const [address, setAddress] = useState('');
   const [balance, setBalance] = useState('0');
+  const [debtDueDate, setDebtDueDate] = useState('');
 
   async function submit() {
     if (!name.trim()) return Alert.alert('Error', 'Customer name is required.');
@@ -28,6 +29,7 @@ export default function NewCustomerScreen() {
         email: email.trim() || undefined,
         address: address.trim() || undefined,
         balance: Number(balance) || 0,
+        debt_due_date: debtDueDate.trim() || undefined,
       });
       Alert.alert('Success', 'Customer added!', [{ text: 'OK', onPress: () => router.back() }]);
     } catch (e: any) {
@@ -57,6 +59,8 @@ export default function NewCustomerScreen() {
         <Text style={styles.sectionTitle}>Opening Balance</Text>
         <Text style={styles.hint}>Enter any existing debt this customer already owes.</Text>
         <TextInput style={styles.input} value={balance} onChangeText={setBalance} keyboardType="numeric" placeholder="0" placeholderTextColor={C.textFaint} />
+        <Text style={[styles.label, { marginTop: 12 }]}>Debt Due Date</Text>
+        <TextInput style={styles.input} value={debtDueDate} onChangeText={setDebtDueDate} placeholder="YYYY-MM-DD" placeholderTextColor={C.textFaint} />
       </View>
 
       <TouchableOpacity style={[styles.btn, saving && { opacity: 0.6 }]} onPress={submit} disabled={saving}>

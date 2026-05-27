@@ -58,14 +58,35 @@ export const categoryAPI = {
 };
 
 // ── Products ──────────────────────────────────────────────────────────────────
+
+function toFormData(data: Record<string, any>): FormData {
+  const fd = new FormData();
+  for (const [key, value] of Object.entries(data)) {
+    if (value == null) continue;
+    if (Array.isArray(value)) {
+      value.forEach(item => fd.append(key, String(item)));
+    } else if (value && typeof value === 'object' && value.uri) {
+      fd.append(key, value as any);
+    } else {
+      fd.append(key, String(value));
+    }
+  }
+  return fd;
+}
+
 export const productAPI = {
   list:       (q?: string, params?: { category?: number; low_stock?: boolean }) =>
     api.get('/products/', { params: { ...(q ? { q } : {}), ...params } }),
   get:        (id: string | number) => api.get(`/products/${id}/`),
-  create:     (data: object) => api.post('/products/', data),
-  update:     (id: string | number, data: object) => api.patch(`/products/${id}/`, data),
+  create:     (data: Record<string, any>) =>
+    api.post('/products/', toFormData(data), { headers: { 'Content-Type': 'multipart/form-data' } }),
+  update:     (id: string | number, data: Record<string, any>) =>
+    api.patch(`/products/${id}/`, toFormData(data), { headers: { 'Content-Type': 'multipart/form-data' } }),
   deactivate: (id: string | number) => api.post(`/products/${id}/deactivate/`),
-  lowStock:   () => api.get('/products/low_stock/'),
+  lowStock:   () => api.get('/products/low-stock/'),
+  refill:     (id: string | number, data: { quantity_added: number; notes?: string }) =>
+    api.post(`/products/${id}/refill/`, data),
+  refills:    (id: string | number) => api.get(`/products/${id}/refills/`),
 };
 
 // ── Customers ─────────────────────────────────────────────────────────────────
@@ -90,13 +111,57 @@ export const saleAPI = {
   delete:  (id: string | number) => api.delete(`/sales/${id}/`),
 };
 
+// ── Documents (Invoices & Quotations) ────────────────────────────────────────
+export const documentAPI = {
+  list:         (params?: { doc_type?: 'invoice'|'quotation'; status?: string }) =>
+    api.get('/documents/', { params }),
+  get:          (id: string | number) => api.get(`/documents/${id}/`),
+  create:       (data: object) => api.post('/documents/', data),
+  update:       (id: string | number, data: object) => api.patch(`/documents/${id}/`, data),
+  delete:       (id: string | number) => api.delete(`/documents/${id}/`),
+  setStatus:    (id: string | number, status: string, note?: string) =>
+    api.post(`/documents/${id}/status/`, { status, note }),
+};
+
+// ── Sale Orders ───────────────────────────────────────────────────────────────
+export const orderAPI = {
+  list:     (status?: string) => api.get('/orders/', { params: status ? { status } : undefined }),
+  get:      (id: string | number) => api.get(`/orders/${id}/`),
+  create:   (data: object) => api.post('/orders/', data),
+  update:   (id: string | number, data: object) => api.patch(`/orders/${id}/`, data),
+  delete:   (id: string | number) => api.delete(`/orders/${id}/`),
+  verify:   (id: string | number) => api.post(`/orders/${id}/verify/`),
+  dispatch: (id: string | number) => api.post(`/orders/${id}/dispatch/`),
+};
+
+// ── Picking Orders ────────────────────────────────────────────────────────────
+export const pickingAPI = {
+  list:   () => api.get('/picking/'),
+  get:    (id: string | number) => api.get(`/picking/${id}/`),
+  accept: (id: string | number) => api.post(`/picking/${id}/accept/`),
+  submit: (id: string | number, items: { id: number; picked_qty: number }[]) =>
+    api.post(`/picking/${id}/submit/`, { items }),
+};
+
+// ── Notifications ─────────────────────────────────────────────────────────────
+export const notificationAPI = {
+  list:        () => api.get('/notifications/'),
+  markRead:    (id: string | number) => api.post(`/notifications/${id}/read/`),
+  markAllRead: () => api.post('/notifications/mark-all-read/'),
+};
+
+// ── Push tokens ───────────────────────────────────────────────────────────────
+export const pushTokenAPI = {
+  register: (token: string) => api.post('/auth/push-token/', { token }),
+};
+
 // ── Users ─────────────────────────────────────────────────────────────────────
 export const userAPI = {
-  list:   () => api.get('/users/'),
-  create: (data: object) => api.post('/users/', data),
-  update: (id: string, data: object) => api.patch(`/users/${id}/`, data),
-  toggleActive: (id: string) => api.post(`/users/${id}/toggle_active/`),
-  setRole: (id: string, role: string) => api.patch(`/users/${id}/set_role/`, { role }),
+  list:         () => api.get('/users/'),
+  create:       (data: object) => api.post('/users/', data),
+  update:       (id: string, data: object) => api.patch(`/users/${id}/`, data),
+  toggleActive: (id: string) => api.post(`/users/${id}/toggle-active/`),
+  setRole:      (id: string, role: string) => api.patch(`/users/${id}/set-role/`, { role }),
 };
 
 export default api;

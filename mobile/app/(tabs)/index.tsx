@@ -4,10 +4,11 @@ import {
   StyleSheet, TouchableOpacity, ActivityIndicator,
 } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
-import { dashboardAPI } from '@/lib/api';
+import { dashboardAPI, notificationAPI } from '@/lib/api';
 import { useColors } from '@/lib/theme';
 import { useAuth } from '@/context/AuthContext';
 import KPICard from '@/components/KPICard';
+import BarChart from '@/components/BarChart';
 
 const fmt = (n: number) =>
   n >= 1_000_000 ? `TZS ${(n / 1_000_000).toFixed(1)}M`
@@ -15,7 +16,7 @@ const fmt = (n: number) =>
   : `TZS ${n}`;
 
 export default function DashboardScreen() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const C = useColors();
   const styles = makeStyles(C);
   const router = useRouter();
@@ -23,11 +24,19 @@ export default function DashboardScreen() {
   const [period, setPeriod] = useState<'week' | 'month'>('week');
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   const load = useCallback(async (p = period) => {
     try {
-      const res = await dashboardAPI.get(p);
-      setData(res.data);
+      const [dashRes, notifRes] = await Promise.allSettled([
+        dashboardAPI.get(p),
+        notificationAPI.list(),
+      ]);
+      if (dashRes.status === 'fulfilled') setData(dashRes.value.data);
+      if (notifRes.status === 'fulfilled') {
+        const notifs: any[] = notifRes.value.data.results ?? notifRes.value.data;
+        setUnreadCount(notifs.filter((n: any) => !n.is_read).length);
+      }
     } catch {}
     setLoading(false);
     setRefreshing(false);
@@ -58,9 +67,19 @@ export default function DashboardScreen() {
           <Text style={styles.greeting}>Hello, {user?.firstname || user?.username} 👋</Text>
           <Text style={styles.greetingSub}>Here's what's happening today</Text>
         </View>
-        <TouchableOpacity style={styles.avatarBtn} onPress={logout}>
-          <Text style={styles.avatarText}>{user?.username?.[0]?.toUpperCase()}</Text>
-        </TouchableOpacity>
+        <View style={styles.headerRight}>
+          <TouchableOpacity style={styles.notifBtn} onPress={() => router.push('/notifications' as any)}>
+            <Text style={styles.notifIcon}>🔔</Text>
+            {unreadCount > 0 && (
+              <View style={styles.notifBadge}>
+                <Text style={styles.notifBadgeText}>{unreadCount > 9 ? '9+' : unreadCount}</Text>
+              </View>
+            )}
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.avatarBtn} onPress={() => router.push('/profile' as any)}>
+            <Text style={styles.avatarText}>{user?.username?.[0]?.toUpperCase()}</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       <View style={styles.toggle}>
@@ -88,6 +107,13 @@ export default function DashboardScreen() {
         <View style={styles.debtBanner}>
           <Text style={styles.debtLabel}>💳  Outstanding Debt</Text>
           <Text style={styles.debtAmount}>{fmt(Number(d.total_debt))}</Text>
+        </View>
+      )}
+
+      {d.chart_labels?.length > 0 && (
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Revenue Trend</Text>
+          <BarChart labels={d.chart_labels} values={d.chart_revenue} />
         </View>
       )}
 
@@ -132,6 +158,11 @@ const makeStyles = (C: ReturnType<typeof useColors>) => StyleSheet.create({
   header:          { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
   greeting:        { fontSize: 22, fontWeight: '900', color: C.text },
   greetingSub:     { fontSize: 13, color: C.textMuted, marginTop: 2 },
+  headerRight:     { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  notifBtn:        { width: 40, height: 40, borderRadius: 12, backgroundColor: C.card, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: C.border },
+  notifIcon:       { fontSize: 18 },
+  notifBadge:      { position: 'absolute', top: -4, right: -4, backgroundColor: C.red, borderRadius: 8, minWidth: 16, height: 16, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 3 },
+  notifBadgeText:  { color: '#fff', fontSize: 9, fontWeight: '800' },
   avatarBtn:       { width: 40, height: 40, borderRadius: 12, backgroundColor: C.primary, alignItems: 'center', justifyContent: 'center' },
   avatarText:      { color: '#fff', fontWeight: '900', fontSize: 16 },
   toggle:          { flexDirection: 'row', backgroundColor: C.border, borderRadius: 12, padding: 3, marginBottom: 16 },

@@ -7,7 +7,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { customerAPI, saleAPI } from '@/lib/api';
 import { useColors } from '@/lib/theme';
 import StatusBadge from '@/components/StatusBadge';
-import { useAuth } from '@/context/AuthContext';
+import { usePermissions } from '@/context/AuthContext';
 
 const fmt = (n: any) => `TZS ${Number(n).toLocaleString()}`;
 
@@ -16,7 +16,7 @@ export default function CustomerDetailScreen() {
   const router = useRouter();
   const C = useColors();
   const styles = makeStyles(C);
-  const { user } = useAuth();
+  const { isManager: isManagerOrAdmin } = usePermissions();
   const [customer, setCustomer] = useState<any>(null);
   const [sales, setSales] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -26,12 +26,11 @@ export default function CustomerDetailScreen() {
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  const isManagerOrAdmin = user?.role === 'manager' || user?.role === 'admin';
-
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [address, setAddress] = useState('');
+  const [debtDueDate, setDebtDueDate] = useState('');
 
   async function fetchCustomer() {
     try {
@@ -43,6 +42,7 @@ export default function CustomerDetailScreen() {
       setPhone(c.phone ?? '');
       setEmail(c.email ?? '');
       setAddress(c.address ?? '');
+      setDebtDueDate(c.debt_due_date ?? '');
     } catch {
       Alert.alert('Error', 'Failed to load customer.', [{ text: 'OK', onPress: () => router.back() }]);
     } finally {
@@ -75,7 +75,7 @@ export default function CustomerDetailScreen() {
     if (!name.trim()) return Alert.alert('Error', 'Name is required.');
     setSaving(true);
     try {
-      await customerAPI.update(id, { name: name.trim(), phone: phone.trim() || null, email: email.trim() || null, address: address.trim() || null });
+      await customerAPI.update(id, { name: name.trim(), phone: phone.trim() || null, email: email.trim() || null, address: address.trim() || null, debt_due_date: debtDueDate.trim() || null });
       await fetchCustomer();
       setEditing(false);
     } catch (e: any) {
@@ -103,6 +103,8 @@ export default function CustomerDetailScreen() {
           <TextInput style={styles.input} value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" placeholderTextColor={C.textFaint} />
           <Text style={[styles.label, { marginTop: 12 }]}>Address</Text>
           <TextInput style={[styles.input, styles.multiline]} value={address} onChangeText={setAddress} multiline numberOfLines={3} placeholderTextColor={C.textFaint} />
+          <Text style={[styles.label, { marginTop: 12 }]}>Debt Due Date</Text>
+          <TextInput style={styles.input} value={debtDueDate} onChangeText={setDebtDueDate} placeholder="YYYY-MM-DD" placeholderTextColor={C.textFaint} />
         </View>
         <View style={styles.row}>
           <TouchableOpacity style={[styles.btn, styles.cancelBtn, { flex: 1 }]} onPress={() => setEditing(false)}>
@@ -127,6 +129,7 @@ export default function CustomerDetailScreen() {
         {customer.phone ? <Text style={styles.infoLine}>{customer.phone}</Text> : null}
         {customer.email ? <Text style={styles.infoLine}>{customer.email}</Text> : null}
         {customer.address ? <Text style={styles.infoLine}>{customer.address}</Text> : null}
+        {customer.debt_due_date ? <Text style={styles.infoLine}>Debt due: {new Date(customer.debt_due_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</Text> : null}
         {isManagerOrAdmin && (
           <TouchableOpacity style={styles.editLink} onPress={() => setEditing(true)}>
             <Text style={styles.editLinkText}>Edit</Text>

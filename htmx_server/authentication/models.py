@@ -108,6 +108,8 @@ class User(AbstractBaseUser,PermissionsMixin):
     current_ip = models.CharField(default='', max_length=100, null=True)
     last_known_device = models.CharField(default='', max_length=100, null=True)
     facebook_account = models.URLField(_("Facebook profile"), max_length=255, blank=True, null=True)
+    expo_push_token  = models.CharField(max_length=200, blank=True, default='',
+                                        help_text="Expo push token for mobile push notifications")
     USERNAME_FIELD = 'username'
     objects = UserAccountManager()
     #given_name = lastname

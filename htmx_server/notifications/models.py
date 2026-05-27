@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from authentication.models import User
 
 
@@ -67,3 +69,20 @@ class Notification(models.Model):
     @property
     def color(self):
         return self._COLOR.get(self.notification_type, 'gray')
+
+
+@receiver(post_save, sender=Notification)
+def push_on_create(sender, instance, created, **kwargs):
+    """Send an Expo push notification whenever a new Notification record is created."""
+    if not created:
+        return
+    token = getattr(instance.recipient, 'expo_push_token', '')
+    if not token:
+        return
+    from .utils import send_expo_push_async
+    send_expo_push_async(
+        token,
+        instance.title,
+        instance.message or instance.title,
+        {'type': instance.notification_type, 'entity_id': instance.entity_id},
+    )

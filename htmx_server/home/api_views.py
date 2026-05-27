@@ -1,385 +1,1153 @@
 from datetime import timedelta
+from decimal import Decimal
 
 from django.db import transaction
-from django.db.models import F, Q, Sum, ExpressionWrapper, DecimalField
+from django.db.models import F, Q, Sum, ExpressionWrapper, DecimalField, Value
+from django.db.models.functions import Coalesce
+from django.shortcuts import get_object_or_404
 from django.utils import timezone
 
-from rest_framework import status, viewsets, filters
-from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated, BasePermission,AllowAny
+from rest_framework import status
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated, BasePermission
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
-from .models import Category, Product, Customer, Sale
+from .models import (
+    Category, Product, Customer,
+    Sale, SaleOrder,
+    Document, DocumentItem,
+    PickingOrder, PickingOrderItem,
+    GatePass, GatePassItem,
+    StockRefill, SaleStatusHistory,
+)
+from notifications.models import Notification
+from authentication.models import User
+
 from .serializers import (
     CategorySerializer,
     ProductListSerializer, ProductWriteSerializer,
     CustomerSerializer,
     SaleReadSerializer, SaleWriteSerializer,
+    SaleOrderSerializer, SaleOrderListSerializer,
+    DocumentSerializer, DocumentWriteSerializer, DocumentItemSerializer,
+    PickingOrderSerializer, PickingOrderItemSerializer,
+    GatePassSerializer,
+    StockRefillSerializer, StockRefillCreateSerializer,
+    NotificationSerializer,
     UserSerializer, UserCreateSerializer,
+    VALID_ROLES, _ROLE_FLAGS, _ROLE_SECTIONS,
 )
-from authentication.models import User
 
 
-# ── Permissions ───────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────────────────────────────────────
+#  PERMISSION HELPERS
+# ─────────────────────────────────────────────────────────────────────────────
 
-class IsManagerOrAdmin(BasePermission):
-    """Approve/reject sales, manage customers."""
+class IsAdminOrManager(BasePermission):
     def has_permission(self, request, view):
-        return bool(request.user and request.user.is_authenticated and
-                    (request.user.is_admin or request.user.is_superuser))
+        return bool(
+            request.user and request.user.is_authenticated
+            and (request.user.is_admin or request.user.is_superuser)
+        )
 
 
-class IsAdminUser(BasePermission):
-    """Full user management — superuser or admin flag."""
+class IsAdminOnly(BasePermission):
     def has_permission(self, request, view):
-        return bool(request.user and request.user.is_authenticated and
-                    (request.user.is_admin or request.user.is_superuser))
+        return bool(
+            request.user and request.user.is_authenticated
+            and (request.user.is_admin or request.user.is_superuser)
+        )
 
 
-# ── Category ──────────────────────────────────────────────────────────────────
+def _is_admin(user):
+    return user.is_admin or user.is_superuser
 
-class CategoryViewSet(viewsets.ModelViewSet):
+def _is_picker(user):
+    return user.is_picker or user.is_admin or user.is_superuser
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  AUTH / PROFILE
+# ─────────────────────────────────────────────────────────────────────────────
+
+@api_view(['GET', 'PATCH'])
+@permission_classes([IsAuthenticated])
+def profile(request):
     """
-    list:   GET  /api/categories/
-    create: POST /api/categories/
-    retrieve: GET  /api/categories/{id}/
-    update: PUT  /api/categories/{id}/
-    partial_update: PATCH /api/categories/{id}/
-    destroy: DELETE /api/categories/{id}/
+    GET  /api/auth/me/   — current user profile
+    PATCH /api/auth/me/  — update own name, email, mobile, gender
     """
-    queryset = Category.objects.all().order_by('name')
-    serializer_class = CategorySerializer
-    permission_classes = [IsAuthenticated]
-    filter_backends = [filters.SearchFilter]
-    search_fields = ['name']
+    if request.method == 'GET':
+        return Response(UserSerializer(request.user).data)
+
+    allowed = ['firstname', 'lastname', 'email', 'mobile', 'gender']
+    for field in allowed:
+        if field in request.data:
+            setattr(request.user, field, request.data[field])
+    request.user.save()
+    return Response(UserSerializer(request.user).data)
 
 
-# ── Product ───────────────────────────────────────────────────────────────────
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def register_push_token(request):
+    """POST /api/auth/push-token/ — store the caller's Expo push token."""
+    token = request.data.get('token', '').strip()
+    if not token:
+        return Response({'token': 'This field is required.'}, status=status.HTTP_400_BAD_REQUEST)
+    request.user.expo_push_token = token
+    request.user.save(update_fields=['expo_push_token'])
+    return Response({'detail': 'Token registered.'})
 
-class ProductViewSet(viewsets.ModelViewSet):
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  DASHBOARD
+# ─────────────────────────────────────────────────────────────────────────────
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def dashboard(request):
     """
-    list:   GET  /api/products/?q=&category=&low_stock=true
-    create: POST /api/products/
-    retrieve: GET  /api/products/{id}/
-    update: PUT  /api/products/{id}/
-    partial_update: PATCH /api/products/{id}/
-    destroy: DELETE /api/products/{id}/
-
-    Extra actions:
-    POST /api/products/{id}/deactivate/
-    GET  /api/products/low_stock/
+    GET /api/dashboard/?period=week|month
     """
-    permission_classes = [AllowAny]
+    period     = request.GET.get('period', 'week')
+    today      = timezone.now().date()
+    start_date = today.replace(day=1) if period == 'month' else today - timedelta(days=7)
 
-    def get_queryset(self):
-        qs = Product.objects.prefetch_related('categories').filter(is_active=True)
+    sales_qs = Sale.objects.filter(date_sold__date__gte=start_date, aproved=True)
 
-        q = self.request.query_params.get('q', '').strip()
+    revenue           = sales_qs.aggregate(t=Sum('total_amount'))['t'] or 0
+    total_sales_count = sales_qs.count()
+
+    profit = sales_qs.annotate(
+        margin=ExpressionWrapper(
+            (F('price_per_unit') - Coalesce(
+                F('product__buying_price'), Value(0, output_field=DecimalField())
+            )) * F('quantity_sold'),
+            output_field=DecimalField(),
+        )
+    ).aggregate(t=Sum('margin'))['t'] or 0
+
+    pending_count  = Sale.objects.filter(aproved=False, rejected=False, deleted=False).count()
+    total_customers = Customer.objects.count()
+    total_debt     = Customer.objects.aggregate(t=Sum('remaining_balance'))['t'] or 0
+    low_stock_count = Product.objects.filter(
+        is_active=True, quantity_at_hand__lte=F('reorder_point')
+    ).count()
+
+    top_products = list(
+        Product.objects
+        .filter(sales__aproved=True, sales__date_sold__date__gte=start_date)
+        .annotate(
+            total_sold=Sum('sales__quantity_sold'),
+            total_revenue=Sum('sales__total_amount'),
+        )
+        .order_by('-total_sold')
+        .values('id', 'name', 'brand', 'total_sold', 'total_revenue')[:5]
+    )
+
+    days_to_track = 30 if period == 'month' else 7
+    chart_labels, chart_revenue = [], []
+    for i in range(days_to_track - 1, -1, -1):
+        day = today - timedelta(days=i)
+        chart_labels.append(day.strftime('%d %b'))
+        day_total = (
+            Sale.objects
+            .filter(date_sold__date=day, aproved=True)
+            .aggregate(t=Sum('total_amount'))['t'] or 0
+        )
+        chart_revenue.append(float(day_total))
+
+    return Response({
+        'period':            period,
+        'revenue':           revenue,
+        'profit':            profit,
+        'total_sales_count': total_sales_count,
+        'total_customers':   total_customers,
+        'pending_count':     pending_count,
+        'total_debt':        total_debt,
+        'low_stock_count':   low_stock_count,
+        'top_products':      top_products,
+        'chart_labels':      chart_labels,
+        'chart_revenue':     chart_revenue,
+    })
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  CATEGORIES
+# ─────────────────────────────────────────────────────────────────────────────
+
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
+def category_list(request):
+    """
+    GET  /api/categories/?q=
+    POST /api/categories/          (admin)
+    """
+    if request.method == 'GET':
+        qs = Category.objects.all().order_by('name')
+        q  = request.GET.get('q', '').strip()
+        if q:
+            qs = qs.filter(name__icontains=q)
+        return Response(CategorySerializer(qs, many=True).data)
+
+    if not _is_admin(request.user):
+        return Response({'error': 'Admin access required.'}, status=status.HTTP_403_FORBIDDEN)
+
+    serializer = CategorySerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
+@permission_classes([IsAuthenticated])
+def category_detail(request, pk):
+    """
+    GET    /api/categories/{pk}/
+    PUT    /api/categories/{pk}/   (admin)
+    PATCH  /api/categories/{pk}/  (admin)
+    DELETE /api/categories/{pk}/  (admin)
+    """
+    category = get_object_or_404(Category, pk=pk)
+
+    if request.method == 'GET':
+        return Response(CategorySerializer(category).data)
+
+    if not _is_admin(request.user):
+        return Response({'error': 'Admin access required.'}, status=status.HTTP_403_FORBIDDEN)
+
+    if request.method in ('PUT', 'PATCH'):
+        serializer = CategorySerializer(
+            category, data=request.data, partial=(request.method == 'PATCH')
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    category.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  PRODUCTS
+# ─────────────────────────────────────────────────────────────────────────────
+
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
+def product_list(request):
+    """
+    GET  /api/products/?q=&category=&low_stock=true&include_inactive=true
+    POST /api/products/   (admin)
+    """
+    if request.method == 'GET':
+        qs = Product.objects.prefetch_related('categories')
+        if request.GET.get('include_inactive') != 'true':
+            qs = qs.filter(is_active=True)
+
+        q = request.GET.get('q', '').strip()
         if q:
             qs = qs.filter(
                 Q(name__icontains=q) | Q(brand__icontains=q)
                 | Q(part_number__icontains=q) | Q(upc_code__icontains=q)
             )
 
-        category = self.request.query_params.get('category')
+        category = request.GET.get('category')
         if category:
             qs = qs.filter(categories__id=category)
 
-        if self.request.query_params.get('low_stock') == 'true':
+        if request.GET.get('low_stock') == 'true':
             qs = qs.filter(quantity_at_hand__lte=F('reorder_point'))
 
-        return qs.order_by('name')
+        return Response(ProductListSerializer(qs.order_by('name'), many=True).data)
 
-    def get_serializer_class(self):
-        if self.action in ('create', 'update', 'partial_update'):
-            return ProductWriteSerializer
-        return ProductListSerializer
+    if not _is_admin(request.user):
+        return Response({'error': 'Admin access required.'}, status=status.HTTP_403_FORBIDDEN)
 
-    def perform_create(self, serializer):
-        serializer.save(created_by=self.request.user)
-
-    @action(detail=True, methods=['post'])
-    def deactivate(self, request, pk=None):
-        product = self.get_object()
-        product.is_active = False
-        product.save(update_fields=['is_active'])
-        return Response({'detail': f'Product "{product.name}" deactivated.'})
-
-    @action(detail=False, methods=['get'], url_path='low_stock')
-    def low_stock(self, request):
-        qs = Product.objects.filter(
-            is_active=True, quantity_at_hand__lte=F('reorder_point')
-        ).order_by('quantity_at_hand')
-        serializer = ProductListSerializer(qs, many=True)
-        return Response(serializer.data)
+    serializer = ProductWriteSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save(created_by=request.user)
+        return Response(
+            ProductListSerializer(serializer.instance).data,
+            status=status.HTTP_201_CREATED,
+        )
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# ── Customer ──────────────────────────────────────────────────────────────────
-
-class CustomerViewSet(viewsets.ModelViewSet):
+@api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
+@permission_classes([IsAuthenticated])
+def product_detail(request, pk):
     """
-    list:   GET  /api/customers/?q=
-    create: POST /api/customers/
-    retrieve: GET  /api/customers/{id}/
-    update: PUT  /api/customers/{id}/
-    partial_update: PATCH /api/customers/{id}/
-    destroy: DELETE /api/customers/{id}/
-
-    Extra actions:
-    POST /api/customers/{id}/pay/   body: {"amount": 5000}
-    GET  /api/customers/debtors/    — only customers with balance > 0
+    GET    /api/products/{pk}/
+    PUT    /api/products/{pk}/   (admin)
+    PATCH  /api/products/{pk}/  (admin)
+    DELETE /api/products/{pk}/  (admin — soft delete)
     """
-    serializer_class = CustomerSerializer
-    permission_classes = [IsAuthenticated]
+    product = get_object_or_404(Product, pk=pk)
 
-    def get_queryset(self):
+    if request.method == 'GET':
+        return Response(ProductListSerializer(product).data)
+
+    if not _is_admin(request.user):
+        return Response({'error': 'Admin access required.'}, status=status.HTTP_403_FORBIDDEN)
+
+    if request.method in ('PUT', 'PATCH'):
+        serializer = ProductWriteSerializer(
+            product, data=request.data, partial=(request.method == 'PATCH')
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return Response(ProductListSerializer(serializer.instance).data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    product.is_active = False
+    product.save(update_fields=['is_active'])
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def product_deactivate(request, pk):
+    """POST /api/products/{pk}/deactivate/"""
+    if not _is_admin(request.user):
+        return Response({'error': 'Admin access required.'}, status=status.HTTP_403_FORBIDDEN)
+    product = get_object_or_404(Product, pk=pk)
+    product.is_active = False
+    product.save(update_fields=['is_active'])
+    return Response({'detail': f'Product "{product.name}" deactivated.'})
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def product_low_stock(request):
+    """GET /api/products/low-stock/"""
+    qs = Product.objects.filter(
+        is_active=True, quantity_at_hand__lte=F('reorder_point')
+    ).order_by('quantity_at_hand')
+    return Response(ProductListSerializer(qs, many=True).data)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def stock_refill(request, pk):
+    """
+    POST /api/products/{pk}/refill/
+    Body: { "quantity_added": 100, "notes": "..." }
+    """
+    if not _is_admin(request.user):
+        return Response({'error': 'Admin access required.'}, status=status.HTTP_403_FORBIDDEN)
+
+    product = get_object_or_404(Product, pk=pk)
+    serializer = StockRefillCreateSerializer(data=request.data)
+    if not serializer.is_valid():
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    qty           = serializer.validated_data['quantity_added']
+    notes         = serializer.validated_data['notes']
+    quantity_after = product.quantity_at_hand + qty
+
+    with transaction.atomic():
+        refill = StockRefill.objects.create(
+            product=product,
+            quantity_added=qty,
+            quantity_after=quantity_after,
+            refilled_by=request.user,
+            notes=notes,
+        )
+        product.quantity_at_hand = F('quantity_at_hand') + qty
+        product.save(update_fields=['quantity_at_hand'])
+        Notification.objects.filter(
+            notification_type=Notification.LOW_STOCK,
+            entity_id=product.pk,
+            is_read=False,
+        ).update(is_read=True)
+
+    return Response(StockRefillSerializer(refill).data, status=status.HTTP_201_CREATED)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def product_refills(request, pk):
+    """GET /api/products/{pk}/refills/  — refill history for a product"""
+    product = get_object_or_404(Product, pk=pk)
+    refills = product.refills.all()
+    return Response(StockRefillSerializer(refills, many=True).data)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  CUSTOMERS
+# ─────────────────────────────────────────────────────────────────────────────
+
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
+def customer_list(request):
+    """
+    GET  /api/customers/?q=
+    POST /api/customers/
+    """
+    if request.method == 'GET':
         qs = Customer.objects.all()
-        q = self.request.query_params.get('q', '').strip()
+        q  = request.GET.get('q', '').strip()
         if q:
             qs = qs.filter(
                 Q(name__icontains=q) | Q(email__icontains=q) | Q(phone__icontains=q)
             )
-        return qs.order_by('name')
+        return Response(CustomerSerializer(qs.order_by('name'), many=True).data)
 
-    @action(detail=True, methods=['post'])
-    def pay(self, request, pk=None):
-        customer = self.get_object()
-        try:
-            amount = int(request.data.get('amount', 0))
-            if amount <= 0:
-                raise ValueError()
-        except (ValueError, TypeError):
-            return Response({'detail': 'Provide a positive integer amount.'}, status=status.HTTP_400_BAD_REQUEST)
+    serializer = CustomerSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        customer.pay_balance(amount)
+
+@api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
+@permission_classes([IsAuthenticated])
+def customer_detail(request, pk):
+    """
+    GET    /api/customers/{pk}/
+    PUT    /api/customers/{pk}/
+    PATCH  /api/customers/{pk}/
+    DELETE /api/customers/{pk}/  (admin)
+    """
+    customer = get_object_or_404(Customer, pk=pk)
+
+    if request.method == 'GET':
         return Response(CustomerSerializer(customer).data)
 
-    @action(detail=False, methods=['get'])
-    def debtors(self, request):
-        qs = Customer.objects.filter(remaining_balance__gt=0).order_by('-remaining_balance')
-        serializer = self.get_serializer(qs, many=True)
-        total = qs.aggregate(total=Sum('remaining_balance'))['total'] or 0
-        return Response({'total_debt': total, 'results': serializer.data})
+    if request.method in ('PUT', 'PATCH'):
+        serializer = CustomerSerializer(
+            customer, data=request.data, partial=(request.method == 'PATCH')
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    if not _is_admin(request.user):
+        return Response({'error': 'Admin access required.'}, status=status.HTTP_403_FORBIDDEN)
+    customer.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-# ── Sale ──────────────────────────────────────────────────────────────────────
-
-class SaleViewSet(viewsets.ModelViewSet):
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def customer_pay(request, pk):
     """
-    list:   GET  /api/sales/?status=pending|approved|rejected
-    create: POST /api/sales/
-    retrieve: GET  /api/sales/{id}/
-    update: PUT  /api/sales/{id}/
-    partial_update: PATCH /api/sales/{id}/
-    destroy: DELETE /api/sales/{id}/   (soft delete)
-
-    Extra actions:
-    POST /api/sales/{id}/approve/
-    POST /api/sales/{id}/reject/
+    POST /api/customers/{pk}/pay/
+    Body: { "amount": 5000 }
     """
-    permission_classes = [IsAuthenticated]
+    customer = get_object_or_404(Customer, pk=pk)
+    try:
+        amount = int(request.data.get('amount', 0))
+        if amount <= 0:
+            raise ValueError()
+    except (ValueError, TypeError):
+        return Response(
+            {'error': 'Provide a positive integer amount.'},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+    customer.pay_balance(amount)
+    return Response(CustomerSerializer(customer).data)
 
-    def get_queryset(self):
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def customer_debtors(request):
+    """GET /api/customers/debtors/  — customers with outstanding balance"""
+    qs    = Customer.objects.filter(remaining_balance__gt=0).order_by('-remaining_balance')
+    total = qs.aggregate(t=Sum('remaining_balance'))['t'] or 0
+    return Response({
+        'total_debt': total,
+        'results':    CustomerSerializer(qs, many=True).data,
+    })
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  SALES
+# ─────────────────────────────────────────────────────────────────────────────
+
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
+def sale_list(request):
+    """
+    GET  /api/sales/?status=pending|approved|rejected&q=
+    POST /api/sales/
+    """
+    if request.method == 'GET':
         qs = Sale.objects.select_related('product', 'customer', 'created_by').filter(deleted=False)
 
-        status_filter = self.request.query_params.get('status', '')
-        if status_filter == 'approved':
-            qs = qs.filter(aproved=True, rejected=False)
-        elif status_filter == 'rejected':
+        sf = request.GET.get('status', '')
+        if sf == 'approved':
+            qs = qs.filter(aproved=True,  rejected=False)
+        elif sf == 'rejected':
             qs = qs.filter(rejected=True)
-        elif status_filter == 'pending':
+        elif sf == 'pending':
             qs = qs.filter(aproved=False, rejected=False)
 
-        return qs.order_by('-date_sold')
+        q = request.GET.get('q', '').strip()
+        if q:
+            qs = qs.filter(
+                Q(product__name__icontains=q) | Q(customer__name__icontains=q)
+            )
 
-    def get_serializer_class(self):
-        if self.action == 'create':
-            return SaleWriteSerializer
-        return SaleReadSerializer
+        return Response(SaleReadSerializer(qs.order_by('-date_sold'), many=True).data)
 
-    def destroy(self, request, *args, **kwargs):
-        sale = self.get_object()
-        sale.deleted = True
-        sale.save(update_fields=['deleted'])
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    serializer = SaleWriteSerializer(data=request.data, context={'request': request})
+    if serializer.is_valid():
+        serializer.save()
+        return Response(
+            SaleReadSerializer(serializer.instance).data,
+            status=status.HTTP_201_CREATED,
+        )
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=True, methods=['post'], permission_classes=[IsManagerOrAdmin])
-    def approve(self, request, pk=None):
-        sale = self.get_object()
+
+@api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
+@permission_classes([IsAuthenticated])
+def sale_detail(request, pk):
+    """
+    GET    /api/sales/{pk}/
+    PUT    /api/sales/{pk}/
+    PATCH  /api/sales/{pk}/
+    DELETE /api/sales/{pk}/   (soft delete)
+    """
+    sale = get_object_or_404(Sale, pk=pk, deleted=False)
+
+    if request.method == 'GET':
+        return Response(SaleReadSerializer(sale).data)
+
+    if request.method in ('PUT', 'PATCH'):
         if sale.aproved:
-            return Response({'detail': 'Already approved.'}, status=status.HTTP_400_BAD_REQUEST)
-        if sale.rejected:
-            return Response({'detail': 'Cannot approve a rejected sale.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {'error': 'Approved sales cannot be edited.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        allowed_fields = {'quantity_sold', 'price_per_unit', 'customer'}
+        data = {k: v for k, v in request.data.items() if k in allowed_fields}
+        serializer = SaleWriteSerializer(
+            sale, data=data, partial=True, context={'request': request}
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return Response(SaleReadSerializer(serializer.instance).data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    sale.deleted = True
+    sale.save(update_fields=['deleted'])
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def sale_approve(request, pk):
+    """POST /api/sales/{pk}/approve/  (manager / admin)"""
+    if not _is_admin(request.user):
+        return Response({'error': 'Manager access required.'}, status=status.HTTP_403_FORBIDDEN)
+
+    sale = get_object_or_404(Sale, pk=pk, deleted=False, rejected=False)
+    if sale.aproved:
+        return Response({'error': 'Already approved.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    with transaction.atomic():
+        sale.aproved = True
+        sale.save(update_fields=['aproved'])
+        sale.product.update_stock_on_sale(sale.quantity_sold, sale.total_amount)
+
+    return Response(SaleReadSerializer(sale).data)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def sale_reject(request, pk):
+    """POST /api/sales/{pk}/reject/  (manager / admin)"""
+    if not _is_admin(request.user):
+        return Response({'error': 'Manager access required.'}, status=status.HTTP_403_FORBIDDEN)
+
+    sale = get_object_or_404(Sale, pk=pk, deleted=False)
+    if sale.rejected:
+        return Response({'error': 'Already rejected.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    sale.rejected = True
+    sale.aproved  = False
+    sale.save(update_fields=['rejected', 'aproved'])
+    return Response(SaleReadSerializer(sale).data)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  SALE ORDERS
+# ─────────────────────────────────────────────────────────────────────────────
+
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
+def sale_order_list(request):
+    """
+    GET  /api/orders/?status=&q=
+    POST /api/orders/   — create a new order with one or more line items
+         Body: { customer?: id, notes?: str, items: [{product, quantity_sold, price_per_unit}] }
+    """
+    if request.method == 'POST':
+        items_data = request.data.get('items', [])
+        if not items_data:
+            return Response({'items': 'At least one item is required.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        customer_id = request.data.get('customer') or None
+        errors = []
+        for i, item in enumerate(items_data):
+            if not item.get('product'):
+                errors.append({f'items[{i}].product': 'Required.'})
+            if not item.get('quantity_sold') or int(item['quantity_sold']) <= 0:
+                errors.append({f'items[{i}].quantity_sold': 'Must be > 0.'})
+            if not item.get('price_per_unit') or float(item['price_per_unit']) <= 0:
+                errors.append({f'items[{i}].price_per_unit': 'Must be > 0.'})
+        if errors:
+            return Response(errors, status=status.HTTP_400_BAD_REQUEST)
 
         with transaction.atomic():
-            sale.aproved = True
-            sale.save(update_fields=['aproved'])
-            sale.product.update_stock_on_sale(sale.quantity_sold, sale.total_amount)
-
-        return Response(SaleReadSerializer(sale).data)
-
-    @action(detail=True, methods=['post'], permission_classes=[IsManagerOrAdmin])
-    def reject(self, request, pk=None):
-        sale = self.get_object()
-        if sale.rejected:
-            return Response({'detail': 'Already rejected.'}, status=status.HTTP_400_BAD_REQUEST)
-        sale.rejected = True
-        sale.aproved = False
-        sale.save(update_fields=['rejected', 'aproved'])
-        return Response(SaleReadSerializer(sale).data)
-
-
-# ── Dashboard ─────────────────────────────────────────────────────────────────
-
-class DashboardView(APIView):
-    """
-    GET /api/dashboard/?period=week|month
-
-    Returns KPIs and chart data for the requested period.
-    """
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        period = request.query_params.get('period', 'week')
-        today = timezone.now().date()
-        start_date = today.replace(day=1) if period == 'month' else today - timedelta(days=7)
-
-        sales_qs = Sale.objects.filter(date_sold__date__gte=start_date, aproved=True)
-
-        revenue = sales_qs.aggregate(total=Sum('total_amount'))['total'] or 0
-        total_sales_count = sales_qs.count()
-
-        profit = sales_qs.annotate(
-            margin=ExpressionWrapper(
-                (F('price_per_unit') - F('product__buying_price')) * F('quantity_sold'),
-                output_field=DecimalField()
+            order = SaleOrder.objects.create(
+                customer_id=customer_id,
+                created_by=request.user,
+                notes=request.data.get('notes', ''),
             )
-        ).aggregate(total=Sum('margin'))['total'] or 0
+            for item in items_data:
+                Sale.objects.create(
+                    order=order,
+                    product_id=item['product'],
+                    quantity_sold=int(item['quantity_sold']),
+                    price_per_unit=Decimal(str(item['price_per_unit'])),
+                    customer_id=customer_id,
+                    created_by=request.user,
+                )
 
-        pending_count = Sale.objects.filter(aproved=False, rejected=False, deleted=False).count()
-        total_customers = Customer.objects.count()
-        total_debt = Customer.objects.aggregate(total=Sum('remaining_balance'))['total'] or 0
-        low_stock_count = Product.objects.filter(
-            is_active=True, quantity_at_hand__lte=F('reorder_point')
-        ).count()
+        order.refresh_from_db()
+        return Response(SaleOrderSerializer(order).data, status=status.HTTP_201_CREATED)
 
-        top_products = list(
-            Product.objects
-            .filter(sales__aproved=True, sales__date_sold__date__gte=start_date)
-            .annotate(
-                total_sold=Sum('sales__quantity_sold'),
-                total_revenue=Sum('sales__total_amount'),
+    # GET
+    qs = SaleOrder.objects.select_related('customer', 'created_by').all()
+
+    sf = request.GET.get('status', '')
+    if sf:
+        qs = qs.filter(workflow_status=sf)
+
+    q = request.GET.get('q', '').strip()
+    if q:
+        upper_q = q.upper()
+        if upper_q.startswith('ZO'):
+            try:
+                qs = qs.filter(pk=int(upper_q[2:]))
+            except ValueError:
+                qs = qs.none()
+        else:
+            qs = qs.filter(
+                Q(customer__name__icontains=q)
+                | Q(created_by__username__icontains=q)
             )
-            .order_by('-total_sold')
-            .values('id', 'name', 'brand', 'total_sold', 'total_revenue')[:5]
+
+    return Response(SaleOrderListSerializer(qs.order_by('-created_at'), many=True).data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def sale_order_detail(request, pk):
+    """GET /api/orders/{pk}/"""
+    order = get_object_or_404(
+        SaleOrder.objects
+        .select_related('customer', 'created_by', 'verified_by')
+        .prefetch_related(
+            'sales__product', 'history__changed_by',
+            'picking_orders__items__product',
+        ),
+        pk=pk,
+    )
+    return Response(SaleOrderSerializer(order).data)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def sale_order_verify(request, pk):
+    """
+    POST /api/orders/{pk}/verify/
+    Body: { "action": "approve|reject|re_pick", "note": "..." }
+    """
+    order  = get_object_or_404(SaleOrder, pk=pk)
+    action = request.data.get('action')
+    note   = request.data.get('note', '')
+
+    if order.workflow_status not in (
+        SaleOrder.PICKED, SaleOrder.PARTIALLY_PICKED, SaleOrder.RE_PICK_REQUIRED
+    ):
+        return Response(
+            {'error': 'Order is not ready for verification.'},
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
-        days_to_track = 30 if period == 'month' else 7
-        chart_labels = []
-        chart_revenue = []
-        for i in range(days_to_track - 1, -1, -1):
-            day = today - timedelta(days=i)
-            chart_labels.append(day.strftime('%d %b'))
-            day_total = (
-                Sale.objects
-                .filter(date_sold__date=day, aproved=True)
-                .aggregate(Sum('total_amount'))['total_amount__sum'] or 0
+    last_picking = order.picking_orders.filter(
+        status__in=[PickingOrder.COMPLETED, PickingOrder.PARTIALLY_PICKED]
+    ).last()
+
+    if (last_picking and last_picking.picker == request.user
+            and not _is_admin(request.user)):
+        return Response(
+            {'error': 'You cannot verify picking you performed yourself.'},
+            status=status.HTTP_403_FORBIDDEN,
+        )
+
+    if action not in ('approve', 'reject', 're_pick'):
+        return Response(
+            {'error': 'action must be approve, reject, or re_pick.'},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    with transaction.atomic():
+        if action == 'approve':
+            order.verified_by = request.user
+            order.verified_at = timezone.now()
+            order.save(update_fields=['verified_by', 'verified_at', 'updated_at'])
+            order.transition(SaleOrder.VERIFIED, request.user, note or 'Verified')
+            gp = GatePass.objects.create(
+                sale_order=order,
+                picking_order=last_picking,
+                verified_by=request.user,
             )
-            chart_revenue.append(float(day_total))
+            for poi in (last_picking.items.select_related('product') if last_picking else []):
+                GatePassItem.objects.create(
+                    gate_pass=gp,
+                    product=poi.product,
+                    requested_qty=poi.requested_qty,
+                    picked_qty=poi.picked_qty,
+                )
 
-        return Response({
-            'period': period,
-            'revenue': revenue,
-            'profit': profit,
-            'total_sales_count': total_sales_count,
-            'total_customers': total_customers,
-            'pending_count': pending_count,
-            'total_debt': total_debt,
-            'low_stock_count': low_stock_count,
-            'top_products': top_products,
-            'chart_labels': chart_labels,
-            'chart_revenue': chart_revenue,
-        })
+        elif action == 'reject':
+            order.transition(SaleOrder.REJECTED, request.user, note or 'Rejected')
+
+        elif action == 're_pick':
+            order.transition(SaleOrder.RE_PICK_REQUIRED, request.user, note or 'Re-pick requested')
+            new_po = PickingOrder.objects.create(sale_order=order)
+            for sale in order.sales.select_related('product'):
+                PickingOrderItem.objects.create(
+                    picking_order=new_po,
+                    sale=sale,
+                    product=sale.product,
+                    requested_qty=sale.quantity_sold,
+                )
+
+    return Response(SaleOrderSerializer(order).data)
 
 
-# ── User Management ───────────────────────────────────────────────────────────
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def sale_order_dispatch(request, pk):
+    """POST /api/orders/{pk}/dispatch/  (admin)"""
+    if not _is_admin(request.user):
+        return Response({'error': 'Admin access required.'}, status=status.HTTP_403_FORBIDDEN)
 
-class UserViewSet(viewsets.ModelViewSet):
+    order = get_object_or_404(SaleOrder, pk=pk)
+    if order.workflow_status != SaleOrder.VERIFIED:
+        return Response(
+            {'error': 'Only verified orders can be dispatched.'},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    try:
+        gate_pass = order.gate_pass
+    except GatePass.DoesNotExist:
+        return Response(
+            {'error': 'Cannot dispatch: gate pass not found.'},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    with transaction.atomic():
+        for sale in order.sales.select_related('product').all():
+            sale.product.update_stock_on_sale(sale.quantity_sold, sale.total_amount)
+        order.dispatched_at = timezone.now()
+        order.save(update_fields=['dispatched_at', 'updated_at'])
+        order.transition(SaleOrder.DISPATCHED, request.user, 'Goods dispatched')
+        gate_pass.is_used = True
+        gate_pass.save(update_fields=['is_used'])
+
+    return Response(SaleOrderSerializer(order).data)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  DOCUMENTS (Invoices & Quotations)
+# ─────────────────────────────────────────────────────────────────────────────
+
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
+def document_list(request):
     """
-    list:   GET  /api/users/          (admin only)
-    create: POST /api/users/          (admin only)
-    retrieve: GET  /api/users/{id}/   (admin only)
-    update: PUT  /api/users/{id}/     (admin only)
-    partial_update: PATCH /api/users/{id}/
-    destroy: DELETE /api/users/{id}/  (superuser only)
-
-    Extra actions:
-    POST /api/users/{id}/toggle_active/
-    PATCH /api/users/{id}/set_role/   body: {"role": "staff|manager|admin"}
+    GET  /api/documents/?type=invoice|quotation&status=
+    POST /api/documents/
     """
-    permission_classes = [IsAdminUser]
-    filter_backends = [filters.SearchFilter]
-    search_fields = ['username', 'firstname', 'lastname', 'email']
+    if request.method == 'GET':
+        qs = Document.objects.select_related('customer', 'created_by').all()
+        if request.GET.get('type'):
+            qs = qs.filter(doc_type=request.GET['type'])
+        if request.GET.get('status'):
+            qs = qs.filter(status=request.GET['status'])
+        return Response(DocumentSerializer(qs.order_by('-created_at'), many=True).data)
 
-    def get_queryset(self):
-        return User.objects.all().order_by('username')
+    serializer = DocumentWriteSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save(created_by=request.user)
+        return Response(
+            DocumentSerializer(serializer.instance).data,
+            status=status.HTTP_201_CREATED,
+        )
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def get_serializer_class(self):
-        if self.action == 'create':
-            return UserCreateSerializer
-        return UserSerializer
 
-    def destroy(self, request, *args, **kwargs):
-        user = self.get_object()
-        if user.pk == request.user.pk:
-            return Response({'detail': 'Cannot delete your own account.'}, status=status.HTTP_400_BAD_REQUEST)
-        if user.is_superuser and not request.user.is_superuser:
-            return Response({'detail': 'Only a superuser can delete another superuser.'}, status=status.HTTP_403_FORBIDDEN)
-        user.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+@api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
+@permission_classes([IsAuthenticated])
+def document_detail(request, pk):
+    """
+    GET    /api/documents/{pk}/
+    PUT    /api/documents/{pk}/
+    PATCH  /api/documents/{pk}/
+    DELETE /api/documents/{pk}/  (admin)
+    """
+    doc = get_object_or_404(
+        Document.objects.select_related('customer', 'created_by')
+                        .prefetch_related('items__product'),
+        pk=pk,
+    )
 
-    @action(detail=True, methods=['post'], url_path='toggle_active')
-    def toggle_active(self, request, pk=None):
-        user = self.get_object()
-        if user.pk == request.user.pk:
-            return Response({'detail': 'Cannot deactivate your own account.'}, status=status.HTTP_400_BAD_REQUEST)
-        user.is_active = not user.is_active
-        user.save(update_fields=['is_active'])
+    if request.method == 'GET':
+        return Response(DocumentSerializer(doc).data)
+
+    if request.method in ('PUT', 'PATCH'):
+        serializer = DocumentWriteSerializer(
+            doc, data=request.data, partial=(request.method == 'PATCH')
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return Response(DocumentSerializer(serializer.instance).data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    if not _is_admin(request.user):
+        return Response({'error': 'Admin access required.'}, status=status.HTTP_403_FORBIDDEN)
+    doc.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def document_status(request, pk):
+    """
+    POST /api/documents/{pk}/status/
+    Body: { "status": "draft|sent|paid|accepted|rejected|cancelled" }
+    """
+    doc        = get_object_or_404(Document, pk=pk)
+    new_status = request.data.get('status')
+    valid      = [s[0] for s in Document.STATUSES]
+
+    if new_status not in valid:
+        return Response(
+            {'error': f'status must be one of: {", ".join(valid)}'},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+    doc.status = new_status
+    doc.save(update_fields=['status'])
+    return Response(DocumentSerializer(doc).data)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  PICKING ORDERS
+# ─────────────────────────────────────────────────────────────────────────────
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def picking_list(request):
+    """
+    GET /api/picking/?status=&mine=true
+    """
+    qs = PickingOrder.objects.select_related('sale_order__customer', 'picker').all()
+
+    sf = request.GET.get('status', '')
+    if sf:
+        qs = qs.filter(status=sf)
+
+    if request.GET.get('mine') == 'true':
+        qs = qs.filter(picker=request.user)
+
+    return Response(PickingOrderSerializer(qs.order_by('-created_at'), many=True).data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def picking_detail(request, pk):
+    """GET /api/picking/{pk}/"""
+    picking = get_object_or_404(
+        PickingOrder.objects
+        .select_related('sale_order__customer', 'picker')
+        .prefetch_related('items__product'),
+        pk=pk,
+    )
+    return Response(PickingOrderSerializer(picking).data)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def picking_accept(request, pk):
+    """POST /api/picking/{pk}/accept/"""
+    if not _is_picker(request.user):
+        return Response({'error': 'Picker access required.'}, status=status.HTTP_403_FORBIDDEN)
+
+    picking = get_object_or_404(PickingOrder, pk=pk, status=PickingOrder.PENDING)
+    picking.picker      = request.user
+    picking.status      = PickingOrder.ACCEPTED
+    picking.accepted_at = timezone.now()
+    picking.save(update_fields=['picker', 'status', 'accepted_at'])
+    picking.sale_order.transition(
+        SaleOrder.PICKING, request.user,
+        f'Picking accepted by {request.user.username}',
+    )
+    return Response(PickingOrderSerializer(picking).data)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def picking_submit(request, pk):
+    """
+    POST /api/picking/{pk}/submit/
+    Body: { "items": [{"id": 1, "picked_qty": 5, "notes": ""}], "notes": "..." }
+    """
+    if not _is_picker(request.user):
+        return Response({'error': 'Picker access required.'}, status=status.HTTP_403_FORBIDDEN)
+
+    picking = get_object_or_404(
+        PickingOrder.objects.select_related('sale_order'),
+        pk=pk,
+        status__in=[PickingOrder.ACCEPTED, PickingOrder.PARTIALLY_PICKED],
+    )
+
+    if not (request.user == picking.picker or _is_admin(request.user)):
+        return Response(
+            {'error': 'Only the assigned picker can submit picks.'},
+            status=status.HTTP_403_FORBIDDEN,
+        )
+
+    items_data   = request.data.get('items', [])
+    picker_notes = request.data.get('notes', '')
+
+    with transaction.atomic():
+        for entry in items_data:
+            item = get_object_or_404(PickingOrderItem, pk=entry.get('id'), picking_order=picking)
+            try:
+                qty = max(0, int(entry.get('picked_qty', 0)))
+            except (ValueError, TypeError):
+                qty = 0
+            item.picked_qty = min(qty, item.requested_qty)
+            item.notes      = entry.get('notes', '')
+            item.save(update_fields=['picked_qty', 'notes'])
+
+        picking.notes = picker_notes
+
+        if picking.is_fully_picked:
+            picking.status       = PickingOrder.COMPLETED
+            picking.completed_at = timezone.now()
+            new_order_status     = SaleOrder.PICKED
+        elif any(i.picked_qty > 0 for i in picking.items.all()):
+            picking.status   = PickingOrder.PARTIALLY_PICKED
+            new_order_status = SaleOrder.PARTIALLY_PICKED
+        else:
+            new_order_status = None
+
+        picking.save(update_fields=['status', 'completed_at', 'notes'])
+
+        if new_order_status:
+            picking.sale_order.transition(
+                new_order_status, request.user,
+                f'Picking {"completed" if new_order_status == SaleOrder.PICKED else "partial"} '
+                f'by {request.user.username}',
+            )
+
+    return Response(PickingOrderSerializer(picking).data)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  GATE PASSES
+# ─────────────────────────────────────────────────────────────────────────────
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def gate_pass_list(request):
+    """GET /api/gate-passes/?used=true|false"""
+    qs = GatePass.objects.select_related(
+        'sale_order__customer', 'picking_order__picker', 'verified_by'
+    ).prefetch_related('items__product').all()
+
+    used = request.GET.get('used')
+    if used == 'true':
+        qs = qs.filter(is_used=True)
+    elif used == 'false':
+        qs = qs.filter(is_used=False)
+
+    return Response(GatePassSerializer(qs.order_by('-issued_at'), many=True).data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def gate_pass_detail(request, pk):
+    """GET /api/gate-passes/{pk}/"""
+    gp = get_object_or_404(
+        GatePass.objects
+        .select_related('sale_order__customer', 'picking_order__picker', 'verified_by')
+        .prefetch_related('items__product'),
+        pk=pk,
+    )
+    return Response(GatePassSerializer(gp).data)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  NOTIFICATIONS
+# ─────────────────────────────────────────────────────────────────────────────
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def notification_list(request):
+    """
+    GET /api/notifications/?unread=true
+    """
+    qs = Notification.objects.filter(recipient=request.user)
+    if request.GET.get('unread') == 'true':
+        qs = qs.filter(is_read=False)
+    return Response({
+        'unread_count': qs.filter(is_read=False).count(),
+        'results':      NotificationSerializer(qs, many=True).data,
+    })
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def notification_mark_read(request, pk):
+    """POST /api/notifications/{pk}/read/"""
+    notif = get_object_or_404(Notification, pk=pk, recipient=request.user)
+    notif.is_read = True
+    notif.save(update_fields=['is_read'])
+    return Response(NotificationSerializer(notif).data)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def notification_mark_all_read(request):
+    """POST /api/notifications/mark-all-read/"""
+    Notification.objects.filter(recipient=request.user, is_read=False).update(is_read=True)
+    return Response({'detail': 'All notifications marked as read.'})
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  USERS
+# ─────────────────────────────────────────────────────────────────────────────
+
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
+def user_list(request):
+    """
+    GET  /api/users/?q=   (admin)
+    POST /api/users/      (admin)
+    """
+    if not _is_admin(request.user):
+        return Response({'error': 'Admin access required.'}, status=status.HTTP_403_FORBIDDEN)
+
+    if request.method == 'GET':
+        qs = User.objects.all()
+        q  = request.GET.get('q', '').strip()
+        if q:
+            qs = qs.filter(
+                Q(username__icontains=q) | Q(firstname__icontains=q)
+                | Q(lastname__icontains=q) | Q(email__icontains=q)
+            )
+        return Response(UserSerializer(qs.order_by('username'), many=True).data)
+
+    serializer = UserCreateSerializer(data=request.data)
+    if serializer.is_valid():
+        user = serializer.save()
+        return Response(UserSerializer(user).data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET', 'PATCH', 'DELETE'])
+@permission_classes([IsAuthenticated])
+def user_detail(request, pk):
+    """
+    GET    /api/users/{pk}/   (admin)
+    PATCH  /api/users/{pk}/  (admin)
+    DELETE /api/users/{pk}/  (admin)
+    """
+    if not _is_admin(request.user):
+        return Response({'error': 'Admin access required.'}, status=status.HTTP_403_FORBIDDEN)
+
+    user = get_object_or_404(User, pk=pk)
+
+    if request.method == 'GET':
         return Response(UserSerializer(user).data)
 
-    @action(detail=True, methods=['patch'], url_path='set_role')
-    def set_role(self, request, pk=None):
-        user = self.get_object()
-        role = request.data.get('role')
-        role_map = {
-            'staff':   (True, False, False),
-            'manager': (True, True,  False),
-            'admin':   (True, True,  True),
-        }
-        if role not in role_map:
-            return Response({'detail': 'role must be staff, manager, or admin.'}, status=status.HTTP_400_BAD_REQUEST)
-        user.is_staff, user.is_admin, user.is_superuser = role_map[role]
-        user.save(update_fields=['is_staff', 'is_admin', 'is_superuser'])
-        return Response(UserSerializer(user).data)
-
-
-# ── Profile (current user) ────────────────────────────────────────────────────
-
-class ProfileView(APIView):
-    """
-    GET   /api/auth/me/   — current user's profile
-    PATCH /api/auth/me/   — update own name, email, mobile
-    """
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        return Response(UserSerializer(request.user).data)
-
-    def patch(self, request):
-        allowed = ['firstname', 'lastname', 'email', 'mobile', 'gender']
+    if request.method == 'PATCH':
+        allowed = ['firstname', 'lastname', 'email', 'mobile', 'gender', 'is_active']
         for field in allowed:
             if field in request.data:
-                setattr(request.user, field, request.data[field])
-        request.user.save()
-        return Response(UserSerializer(request.user).data)
+                setattr(user, field, request.data[field])
+        user.save()
+        return Response(UserSerializer(user).data)
+
+    if user.pk == request.user.pk:
+        return Response({'error': 'Cannot delete your own account.'}, status=status.HTTP_400_BAD_REQUEST)
+    if user.is_superuser and not request.user.is_superuser:
+        return Response({'error': 'Only a superuser can delete another superuser.'}, status=status.HTTP_403_FORBIDDEN)
+    user.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def user_toggle_active(request, pk):
+    """POST /api/users/{pk}/toggle-active/  (admin)"""
+    if not _is_admin(request.user):
+        return Response({'error': 'Admin access required.'}, status=status.HTTP_403_FORBIDDEN)
+
+    user = get_object_or_404(User, pk=pk)
+    if user.pk == request.user.pk:
+        return Response(
+            {'error': 'Cannot deactivate your own account.'},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+    user.is_active = not user.is_active
+    user.save(update_fields=['is_active'])
+    return Response(UserSerializer(user).data)
+
+
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
+def user_set_role(request, pk):
+    """
+    PATCH /api/users/{pk}/set-role/
+    Body: { "role": "staff|sales|accountant|picker|manager|admin", "sections": [...] }
+    """
+    if not _is_admin(request.user):
+        return Response({'error': 'Admin access required.'}, status=status.HTTP_403_FORBIDDEN)
+
+    user = get_object_or_404(User, pk=pk)
+    role = request.data.get('role')
+
+    if role not in VALID_ROLES:
+        return Response(
+            {'error': f'role must be one of: {", ".join(VALID_ROLES)}'},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    flags = _ROLE_FLAGS[role]
+    user.is_staff, user.is_admin, user.is_superuser = flags[0], flags[1], flags[2]
+    user.is_picker, user.is_sales, user.is_accountant = flags[3], flags[4], flags[5]
+
+    sections = request.data.get('sections')
+    user.allowed_sections = sections if sections is not None else _ROLE_SECTIONS.get(role, [])
+
+    user.save(update_fields=[
+        'is_staff', 'is_admin', 'is_superuser',
+        'is_picker', 'is_sales', 'is_accountant',
+        'allowed_sections',
+    ])
+    return Response(UserSerializer(user).data)

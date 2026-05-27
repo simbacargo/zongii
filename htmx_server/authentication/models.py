@@ -86,6 +86,13 @@ class User(AbstractBaseUser,PermissionsMixin):
     is_staff = models.BooleanField(default=True)#is user allowed to add and manage data
     is_admin = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
+    is_picker = models.BooleanField(default=False, help_text="Store staff authorised to pick warehouse orders")
+    is_sales = models.BooleanField(default=False, help_text="Sales person — can create and manage sales")
+    is_accountant = models.BooleanField(default=False, help_text="Accountant — can view financials and billing")
+    allowed_sections = models.JSONField(
+        default=list, blank=True,
+        help_text="List of app sections this user can access. Admins always have full access.",
+    )
     hide_email = models.BooleanField(default=False)
     last_seen = models.DateTimeField(auto_now=True)
     password=models.CharField(blank=True,max_length=256)
@@ -121,6 +128,34 @@ class User(AbstractBaseUser,PermissionsMixin):
         return self.username
     def __str__(self):
         return str(self.username)
+
+    _ALL_SECTIONS = frozenset({
+        'dashboard', 'inventory', 'sales', 'orders', 'customers', 'billing', 'users',
+    })
+
+    _ROLE_SECTION_DEFAULTS = {
+        'picker':     frozenset({'dashboard', 'orders'}),
+        'accountant': frozenset({'dashboard', 'sales', 'billing'}),
+        'sales':      frozenset({'dashboard', 'inventory', 'sales', 'orders', 'customers'}),
+        'staff':      frozenset({'dashboard', 'sales', 'orders', 'customers'}),
+        'manager':    frozenset({'dashboard', 'inventory', 'sales', 'orders', 'customers', 'billing'}),
+    }
+
+    @property
+    def accessible_sections(self):
+        """Set of section keys this user may access. Admins always get everything."""
+        if self.is_superuser or self.is_admin:
+            return self._ALL_SECTIONS
+        if self.allowed_sections:
+            return frozenset(self.allowed_sections)
+        # Fall back to role defaults for users created before section tracking
+        if self.is_picker:
+            return self._ROLE_SECTION_DEFAULTS['picker']
+        if self.is_accountant:
+            return self._ROLE_SECTION_DEFAULTS['accountant']
+        if self.is_sales:
+            return self._ROLE_SECTION_DEFAULTS['sales']
+        return self._ROLE_SECTION_DEFAULTS['staff']
 
     def get_full_name(self):
         """

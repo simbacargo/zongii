@@ -1,0 +1,32 @@
+{% comment %}
+  Params: stage, bg, border, text, icon_c, count_bg, count_t,
+          active_bg, active_t, active_icon, active_count, q
+{% endcomment %}
+<button hx-get="{% url 'sale_order_list' %}?status={{ stage.value }}&q={{ q|urlencode }}"
+        hx-target="#main-content" hx-push-url="false"
+        title="{{ stage.label }}"
+        class="group relative flex flex-col items-center gap-1.5 p-3 rounded-2xl border-2 transition-all cursor-pointer
+               {% if stage.active %}{{ active_bg }} border-transparent shadow-sm{% else %}bg-white {{ border }} hover:{{ bg }}{% endif %}">
+
+    <!-- Icon -->
+    <i class="bi {{ stage.icon }} text-xl
+              {% if stage.active %}{{ active_icon }}{% else %}{{ icon_c }}{% endif %}"></i>
+
+    <!-- Count -->
+    <span class="text-lg font-black leading-none
+                 {% if stage.active %}{{ active_t }}{% else %}{{ text }}{% endif %}">
+        {{ stage.count }}
+    </span>
+
+    <!-- Label -->
+    <span class="text-[9px] font-black uppercase tracking-wide text-center leading-tight
+                 {% if stage.active %}{{ active_t }} opacity-90{% else %}text-gray-400{% endif %}">
+        {{ stage.label }}
+    </span>
+
+    <!-- Active dot -->
+    {% if stage.active %}
+    <span class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-current {{ active_t }}"></span>
+    {% endif %}
+
+</button>

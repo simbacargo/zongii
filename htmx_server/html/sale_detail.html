@@ -9,7 +9,7 @@
             <i class="bi bi-arrow-left text-sm"></i>
         </button>
         <div>
-            <h1 class="text-2xl font-black text-gray-900">Sale #{{ sale.pk }}</h1>
+            <h1 class="text-2xl font-black text-gray-900">Sale <span class="font-mono text-indigo-600">{{ sale.sale_code }}</span></h1>
             <p class="text-sm text-gray-500">{{ sale.date_sold|date:"d F Y, H:i" }}</p>
         </div>
         <div class="ml-auto">

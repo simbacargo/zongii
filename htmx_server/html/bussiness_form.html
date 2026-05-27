@@ -1,31 +1,53 @@
-{% extends "base.html" %}
-{% block title %}{% if business %}Edit Business{% else %}New Business{% endif %}{% endblock %}
-{% block page_title %}{% if business %}Edit "{{ business.name }}"{% else %}New Business{% endif %}{% endblock %}
-
-{% block topbar_actions %}
-  <a href="{% url 'business_list' %}" role="button" class="btn-sm outline">Cancel</a>
-{% endblock %}
-
 {% block content %}
-<article style="max-width:480px">
-  <form
-    method="POST"
-    hx-post="{% if business %}{% url 'business_update' business.pk %}{% else %}{% url 'business_create' %}{% endif %}"
-    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-  >
-    {% csrf_token %}
-    {% if messages %}
-      {% for m in messages %}
-        <p style="color:var(--pico-del-color)">{{ m }}</p>
-      {% endfor %}
-    {% endif %}
+<div class="max-w-lg mx-auto">
 
-    <label>
-      Business name
-      <input type="text" name="name" value="{{ business.name|default:'' }}" required autofocus placeholder="e.g. Main Warehouse">
-    </label>
+    <!-- Header -->
+    <div class="flex items-center gap-4 mb-6">
+        <button hx-get="{% url 'business_list' %}" hx-target="#main-content"
+                class="w-9 h-9 flex items-center justify-center rounded-xl bg-white border border-gray-200 hover:bg-gray-50 text-gray-500 transition-colors shrink-0 shadow-sm">
+            <i class="bi bi-arrow-left text-sm"></i>
+        </button>
+        <div>
+            <h1 class="text-2xl font-black text-gray-900">
+                {% if business %}Edit "{{ business.name }}"{% else %}New Business{% endif %}
+            </h1>
+        </div>
+    </div>
 
-    <button type="submit">{% if business %}Save changes{% else %}Create business{% endif %}</button>
-  </form>
-</article>
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+        <form hx-post="{% if business %}{% url 'business_update' business.pk %}{% else %}{% url 'business_create' %}{% endif %}"
+              hx-target="#main-content">
+            {% csrf_token %}
+
+            {% if messages %}
+            <div class="mb-4 space-y-2">
+                {% for m in messages %}
+                <div class="px-4 py-3 rounded-xl text-sm font-semibold bg-red-50 text-red-700 border border-red-100">{{ m }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="mb-5">
+                <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2">
+                    Business Name <span class="text-red-400">*</span>
+                </label>
+                <input type="text" name="name" value="{{ business.name|default:'' }}" required autofocus
+                       placeholder="e.g. Main Warehouse"
+                       class="w-full border-2 border-gray-100 focus:border-indigo-400 rounded-xl px-4 py-3 text-sm font-medium outline-none transition bg-gray-50 focus:bg-white">
+            </div>
+
+            <div class="flex gap-3 justify-end">
+                <button type="button" hx-get="{% url 'business_list' %}" hx-target="#main-content"
+                        class="px-5 py-2.5 bg-white border border-gray-200 hover:bg-gray-50 text-gray-600 font-bold rounded-xl transition-all text-sm">
+                    Cancel
+                </button>
+                <button type="submit"
+                        class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-xl shadow-sm shadow-indigo-200 transition-all text-sm">
+                    {% if business %}Save Changes{% else %}Create Business{% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+
+</div>
 {% endblock %}

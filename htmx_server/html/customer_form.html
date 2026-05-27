@@ -1,3 +1,4 @@
+<div class="max-w-xl mx-auto w-full">
 <div class="bg-white rounded-2xl shadow-2xl overflow-hidden w-full">
 
     <!-- Header -->
@@ -120,6 +121,27 @@
             </p>
         </div>
 
+        <!-- Payment due date -->
+        <div>
+            <label class="block text-xs font-black text-gray-500 uppercase tracking-wider mb-2">
+                Payment Due Date
+                <span class="font-normal normal-case text-gray-400 ml-1">(optional)</span>
+            </label>
+            <div class="relative">
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300">
+                    <i class="bi bi-calendar-event text-sm"></i>
+                </span>
+                <input type="date"
+                       name="debt_due_date"
+                       value="{{ customer.debt_due_date|default:'' }}"
+                       class="w-full border-2 border-gray-200 focus:border-violet-500 rounded-xl pl-11 py-3.5 text-sm font-medium outline-none transition-all bg-gray-50 focus:bg-white">
+            </div>
+            <p class="text-[10px] text-gray-400 mt-1.5">
+                <i class="bi bi-info-circle mr-1"></i>
+                Deadline for the customer to clear their outstanding balance.
+            </p>
+        </div>
+
         <!-- Actions -->
         <div class="flex gap-3 pt-2">
             <button type="button" onclick="closeModal()"
@@ -133,6 +155,7 @@
             </button>
         </div>
     </form>
+</div>
 </div>
 
 <script>

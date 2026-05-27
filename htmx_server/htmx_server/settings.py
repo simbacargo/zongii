@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'corsheaders',
     'home',
+    'notifications',
     'authentication',
      'allauth',
     'allauth.account',
@@ -49,6 +50,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
+    'home.middleware.HtmxBaseMiddleware',
 ]
 
 ROOT_URLCONF = 'htmx_server.urls'
@@ -63,6 +65,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'home.context_processors.unread_notifications',
             ],
             'libraries': {
                 'currency': 'home.templatetags.currency',

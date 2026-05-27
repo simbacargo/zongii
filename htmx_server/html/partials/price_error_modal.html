@@ -1,0 +1,40 @@
+{% load currency %}
+<div class="p-8 text-center">
+
+    <!-- Icon -->
+    <div class="w-18 h-18 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-5" style="width:4.5rem;height:4.5rem">
+        <i class="bi bi-currency-exchange text-amber-500 text-4xl"></i>
+    </div>
+
+    <!-- Heading -->
+    <h3 class="text-xl font-black text-gray-900 mb-1">Price Out of Range</h3>
+    <p class="text-sm text-gray-400 mb-6">The price must be within the allowed range for this product.</p>
+
+    <!-- Detail card -->
+    <div class="bg-gray-50 border border-gray-200 rounded-2xl px-6 py-4 mb-6 text-left space-y-2">
+        <div class="flex justify-between text-sm">
+            <span class="text-gray-500">Product</span>
+            <span class="font-bold text-gray-800 text-right max-w-[60%] truncate">{{ product.name }}</span>
+        </div>
+        <div class="flex justify-between text-sm">
+            <span class="text-gray-500">Entered price</span>
+            <span class="font-bold text-red-600">{{ entered_price|tzs }}</span>
+        </div>
+        <div class="flex justify-between text-sm border-t border-gray-200 pt-2">
+            <span class="text-gray-500">Allowed range</span>
+            <span class="font-bold text-green-700">{{ product.min_price|tzs }} – {{ product.max_price|tzs }}</span>
+        </div>
+    </div>
+
+    <!-- Hint -->
+    <p class="text-xs text-gray-400 mb-6">
+        The price has been reset to <strong>{{ clamped_price|tzs }}</strong>.
+    </p>
+
+    <!-- Close button -->
+    <button onclick="closeModal()"
+            class="w-full bg-amber-500 hover:bg-amber-600 active:scale-95 text-white font-bold py-3 rounded-xl transition-all shadow-sm">
+        Got it
+    </button>
+
+</div>

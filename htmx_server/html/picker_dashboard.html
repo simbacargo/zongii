@@ -1,0 +1,105 @@
+{% load currency %}
+{% block content %}
+<div class="max-w-4xl mx-auto">
+
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">Picker Dashboard</h1>
+        <p class="text-gray-500">Warehouse picking requests and your active assignments</p>
+    </div>
+
+    <!-- My active pickings -->
+    {% if my_active %}
+    <div class="mb-8">
+        <h2 class="text-sm font-black text-gray-400 uppercase tracking-wider mb-3">Your Active Assignments</h2>
+        <div class="space-y-3">
+            {% for po in my_active %}
+            <div class="bg-blue-50 border border-blue-100 rounded-2xl p-5 flex items-center justify-between gap-4">
+                <div>
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="font-mono text-sm font-black text-blue-700">{{ po.picking_code }}</span>
+                        <span class="font-mono text-xs font-bold text-gray-500">→ {{ po.sale_order.order_code }}</span>
+                    </div>
+                    <p class="text-sm text-gray-600">
+                        {{ po.sale_order.customer.name|default:"Walk-in" }}
+                        · {{ po.items.count }} item{{ po.items.count|pluralize }}
+                    </p>
+                    {% if po.status == 'PARTIALLY_PICKED' %}
+                    <p class="text-xs font-bold text-orange-600 mt-0.5">Partial — items still needed</p>
+                    {% endif %}
+                </div>
+                <button hx-get="{% url 'picking_detail' po.pk %}" hx-target="#main-content"
+                        class="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-xl transition-all shrink-0">
+                    <i class="bi bi-clipboard-check"></i> Continue
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Pending picking requests -->
+    <h2 class="text-sm font-black text-gray-400 uppercase tracking-wider mb-3">
+        Pending Picking Requests
+        {% if pending_orders %}<span class="ml-1 text-amber-600">({{ pending_orders|length }})</span>{% endif %}
+    </h2>
+
+    {% if pending_orders %}
+    <div class="space-y-3">
+        {% for order in pending_orders %}
+        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
+            <div class="flex items-start justify-between gap-4 flex-wrap">
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2 mb-1 flex-wrap">
+                        <span class="font-mono text-sm font-black text-indigo-600">{{ order.order_code }}</span>
+                        {% include "partials/workflow_badge.html" with status=order.workflow_status %}
+                    </div>
+                    <p class="text-sm font-semibold text-gray-700">
+                        {{ order.customer.name|default:"Walk-in Customer" }}
+                    </p>
+                    <p class="text-xs text-gray-400 mt-0.5">
+                        Created {{ order.created_at|date:"d M Y, H:i" }} by {{ order.created_by.username }}
+                    </p>
+
+                    <!-- Item list preview -->
+                    <div class="mt-3 flex flex-wrap gap-2">
+                        {% for sale in order.sales.all %}
+                        <span class="text-[11px] font-semibold bg-gray-100 text-gray-600 px-2 py-0.5 rounded-lg">
+                            {{ sale.product.name }} × {{ sale.quantity_sold }}
+                        </span>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-2 shrink-0">
+                    {% with po=order.picking_orders.last %}
+                    {% if po and po.status == 'PENDING' %}
+                    <form hx-post="{% url 'picking_accept' po.pk %}" hx-target="#main-content">
+                        {% csrf_token %}
+                        <button class="flex items-center gap-2 px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white text-sm font-bold rounded-xl transition-all shadow-sm shadow-amber-100">
+                            <i class="bi bi-hand-index-thumb"></i> Accept
+                        </button>
+                    </form>
+                    {% endif %}
+                    {% endwith %}
+                    <button hx-get="{% url 'sale_order_detail' order.pk %}" hx-target="#main-content"
+                            class="flex items-center gap-2 px-5 py-2 text-gray-500 hover:text-indigo-600 text-sm font-semibold rounded-xl hover:bg-indigo-50 transition-all">
+                        <i class="bi bi-eye"></i> View
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% else %}
+    <div class="bg-white rounded-2xl border border-gray-200 p-16 text-center">
+        <div class="flex flex-col items-center opacity-30 mb-4">
+            <i class="bi bi-check2-all text-5xl text-gray-400 mb-3"></i>
+            <p class="text-lg font-bold text-gray-500">All clear!</p>
+            <p class="text-sm text-gray-400">No pending picking requests right now.</p>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

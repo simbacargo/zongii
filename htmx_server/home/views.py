@@ -13,7 +13,15 @@ from django.template.loader import render_to_string
 from decimal import Decimal
 from datetime import date
 
-from .models import Category, Business, Product, Customer, Sale, Document, DocumentItem
+from django.db.models import Avg as _Avg
+
+from .models import (
+    Category, Business, Product, Customer, Sale, Document, DocumentItem,
+    SaleOrder, PickingOrder, PickingOrderItem, GatePass, GatePassItem, SaleStatusHistory,
+    StockRefill,
+)
+from notifications.models import Notification
+from notifications.utils import notify, notify_admins, notify_pickers
 from authentication.models import User
 
 
@@ -22,6 +30,17 @@ def admin_required(view_func):
     @login_required
     def wrapper(request, *args, **kwargs):
         if not (request.user.is_superuser or request.user.is_admin):
+            raise PermissionDenied
+        return view_func(request, *args, **kwargs)
+    wrapper.__name__ = view_func.__name__
+    return wrapper
+
+
+def picker_required(view_func):
+    """Allow pickers, admins, and superusers."""
+    @login_required
+    def wrapper(request, *args, **kwargs):
+        if not (request.user.is_picker or request.user.is_admin or request.user.is_superuser):
             raise PermissionDenied
         return view_func(request, *args, **kwargs)
     wrapper.__name__ = view_func.__name__
@@ -194,7 +213,9 @@ def product_list(request):
     query = request.GET.get("q", "").strip()
 
     # products = Product.objects.select_related("supplier", "business").filter(is_active=True)
-    products = Product.objects.filter(is_active=True)
+    products = Product.objects.filter(is_active=True).annotate(
+        avg_selling_price=_Avg('sales__price_per_unit', filter=Q(sales__aproved=True))
+    )
     if business_id:
         products = products.filter(business_id=business_id)
 
@@ -223,13 +244,32 @@ def product_detail(request, pk):
     """GET /products/<pk>/ — full product detail."""
     product = get_object_or_404(
         Product.objects.select_related("business", "created_by")
-                       .prefetch_related("categories"),
+                       .prefetch_related("categories", "refills"),
         pk=pk,
     )
-    return render(request, "product_detail.html", {"product": product})
+    last_refill = product.refills.first()
+    if last_refill and last_refill.quantity_after > 0:
+        stock_threshold = int(last_refill.quantity_after * 0.30)
+        if product.quantity_at_hand == 0:
+            stock_status = 'empty'
+        elif product.quantity_at_hand <= stock_threshold:
+            stock_status = 'low'
+        else:
+            stock_status = 'ok'
+    else:
+        stock_threshold = None
+        stock_status = 'unknown'
+
+    return render(request, "product_details.html", {
+        "product": product,
+        "last_refill": last_refill,
+        "stock_threshold": stock_threshold,
+        "stock_status": stock_status,
+        "recent_refills": product.refills.all()[:5],
+    })
 
 
-@login_required
+@admin_required
 @require_http_methods(["GET", "POST"])
 def product_create(request):
     """GET — blank form  |  POST — create product."""
@@ -286,7 +326,7 @@ def product_create(request):
     return render(request, "product_form.html", context)
 
 
-@login_required
+@admin_required
 @require_http_methods(["GET", "POST"])
 def product_update(request, pk):
     """GET — prefilled form  |  POST — update product."""
@@ -343,7 +383,7 @@ def product_update(request, pk):
     return render(request, "product_form.html", context)
 
 
-@login_required
+@admin_required
 @require_POST
 def product_delete(request, pk):
     """POST /products/<pk>/delete/ — soft-delete (sets is_active=False)."""
@@ -411,6 +451,7 @@ def customer_create(request):
             email=data.get("email", ""),
             phone=data.get("phone", ""),
             remaining_balance=data.get("remaining_balance", 0),
+            debt_due_date=data.get("debt_due_date") or None,
         )
         messages.success(request, f'Customer "{customer.name}" created.')
         return redirect("customer_detail", pk=customer.pk)
@@ -434,6 +475,7 @@ def customer_update(request, pk):
         customer.email = data.get("email", customer.email)
         customer.phone = data.get("phone", customer.phone)
         customer.remaining_balance = data.get("remaining_balance", customer.remaining_balance)
+        customer.debt_due_date = data.get("debt_due_date") or None
         customer.save()
         messages.success(request, "Customer updated.")
         return redirect("customer_detail", pk=customer.pk)
@@ -473,10 +515,11 @@ def customer_pay_balance(request, pk):
 @login_required
 @require_GET
 def sale_list(request):
-    """GET /sales/?status=pending|approved|rejected&page=<n>"""
+    """GET /sales/?status=pending|approved|rejected&q=<search>&page=<n>"""
     status_filter = request.GET.get("status", "")
+    q = request.GET.get("q", "").strip()
+
     sales = Sale.objects.select_related("product", "customer", "created_by").filter(deleted=False)
-    sales = Sale.objects.all().filter(deleted=False)
 
     if status_filter == "approved":
         sales = sales.filter(aproved=True, rejected=False)
@@ -484,13 +527,29 @@ def sale_list(request):
         sales = sales.filter(rejected=True)
     elif status_filter == "pending":
         sales = sales.filter(aproved=False, rejected=False)
-        print(sales)
+
+    if q:
+        upper_q = q.upper()
+        if upper_q.startswith("ZC"):
+            try:
+                sale_num = int(upper_q[2:])
+                sales = sales.filter(pk=sale_num)
+            except ValueError:
+                sales = sales.none()
+        else:
+            search_q = Q(product__name__icontains=q) | Q(customer__name__icontains=q)
+            try:
+                search_q |= Q(pk=int(q))
+            except ValueError:
+                pass
+            sales = sales.filter(search_q)
 
     paginator = Paginator(sales.order_by("-date_sold"), 25)
     page = paginator.get_page(request.GET.get("page"))
     return render(request, "sale_list.html", {
         "page_obj": page,
         "status_filter": status_filter,
+        "q": q,
     })
 
 
@@ -515,8 +574,22 @@ def sale_create(request):
         try:
             product = get_object_or_404(Product, pk=data["product"])
             quantity = int(data["quantity_sold"])
-            price_per_unit = float(data["price_per_unit"])
+            price_per_unit = Decimal(data["price_per_unit"])
             customer_id = data.get("customer") or None
+
+            # Inline customer creation
+            new_customer_name = data.get("new_customer_name", "").strip()
+            if new_customer_name:
+                total_amount = quantity * price_per_unit
+                due_date = data.get("customer_due_date") or None
+                new_customer = Customer.objects.create(
+                    name=new_customer_name,
+                    email=data.get("new_customer_email", ""),
+                    phone=data.get("new_customer_phone", ""),
+                    remaining_balance=int(total_amount),
+                    debt_due_date=due_date,
+                )
+                customer_id = new_customer.pk
 
             if quantity <= 0:
                 raise ValueError("Quantity must be greater than zero.")
@@ -533,8 +606,6 @@ def sale_create(request):
                     created_by=request.user,
                     customer_id=customer_id,
                 )
-                # Note: Sale.save() calls product.update_stock — see model.
-                # If your Sale.save() calls update_stock_on_sale, that's handled.
 
             messages.success(request, f"Sale #{sale.pk} recorded.")
             return redirect("sale_detail", pk=sale.pk)
@@ -764,12 +835,12 @@ import json
 def sale_create_view(request):
     # --- 1. HANDLE LIVE SEARCH (HTMX) ---
     if request.headers.get('HX-Request') and 'q' in request.GET:
-        query = request.GET.get('q')
-        # Search by name or part number, limit to 10 for speed
+        query = request.GET.get('q', '').strip()
         products = Product.objects.filter(
-            Q(name__icontains=query) | Q(part_number__icontains=query),
+            Q(name__icontains=query) | Q(brand__icontains=query) | Q(part_number__icontains=query),
             is_active=True,
-            quantity_at_hand__gt=0
+        ).annotate(
+            avg_selling_price=_Avg('sales__price_per_unit', filter=Q(sales__aproved=True))
         )[:10]
         return render(request, "partials/sale_search_results.html", {"products": products})
 
@@ -778,8 +849,9 @@ def sale_create_view(request):
         p_id = request.GET.get('product_id')
         qty = int(request.GET.get('quantity_sold', 1) or 1)
         product = get_object_or_404(Product, id=p_id)
-        
-        total = (product.min_price or 0) * qty
+
+        price = product.average_price or 0
+        total = price * qty
         return render(request, "partials/sale_calc_snippet.html", {
             "product": product,
             "quantity": qty,
@@ -790,41 +862,303 @@ def sale_create_view(request):
     customers = Customer.objects.all().order_by('name')
     return render(request, "sale_page.html", {"customers": customers})
 
+
+@login_required
+@require_GET
+def checkout_product_search(request):
+    """Dedicated HTMX endpoint for product search on the checkout page."""
+    query = request.GET.get('q', '').strip()
+    if not query:
+        return HttpResponse('')
+    products = Product.objects.filter(
+        Q(name__icontains=query) | Q(brand__icontains=query) | Q(part_number__icontains=query),
+        is_active=True,
+    ).annotate(
+        avg_selling_price=_Avg('sales__price_per_unit', filter=Q(sales__aproved=True))
+    )[:12]
+    return render(request, "partials/sale_search_results.html", {"products": products})
+
+def _cart_item_price(item_data, product):
+    raw = item_data.get('price') if isinstance(item_data, dict) else None
+    if raw is not None:
+        try:
+            return Decimal(str(raw))
+        except Exception:
+            pass
+    return Decimal(str(product.max_price or product.average_price or product.min_price or 0))
+
+
+def _cart_item_qty(item_data):
+    if isinstance(item_data, int):
+        return item_data
+    try:
+        return int(item_data.get('quantity', 1) or 1)
+    except (ValueError, TypeError):
+        return 1
+
+
+def _build_cart_items(cart):
+    items, total = [], Decimal('0')
+    for p_id, item_data in list(cart.items()):
+        try:
+            product = Product.objects.get(id=int(p_id))
+            qty   = _cart_item_qty(item_data)
+            price = _cart_item_price(item_data, product)
+            line  = price * qty
+            total += line
+            items.append({'product': product, 'quantity': qty, 'price': price, 'total': line})
+        except Product.DoesNotExist:
+            pass
+    return items, total
+
+
+def _stock_error_response(product, requested, available, cart_items=None, grand_total=None):
+    """HTMX response that opens the stock-error modal, optionally resetting the cart via OOB."""
+    modal_html = render_to_string('partials/stock_error_modal.html', {
+        'product': product,
+        'requested': requested,
+        'available': available,
+    })
+    body = modal_html
+    if cart_items is not None:
+        cart_html = render_to_string('partials/cart_table.html', {
+            'cart_items': cart_items,
+            'grand_total': grand_total or Decimal('0'),
+        })
+        # Inject OOB attribute so HTMX swaps the cart back to its corrected state
+        cart_oob = cart_html.replace(
+            '<div id="cart-container"',
+            '<div id="cart-container" hx-swap-oob="outerHTML"',
+            1,
+        )
+        body = cart_oob + modal_html
+    response = HttpResponse(body)
+    response['HX-Retarget'] = '#modal-content'
+    response['HX-Reswap']   = 'innerHTML'
+    return response
+
+
+def _price_error_response(product, entered_price, clamped_price, cart_items, grand_total):
+    """HTMX response that opens the price-range-error modal and resets the cart via OOB."""
+    modal_html = render_to_string('partials/price_error_modal.html', {
+        'product': product,
+        'entered_price': entered_price,
+        'clamped_price': clamped_price,
+    })
+    cart_html = render_to_string('partials/cart_table.html', {
+        'cart_items': cart_items,
+        'grand_total': grand_total or Decimal('0'),
+    })
+    cart_oob = cart_html.replace(
+        '<div id="cart-container"',
+        '<div id="cart-container" hx-swap-oob="outerHTML"',
+        1,
+    )
+    response = HttpResponse(cart_oob + modal_html)
+    response['HX-Retarget'] = '#modal-content'
+    response['HX-Reswap']   = 'innerHTML'
+    return response
+
+
 @login_required
 def manage_cart(request):
     cart = request.session.get('cart', {})
 
-    # Action: Add Product
-    if request.method == "POST" and "add_id" in request.POST:
-        p_id = request.POST.get('add_id')
-        product = get_object_or_404(Product, id=p_id)
-        
-        # Add or increment
-        cart[p_id] = cart.get(p_id, 0) + 1
+    if request.method == "POST":
+
+        if "add_id" in request.POST:
+            p_id = str(request.POST.get('add_id'))
+            try:
+                product = Product.objects.get(id=int(p_id))
+            except Product.DoesNotExist:
+                product = None
+
+            if product:
+                existing    = cart.get(p_id, {})
+                current_qty = _cart_item_qty(existing) if existing else 0
+                new_qty     = current_qty + 1
+
+                if new_qty > product.available_stock:
+                    return _stock_error_response(product, new_qty, product.available_stock)
+
+                default_price = str(product.max_price or product.average_price or product.min_price or '0')
+                if isinstance(existing, int):
+                    existing = {"quantity": existing, "price": default_price}
+                cart[p_id] = {
+                    "quantity": new_qty,
+                    "price": existing.get("price", default_price),
+                }
+
+        elif "remove_id" in request.POST:
+            cart.pop(str(request.POST.get('remove_id')), None)
+
+        elif "update_id" in request.POST:
+            p_id     = str(request.POST.get('update_id'))
+            existing = cart.get(p_id, {})
+            if isinstance(existing, int):
+                existing = {"quantity": existing, "price": '0'}
+            qty       = int(request.POST.get('quantity', existing.get('quantity', 1)) or 1)
+            price_raw = request.POST.get('price', existing.get('price', '0'))
+
+            try:
+                product = Product.objects.get(id=int(p_id))
+
+                if qty > product.available_stock:
+                    capped = max(0, product.available_stock)
+                    if capped > 0:
+                        cart[p_id] = {"quantity": capped, "price": str(price_raw)}
+                    else:
+                        cart.pop(p_id, None)
+                    request.session['cart'] = cart
+                    request.session.modified = True
+                    items, total = _build_cart_items(cart)
+                    return _stock_error_response(
+                        product, qty, product.available_stock,
+                        cart_items=items, grand_total=total,
+                    )
+
+                # Price range validation — only enforce when both bounds are set
+                if product.min_price is not None and product.max_price is not None:
+                    try:
+                        entered = Decimal(str(price_raw))
+                    except Exception:
+                        entered = Decimal('0')
+                    min_p = Decimal(str(product.min_price))
+                    max_p = Decimal(str(product.max_price))
+                    if entered < min_p or entered > max_p:
+                        clamped = max(min_p, min(max_p, entered))
+                        cart[p_id] = {"quantity": qty, "price": str(clamped)}
+                        request.session['cart'] = cart
+                        request.session.modified = True
+                        items, total = _build_cart_items(cart)
+                        return _price_error_response(product, entered, clamped, items, total)
+
+            except Product.DoesNotExist:
+                pass
+
+            if qty > 0:
+                cart[p_id] = {"quantity": qty, "price": str(price_raw)}
+            else:
+                cart.pop(p_id, None)
+
+        elif "clear" in request.POST:
+            cart.clear()
+
         request.session['cart'] = cart
         request.session.modified = True
 
-    # Action: Remove Product
-    elif request.method == "POST" and "remove_id" in request.POST:
-        p_id = request.POST.get('remove_id')
-        if p_id in cart:
-            del cart[p_id]
-            request.session['cart'] = cart
-            request.session.modified = True
-
-    # Prepare data for the template
-    cart_items = []
-    grand_total = 0
-    for p_id, qty in cart.items():
-        product = Product.objects.get(id=p_id)
-        item_total = (product.min_price or 0) * qty
-        grand_total += item_total
-        cart_items.append({'product': product, 'quantity': qty, 'total': item_total})
-
+    cart_items, grand_total = _build_cart_items(cart)
     return render(request, "partials/cart_table.html", {
         "cart_items": cart_items,
-        "grand_total": grand_total
+        "grand_total": grand_total,
     })
+
+
+@login_required
+@require_POST
+def checkout_submit(request):
+    from django.utils import timezone as tz
+    cart = request.session.get('cart', {})
+    if not cart:
+        messages.error(request, "Cart is empty.")
+        return redirect('sale_create')
+
+    data = request.POST
+    customer_id = data.get('customer') or None
+    new_customer_name = data.get('new_customer_name', '').strip()
+    sale_order_pk = None
+
+    try:
+        with transaction.atomic():
+            # Resolve / create customer
+            if new_customer_name:
+                total_debt = Decimal('0')
+                for p_id, item_data in cart.items():
+                    try:
+                        product = Product.objects.get(pk=int(p_id))
+                        total_debt += _cart_item_price(item_data, product) * _cart_item_qty(item_data)
+                    except Product.DoesNotExist:
+                        pass
+                new_customer = Customer.objects.create(
+                    name=new_customer_name,
+                    email=data.get('new_customer_email', ''),
+                    phone=data.get('new_customer_phone', ''),
+                    remaining_balance=int(total_debt),
+                    debt_due_date=data.get('customer_due_date') or None,
+                )
+                customer_id = new_customer.pk
+
+            # Create SaleOrder (umbrella for the whole cart)
+            sale_order = SaleOrder.objects.create(
+                customer_id=customer_id,
+                created_by=request.user,
+                notes=data.get('notes', ''),
+            )
+
+            # Create PickingOrder
+            picking_order = PickingOrder.objects.create(sale_order=sale_order)
+
+            # Create Sale line items + PickingOrderItems
+            for p_id, item_data in list(cart.items()):
+                product = get_object_or_404(Product, pk=int(p_id))
+                qty   = _cart_item_qty(item_data)
+                price = _cart_item_price(item_data, product)
+
+                if product.available_stock < qty:
+                    raise ValueError(
+                        f"Insufficient stock for '{product.name}'. "
+                        f"Available: {product.available_stock}, requested: {qty}."
+                    )
+                if (product.min_price is not None and product.max_price is not None
+                        and (price < Decimal(str(product.min_price))
+                             or price > Decimal(str(product.max_price)))):
+                    raise ValueError(
+                        f"Price for '{product.name}' must be between "
+                        f"{product.min_price} and {product.max_price} (got {price})."
+                    )
+
+                sale = Sale.objects.create(
+                    order=sale_order,
+                    product=product,
+                    quantity_sold=qty,
+                    price_per_unit=price,
+                    created_by=request.user,
+                    customer_id=customer_id,
+                )
+                PickingOrderItem.objects.create(
+                    picking_order=picking_order,
+                    sale=sale,
+                    product=product,
+                    requested_qty=qty,
+                )
+
+            SaleStatusHistory.objects.create(
+                sale_order=sale_order,
+                from_status='',
+                to_status=SaleOrder.PENDING_PICKING,
+                changed_by=request.user,
+                note='Order created via checkout',
+            )
+            sale_order_pk = sale_order.pk
+
+        # Notify every active picker that a new order is waiting
+        notify_pickers(
+            Notification.ORDER_CREATED,
+            title=f"New order {sale_order.order_code} awaiting picking",
+            message=f"Created by {request.user.username}. {picking_order.items.count()} item(s).",
+            link=f"/orders/{sale_order.pk}/",
+            entity_id=sale_order.pk,
+        )
+
+        request.session['cart'] = {}
+        request.session.modified = True
+        messages.success(request, f"Order {sale_order.order_code} created and sent to warehouse.")
+
+    except (ValueError, KeyError) as exc:
+        messages.error(request, str(exc))
+        return redirect('sale_create')
+
+    return redirect('sale_order_detail', pk=sale_order_pk)
     
     
 from django.db.models import Sum, F, Count, ExpressionWrapper, DecimalField, Value
@@ -939,12 +1273,35 @@ def customer_debt_list(request):
 #  USER MANAGEMENT  (admin/superuser only)
 # ═════════════════════════════════════════════
 
+# role_key: (is_staff, is_admin, is_superuser, is_picker, is_sales, is_accountant)
 ROLE_MAP = {
-    # role_key: (is_staff, is_admin, is_superuser)
-    "staff":     (True,  False, False),
-    "manager":   (True,  True,  False),
-    "admin":     (True,  True,  True),
+    "staff":      (True,  False, False, False, False, False),
+    "sales":      (True,  False, False, False, True,  False),
+    "accountant": (True,  False, False, False, False, True),
+    "picker":     (True,  False, False, True,  False, False),
+    "manager":    (True,  True,  False, False, False, False),
+    "admin":      (True,  True,  True,  False, False, False),
 }
+
+# Default section access granted when a role is assigned
+ROLE_SECTIONS = {
+    "staff":      ["dashboard", "sales", "orders", "customers"],
+    "sales":      ["dashboard", "inventory", "sales", "orders", "customers"],
+    "accountant": ["dashboard", "sales", "billing"],
+    "picker":     ["dashboard", "orders"],
+    "manager":    ["dashboard", "inventory", "sales", "orders", "customers", "billing"],
+    "admin":      ["dashboard", "inventory", "sales", "orders", "customers", "billing", "users"],
+}
+
+ALL_SECTIONS = [
+    ("dashboard",  "Dashboard",              "bi-grid-1x2"),
+    ("inventory",  "Inventory & Products",   "bi-boxes"),
+    ("sales",      "Sales",                  "bi-receipt"),
+    ("orders",     "Warehouse Orders",       "bi-box-seam"),
+    ("customers",  "Customers",              "bi-people"),
+    ("billing",    "Invoices & Billing",     "bi-file-earmark-text"),
+    ("users",      "User Management",        "bi-shield-lock"),
+]
 
 def _user_vals(profile=None, data=None):
     """Flatten user field values into a plain dict safe for template use."""
@@ -972,13 +1329,18 @@ def _role_from_user(user):
         return "admin"
     if user.is_admin:
         return "manager"
+    if user.is_picker:
+        return "picker"
+    if user.is_accountant:
+        return "accountant"
+    if user.is_sales:
+        return "sales"
     return "staff"
 
-def _apply_role(user, role_key):
-    is_staff, is_admin, is_superuser = ROLE_MAP.get(role_key, (True, False, False))
-    user.is_staff = is_staff
-    user.is_admin = is_admin
-    user.is_superuser = is_superuser
+def _apply_role(user, role_key, sections=None):
+    flags = ROLE_MAP.get(role_key, (True, False, False, False, False, False))
+    user.is_staff, user.is_admin, user.is_superuser, user.is_picker, user.is_sales, user.is_accountant = flags
+    user.allowed_sections = sections if sections is not None else ROLE_SECTIONS.get(role_key, [])
 
 
 @admin_required
@@ -1018,6 +1380,8 @@ def user_create(request):
                 "profile": None, "errors": errors, "vals": _user_vals(data=data),
             })
 
+        role = data.get("role", "staff")
+        sections = data.getlist("sections") or ROLE_SECTIONS.get(role, [])
         user = User(
             username=username,
             firstname=data.get("firstname", "").strip(),
@@ -1027,13 +1391,18 @@ def user_create(request):
             gender=data.get("gender", "M"),
             is_active=data.get("is_active") == "on",
         )
-        _apply_role(user, data.get("role", "staff"))
+        _apply_role(user, role, sections)
         user.set_password(password)
         user.save()
         messages.success(request, f'User "{user.username}" created.')
         return redirect("user_list")
 
-    return render(request, "user_form.html", {"profile": None, "vals": _user_vals()})
+    return render(request, "user_form.html", {
+        "profile": None,
+        "vals": _user_vals(),
+        "all_sections": ALL_SECTIONS,
+        "role_sections_json": json.dumps(ROLE_SECTIONS),
+    })
 
 
 @admin_required
@@ -1075,6 +1444,8 @@ def user_update(request, pk):
                 "vals": _user_vals(profile, data), "role": data.get("role", _role_from_user(profile)),
             })
 
+        role = data.get("role", _role_from_user(profile))
+        sections = data.getlist("sections") or ROLE_SECTIONS.get(role, [])
         profile.username = username
         profile.firstname = data.get("firstname", "").strip()
         profile.lastname = data.get("lastname", "").strip()
@@ -1082,7 +1453,7 @@ def user_update(request, pk):
         profile.mobile = data.get("mobile", "").strip()
         profile.gender = data.get("gender", profile.gender)
         profile.is_active = data.get("is_active") == "on"
-        _apply_role(profile, data.get("role", _role_from_user(profile)))
+        _apply_role(profile, role, sections)
 
         new_password = data.get("password", "").strip()
         if new_password:
@@ -1101,6 +1472,9 @@ def user_update(request, pk):
         "profile": profile,
         "role": _role_from_user(profile),
         "vals": _user_vals(profile),
+        "all_sections": ALL_SECTIONS,
+        "role_sections_json": json.dumps(ROLE_SECTIONS),
+        "user_sections": list(profile.allowed_sections or ROLE_SECTIONS.get(_role_from_user(profile), [])),
     })
 
 
@@ -1325,3 +1699,407 @@ def document_product_search(request):
         'products': products,
         'index': index,
     })
+
+# ═════════════════════════════════════════════════════════════════════════════
+#  WAREHOUSE WORKFLOW
+# ═════════════════════════════════════════════════════════════════════════════
+
+from django.utils import timezone as _tz
+
+
+# ── Sale Orders ───────────────────────────────────────────────────────────────
+
+@login_required
+def sale_order_list(request):
+    from django.db.models import Count as _Count
+    status_filter = request.GET.get('status', '')
+    q = request.GET.get('q', '').strip()
+
+    all_orders = SaleOrder.objects.all()
+
+    # Per-stage counts (always over the full unfiltered set)
+    raw_counts = dict(
+        all_orders.values_list('workflow_status').annotate(c=_Count('id'))
+    )
+    total_count = all_orders.count()
+
+    # Build a structured stage list the template can iterate over
+    STAGE_META = [
+        ('PENDING_PICKING',  'Pending Picking',  'bi-hourglass-split',      'amber'),
+        ('PICKING',          'Picking',           'bi-box-arrow-in-down',    'blue'),
+        ('PARTIALLY_PICKED', 'Partially Picked',  'bi-pie-chart-fill',       'orange'),
+        ('PICKED',           'Picked',            'bi-check2-square',        'cyan'),
+        ('VERIFIED',         'Verified',          'bi-patch-check-fill',     'green'),
+        ('RE_PICK_REQUIRED', 'Re-pick Required',  'bi-arrow-repeat',         'purple'),
+        ('REJECTED',         'Rejected',          'bi-x-circle-fill',        'red'),
+        ('DISPATCHED',       'Dispatched',        'bi-truck',                'emerald'),
+        ('CANCELLED',        'Cancelled',         'bi-slash-circle',         'gray'),
+    ]
+    stages = [
+        {
+            'value': val,
+            'label': label,
+            'icon':  icon,
+            'color': color,
+            'count': raw_counts.get(val, 0),
+            'active': status_filter == val,
+        }
+        for val, label, icon, color in STAGE_META
+    ]
+
+    orders = all_orders.select_related('customer', 'created_by')
+
+    if status_filter:
+        orders = orders.filter(workflow_status=status_filter)
+
+    if q:
+        upper_q = q.upper()
+        if upper_q.startswith('ZO'):
+            try:
+                orders = orders.filter(pk=int(upper_q[2:]))
+            except ValueError:
+                orders = orders.none()
+        else:
+            orders = orders.filter(
+                Q(customer__name__icontains=q) |
+                Q(created_by__username__icontains=q) |
+                Q(created_by__firstname__icontains=q)
+            )
+
+    paginator = Paginator(orders.order_by('-created_at'), 25)
+    page = paginator.get_page(request.GET.get('page'))
+    return render(request, 'sale_order_list.html', {
+        'page_obj': page,
+        'status_filter': status_filter,
+        'q': q,
+        'stages': stages,
+        'total_count': total_count,
+    })
+
+
+@login_required
+def sale_order_detail(request, pk):
+    order = get_object_or_404(
+        SaleOrder.objects.select_related('customer', 'created_by', 'verified_by')
+                         .prefetch_related('sales__product', 'history__changed_by',
+                                           'picking_orders__picker', 'picking_orders__items__product'),
+        pk=pk,
+    )
+    active_picking = order.picking_orders.filter(
+        status__in=[PickingOrder.PENDING, PickingOrder.ACCEPTED, PickingOrder.PARTIALLY_PICKED]
+    ).first()
+    last_completed_picking = order.picking_orders.filter(
+        status=PickingOrder.COMPLETED
+    ).prefetch_related('items__product').last()
+    try:
+        gate_pass = order.gate_pass
+    except GatePass.DoesNotExist:
+        gate_pass = None
+
+    return render(request, 'sale_order_detail.html', {
+        'order': order,
+        'active_picking': active_picking,
+        'last_completed_picking': last_completed_picking,
+        'gate_pass': gate_pass,
+    })
+
+
+@login_required
+@require_POST
+def sale_order_verify(request, pk):
+    """Sales Person verifies (or rejects / requests re-pick) a picked order."""
+    order = get_object_or_404(SaleOrder, pk=pk)
+    action = request.POST.get('action')
+
+    if order.workflow_status not in (SaleOrder.PICKED, SaleOrder.PARTIALLY_PICKED, SaleOrder.RE_PICK_REQUIRED):
+        messages.error(request, "This order is not ready for verification.")
+        return redirect('sale_order_detail', pk=pk)
+
+    # Find the most recent picking order (completed or partially picked)
+    last_picking = order.picking_orders.filter(
+        status__in=[PickingOrder.COMPLETED, PickingOrder.PARTIALLY_PICKED]
+    ).last()
+
+    # Self-verification guard — admins/superusers may override
+    if (last_picking and last_picking.picker == request.user
+            and not (request.user.is_admin or request.user.is_superuser)):
+        messages.error(request, "You cannot verify picking you performed yourself.")
+        return redirect('sale_order_detail', pk=pk)
+
+    note = request.POST.get('note', '')
+
+    try:
+        with transaction.atomic():
+            if action == 'approve':
+                order.verified_by = request.user
+                order.verified_at = _tz.now()
+                order.save(update_fields=['verified_by', 'verified_at', 'updated_at'])
+                order.transition(SaleOrder.VERIFIED, request.user, note or 'Verified by sales person')
+
+                gp = GatePass.objects.create(
+                    sale_order=order,
+                    picking_order=last_picking,
+                    verified_by=request.user,
+                )
+                items_source = last_picking.items.select_related('product') if last_picking else []
+                for poi in items_source:
+                    GatePassItem.objects.create(
+                        gate_pass=gp,
+                        product=poi.product,
+                        requested_qty=poi.requested_qty,
+                        picked_qty=poi.picked_qty,
+                    )
+                messages.success(request, f"Order {order.order_code} verified. Gate Pass {gp.gp_code} generated.")
+
+            elif action == 'reject':
+                order.transition(SaleOrder.REJECTED, request.user, note or 'Rejected by sales person')
+                messages.warning(request, f"Order {order.order_code} has been rejected.")
+
+            elif action == 're_pick':
+                order.transition(SaleOrder.RE_PICK_REQUIRED, request.user, note or 'Re-pick requested')
+                new_po = PickingOrder.objects.create(sale_order=order)
+                for sale in order.sales.select_related('product'):
+                    PickingOrderItem.objects.create(
+                        picking_order=new_po,
+                        sale=sale,
+                        product=sale.product,
+                        requested_qty=sale.quantity_sold,
+                    )
+                notify_pickers(
+                    Notification.RE_PICK_REQUESTED,
+                    title=f"Re-pick requested for {order.order_code}",
+                    message=note or f"Requested by {request.user.username}.",
+                    link=f"/orders/{order.pk}/",
+                    entity_id=order.pk,
+                )
+                messages.info(request, f"Re-pick requested for {order.order_code}.")
+
+            else:
+                messages.error(request, "Unknown action.")
+
+    except Exception as exc:
+        messages.error(request, f"Action failed: {exc}")
+
+    return redirect('sale_order_detail', pk=pk)
+
+
+@login_required
+@require_POST
+def dispatch_order(request, pk):
+    """Mark a verified order as dispatched and reduce stock."""
+    order = get_object_or_404(SaleOrder, pk=pk)
+
+    if order.workflow_status != SaleOrder.VERIFIED:
+        messages.error(request, "Only verified orders can be dispatched.")
+        return redirect('sale_order_detail', pk=pk)
+
+    try:
+        gate_pass = order.gate_pass
+    except GatePass.DoesNotExist:
+        messages.error(request, "Cannot dispatch: gate pass not found.")
+        return redirect('sale_order_detail', pk=pk)
+
+    with transaction.atomic():
+        # Reduce stock for each sale line item
+        for sale in order.sales.select_related('product').all():
+            sale.product.update_stock_on_sale(sale.quantity_sold, sale.total_amount)
+
+        order.dispatched_at = _tz.now()
+        order.save(update_fields=['dispatched_at', 'updated_at'])
+        order.transition(SaleOrder.DISPATCHED, request.user, 'Goods dispatched')
+        gate_pass.is_used = True
+        gate_pass.save(update_fields=['is_used'])
+
+    # Notify the sales person who created the order
+    if order.created_by:
+        notify(
+            order.created_by,
+            Notification.ORDER_DISPATCHED,
+            title=f"Order {order.order_code} has been dispatched",
+            message="Goods have left the warehouse. Stock has been updated.",
+            link=f"/orders/{order.pk}/",
+            entity_id=order.pk,
+        )
+
+    messages.success(request, f"Order {order.order_code} dispatched. Stock updated.")
+    return redirect('sale_order_detail', pk=pk)
+
+
+# ── Picker Dashboard & Picking ────────────────────────────────────────────────
+
+@picker_required
+def picker_dashboard(request):
+    pending_orders = SaleOrder.objects.filter(
+        workflow_status__in=[
+            SaleOrder.PENDING_PICKING,
+            SaleOrder.RE_PICK_REQUIRED,
+        ]
+    ).select_related('customer', 'created_by').prefetch_related('sales')
+
+    my_active = PickingOrder.objects.filter(
+        picker=request.user,
+        status__in=[PickingOrder.ACCEPTED, PickingOrder.PARTIALLY_PICKED],
+    ).select_related('sale_order__customer')
+
+    return render(request, 'picker_dashboard.html', {
+        'pending_orders': pending_orders,
+        'my_active': my_active,
+    })
+
+
+@picker_required
+@require_POST
+def picking_accept(request, pk):
+    """Picker accepts a picking order."""
+    picking = get_object_or_404(PickingOrder, pk=pk, status=PickingOrder.PENDING)
+    picking.picker = request.user
+    picking.status = PickingOrder.ACCEPTED
+    picking.accepted_at = _tz.now()
+    picking.save(update_fields=['picker', 'status', 'accepted_at'])
+    picking.sale_order.transition(
+        SaleOrder.PICKING, request.user,
+        f'Picking accepted by {request.user.username}'
+    )
+    messages.success(request, f"You accepted picking order {picking.picking_code}.")
+    return redirect('picking_detail', pk=pk)
+
+
+@picker_required
+def picking_detail(request, pk):
+    picking = get_object_or_404(
+        PickingOrder.objects.select_related('sale_order__customer', 'picker')
+                            .prefetch_related('items__product'),
+        pk=pk,
+    )
+    return render(request, 'picking_detail.html', {'picking': picking})
+
+
+@picker_required
+@require_POST
+def picking_save(request, pk):
+    """Save picked quantities for each item in a picking order."""
+    picking = get_object_or_404(
+        PickingOrder.objects.select_related('sale_order'),
+        pk=pk,
+        status__in=[PickingOrder.ACCEPTED, PickingOrder.PARTIALLY_PICKED],
+    )
+
+    # Enforce: only the assigned picker (or admin) can submit picks
+    if not (request.user == picking.picker or request.user.is_admin or request.user.is_superuser):
+        messages.error(request, "Only the assigned picker can submit picks.")
+        return redirect('picking_detail', pk=pk)
+
+    with transaction.atomic():
+        for item in picking.items.select_related('product').all():
+            raw = request.POST.get(f'picked_{item.pk}', '0')
+            try:
+                qty = max(0, int(raw))
+            except ValueError:
+                qty = 0
+            item.picked_qty = min(qty, item.requested_qty)
+            item.notes = request.POST.get(f'notes_{item.pk}', '')
+            item.save(update_fields=['picked_qty', 'notes'])
+
+        picking.notes = request.POST.get('picker_notes', '')
+
+        if picking.is_fully_picked:
+            picking.status = PickingOrder.COMPLETED
+            picking.completed_at = _tz.now()
+            new_order_status = SaleOrder.PICKED
+        elif any(i.picked_qty > 0 for i in picking.items.all()):
+            picking.status = PickingOrder.PARTIALLY_PICKED
+            new_order_status = SaleOrder.PARTIALLY_PICKED
+        else:
+            new_order_status = None
+
+        picking.save(update_fields=['status', 'completed_at', 'notes'])
+
+        if new_order_status:
+            picking.sale_order.transition(
+                new_order_status, request.user,
+                f'Picking {"completed" if new_order_status == SaleOrder.PICKED else "partial"} by {request.user.username}'
+            )
+            # Notify the sales person who created the order
+            order_creator = picking.sale_order.created_by
+            if order_creator:
+                notif_type = Notification.ORDER_PICKED
+                label = "fully picked" if new_order_status == SaleOrder.PICKED else "partially picked"
+                notify(
+                    order_creator,
+                    notif_type,
+                    title=f"Order {picking.sale_order.order_code} is ready for verification",
+                    message=f"Items were {label} by {request.user.username}. Please verify.",
+                    link=f"/orders/{picking.sale_order.pk}/",
+                    entity_id=picking.sale_order.pk,
+                )
+
+    messages.success(request, "Picking saved.")
+    return redirect('picking_detail', pk=pk)
+
+
+# ── Gate Pass ─────────────────────────────────────────────────────────────────
+
+@login_required
+def gate_pass_detail(request, pk):
+    gp = get_object_or_404(
+        GatePass.objects.select_related(
+            'sale_order__customer', 'sale_order__created_by',
+            'picking_order__picker', 'verified_by',
+        ).prefetch_related('items__product'),
+        pk=pk,
+    )
+    return render(request, 'gate_pass.html', {'gp': gp})
+
+
+@login_required
+def gate_pass_print(request, pk):
+    gp = get_object_or_404(
+        GatePass.objects.select_related(
+            'sale_order__customer', 'sale_order__created_by',
+            'picking_order__picker', 'verified_by',
+        ).prefetch_related('items__product'),
+        pk=pk,
+    )
+    return render(request, 'gate_pass_print.html', {'gp': gp})
+
+
+# ── Stock Refill ──────────────────────────────────────────────────────────────
+
+@login_required
+@require_POST
+def stock_refill_view(request, pk):
+    if not (request.user.is_admin or request.user.is_superuser):
+        raise PermissionDenied
+    product = get_object_or_404(Product, pk=pk)
+    try:
+        qty = int(request.POST.get('quantity_added', 0))
+    except (ValueError, TypeError):
+        qty = 0
+    if qty <= 0:
+        messages.error(request, "Quantity must be a positive number.")
+        return redirect('product_detail', pk=pk)
+
+    notes = request.POST.get('notes', '')
+    quantity_after = product.quantity_at_hand + qty
+
+    with transaction.atomic():
+        StockRefill.objects.create(
+            product=product,
+            quantity_added=qty,
+            quantity_after=quantity_after,
+            refilled_by=request.user,
+            notes=notes,
+        )
+        product.quantity_at_hand = F('quantity_at_hand') + qty
+        product.save(update_fields=['quantity_at_hand'])
+        # Refilling clears existing low-stock alerts for this product (matched by entity_id)
+        Notification.objects.filter(
+            notification_type=Notification.LOW_STOCK,
+            entity_id=product.pk,
+            is_read=False,
+        ).update(is_read=True)
+
+    messages.success(request, f"Added {qty} units to {product.name}. New stock: {quantity_after}.")
+    return redirect('product_detail', pk=pk)
+
+

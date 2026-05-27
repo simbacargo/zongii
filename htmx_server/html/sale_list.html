@@ -11,19 +11,40 @@
         </a>
     </div>
 
-    <div class="flex gap-2 mb-6 p-1 bg-gray-200 w-fit rounded-xl">
-        <button hx-get="{% url 'sale_list' %}" hx-target="#main-content" hx-push-url="false"
-                class="px-4 py-2 rounded-lg text-sm font-bold {% if not status_filter %}bg-white text-indigo-600 shadow-sm{% else %}text-gray-600 hover:bg-gray-300{% endif %}">
-            All Sales
-        </button>
-        <button hx-get="{% url 'sale_list' %}?status=pending" hx-target="#main-content" hx-push-url="false"
-                class="px-4 py-2 rounded-lg text-sm font-bold {% if status_filter == 'pending' %}bg-white text-yellow-600 shadow-sm{% else %}text-gray-600 hover:bg-gray-300{% endif %}">
-            Pending
-        </button>
-        <button hx-get="{% url 'sale_list' %}?status=approved" hx-target="#main-content" hx-push-url="false"
-                class="px-4 py-2 rounded-lg text-sm font-bold {% if status_filter == 'approved' %}bg-white text-green-600 shadow-sm{% else %}text-gray-600 hover:bg-gray-300{% endif %}">
-            Approved
-        </button>
+    <!-- Filters + Search row -->
+    <div class="flex flex-col sm:flex-row gap-3 mb-6">
+
+        <!-- Status tabs -->
+        <div class="flex gap-2 p-1 bg-gray-200 w-fit rounded-xl shrink-0">
+            <button hx-get="{% url 'sale_list' %}?q={{ q|urlencode }}" hx-target="#main-content" hx-push-url="false"
+                    class="px-4 py-2 rounded-lg text-sm font-bold {% if not status_filter %}bg-white text-indigo-600 shadow-sm{% else %}text-gray-600 hover:bg-gray-300{% endif %}">
+                All Sales
+            </button>
+            <button hx-get="{% url 'sale_list' %}?status=pending&q={{ q|urlencode }}" hx-target="#main-content" hx-push-url="false"
+                    class="px-4 py-2 rounded-lg text-sm font-bold {% if status_filter == 'pending' %}bg-white text-yellow-600 shadow-sm{% else %}text-gray-600 hover:bg-gray-300{% endif %}">
+                Pending
+            </button>
+            <button hx-get="{% url 'sale_list' %}?status=approved&q={{ q|urlencode }}" hx-target="#main-content" hx-push-url="false"
+                    class="px-4 py-2 rounded-lg text-sm font-bold {% if status_filter == 'approved' %}bg-white text-green-600 shadow-sm{% else %}text-gray-600 hover:bg-gray-300{% endif %}">
+                Approved
+            </button>
+        </div>
+
+        <!-- Search -->
+        <div class="relative flex-1 max-w-sm">
+            <i class="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm pointer-events-none"></i>
+            <input type="text"
+                   name="q"
+                   value="{{ q }}"
+                   placeholder="Search by ID (ZC001), product, customer…"
+                   class="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-400 bg-white"
+                   hx-get="{% url 'sale_list' %}?status={{ status_filter }}"
+                   hx-target="#main-content"
+                   hx-trigger="input delay:350ms, keyup[key=='Enter']"
+                   hx-include="this"
+                   hx-push-url="false">
+        </div>
+
     </div>
 
     <div id="sales-table-container" class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">

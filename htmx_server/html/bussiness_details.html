@@ -1,42 +1,65 @@
-{% extends "base.html" %}
-{% block title %}{{ business.name }}{% endblock %}
-{% block page_title %}{{ business.name }}{% endblock %}
-
-{% block topbar_actions %}
-  {% if business.owner == request.user %}
-    <a href="{% url 'business_update' business.pk %}" role="button" class="btn-sm outline">Edit</a>
-    <button class="btn-sm outline contrast"
-      hx-post="{% url 'business_delete' business.pk %}"
-      hx-confirm="Delete this business? All inventory will be removed."
-      hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-      Delete
-    </button>
-  {% endif %}
-{% endblock %}
-
 {% block content %}
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
-  <article>
-    <header><strong>Details</strong></header>
-    <dl>
-      <dt>Owner</dt>
-      <dd>{{ business.owner.get_full_name|default:business.owner.username }}</dd>
-      <dt>Members</dt>
-      <dd>
-        {% for member in business.members.all %}
-          <span class="badge badge-neutral">{{ member.get_full_name|default:member.username }}</span>
-        {% empty %}—{% endfor %}
-      </dd>
-    </dl>
-  </article>
+<div class="max-w-3xl mx-auto">
 
-  <article>
-    <header><strong>Inventory snapshot</strong></header>
-    <p>
-      <a href="{% url 'product_list' %}?business={{ business.pk }}">
-        View all products &rarr;
-      </a>
-    </p>
-  </article>
+    <!-- Header -->
+    <div class="flex items-center gap-4 mb-6">
+        <button hx-get="{% url 'business_list' %}" hx-target="#main-content"
+                class="w-9 h-9 flex items-center justify-center rounded-xl bg-white border border-gray-200 hover:bg-gray-50 text-gray-500 transition-colors shrink-0 shadow-sm">
+            <i class="bi bi-arrow-left text-sm"></i>
+        </button>
+        <div class="flex-1 min-w-0">
+            <h1 class="text-2xl font-black text-gray-900 truncate">{{ business.name }}</h1>
+        </div>
+        {% if business.owner == request.user %}
+        <button hx-get="{% url 'business_update' business.pk %}" hx-target="#main-content"
+                class="flex items-center gap-2 px-4 py-2 text-sm font-bold text-gray-600 bg-white border border-gray-200 hover:bg-gray-50 rounded-xl transition-all shadow-sm">
+            <i class="bi bi-pencil"></i> Edit
+        </button>
+        <button hx-post="{% url 'business_delete' business.pk %}"
+                hx-confirm="Delete this business? All inventory will be removed."
+                hx-target="#main-content"
+                class="flex items-center gap-2 px-4 py-2 text-sm font-bold text-red-500 bg-white border border-red-200 hover:bg-red-50 rounded-xl transition-all shadow-sm">
+            <i class="bi bi-trash3"></i> Delete
+        </button>
+        {% endif %}
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+        <!-- Details -->
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+            <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">Details</p>
+            <div class="space-y-3">
+                <div>
+                    <p class="text-xs text-gray-400 font-semibold">Owner</p>
+                    <p class="text-sm font-bold text-gray-800 mt-0.5">{{ business.owner.get_full_name|default:business.owner.username }}</p>
+                </div>
+                <div>
+                    <p class="text-xs text-gray-400 font-semibold">Members</p>
+                    <div class="flex flex-wrap gap-1.5 mt-1">
+                        {% for member in business.members.all %}
+                        <span class="px-2.5 py-1 bg-indigo-50 text-indigo-700 text-xs font-bold rounded-lg">
+                            {{ member.get_full_name|default:member.username }}
+                        </span>
+                        {% empty %}
+                        <span class="text-sm text-gray-400">—</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inventory -->
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+            <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">Inventory</p>
+            <p class="text-sm text-gray-500 mb-4">View all products associated with this business.</p>
+            <button hx-get="{% url 'product_list' %}?business={{ business.pk }}" hx-target="#main-content"
+                    class="flex items-center gap-2 px-4 py-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-sm font-bold rounded-xl transition-colors">
+                <i class="bi bi-boxes"></i> View Products
+            </button>
+        </div>
+
+    </div>
+
 </div>
 {% endblock %}

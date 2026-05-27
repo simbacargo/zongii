@@ -11,9 +11,11 @@
     {% endif %}
   </td>
   <td>
-    <div class="actions">
-      <a href="{% url 'customer_detail' customer.pk %}" role="button" class="btn-sm outline">View</a>
-      <a href="{% url 'customer_update' customer.pk %}" role="button" class="btn-sm outline">Edit</a>
+    <div class="flex gap-1">
+      <button hx-get="{% url 'customer_detail' customer.pk %}" hx-target="#main-content"
+              class="px-3 py-1.5 text-xs font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-colors">View</button>
+      <button hx-get="{% url 'customer_update' customer.pk %}" hx-target="#main-content"
+              class="px-3 py-1.5 text-xs font-bold text-gray-600 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">Edit</button>
     </div>
   </td>
 </tr>

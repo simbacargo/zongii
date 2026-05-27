@@ -3,7 +3,7 @@ from django.db import models
 from django.core.cache import cache
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
-from django.db.models import F
+from django.db.models import F, Avg
 from authentication.models import User
 from django.core.validators import MinValueValidator
 from decimal import Decimal
@@ -80,6 +80,15 @@ class Product(models.Model):
         ]
 
     @property
+    def average_price(self):
+        avg = self.sales.filter(aproved=True).aggregate(avg=Avg('price_per_unit'))['avg']
+        if avg is not None:
+            return avg
+        if self.min_price and self.max_price:
+            return (self.min_price + self.max_price) / 2
+        return self.min_price or self.max_price
+
+    @property
     def available_stock(self):
         """Stock that is actually available to be sold."""
         return self.quantity_at_hand - self.quantity_allocated
@@ -92,14 +101,42 @@ class Product(models.Model):
         return self.quantity_at_hand * self.buying_price
 
     def update_stock_on_sale(self, quantity, total_price):
-        """
-        Handles the sale of an item.
-        Increments amount_collected and reduces quantity_at_hand.
-        """
+        """Reduces stock and checks for low-stock threshold after the deduction."""
         self.quantity_at_hand = F('quantity_at_hand') - quantity
         self.amount_collected = F('amount_collected') + total_price
         self.save(update_fields=['quantity_at_hand', 'amount_collected'])
         self.refresh_from_db()
+        self._check_low_stock()
+
+    def _check_low_stock(self):
+        """Notifies admins if stock has fallen to ≤ 30% of the last refill quantity."""
+        last_refill = self.refills.first()  # ordering = ['-created_at'] so .first() is newest
+        if not last_refill or last_refill.quantity_after == 0:
+            return
+        threshold = int(last_refill.quantity_after * 0.30)
+        if self.quantity_at_hand > threshold:
+            return
+        # Avoid duplicate unread alerts: skip if an unread low-stock alert already
+        # exists for this product (identified by entity_id) for any admin.
+        from notifications.models import Notification
+        from notifications.utils import notify_admins
+        already_alerted = Notification.objects.filter(
+            notification_type=Notification.LOW_STOCK,
+            entity_id=self.pk,
+            is_read=False,
+        ).exists()
+        if not already_alerted:
+            notify_admins(
+                notification_type=Notification.LOW_STOCK,
+                title=f"Low stock: {self.name}",
+                message=(
+                    f"{self.quantity_at_hand} unit"
+                    f"{'s' if self.quantity_at_hand != 1 else ''} remaining — "
+                    f"≤ 30% of last refill of {last_refill.quantity_after}."
+                ),
+                link=f"/products/{self.pk}/",
+                entity_id=self.pk,
+            )
 
     def __str__(self):
         return f"[{self.part_number}] {self.brand} {self.name}"
@@ -109,6 +146,7 @@ class Customer(models.Model):
     email = models.EmailField(unique=False,blank=True)
     phone = models.CharField(max_length=15, blank=True)
     remaining_balance = models.IntegerField(default=0)
+    debt_due_date = models.DateField(null=True, blank=True, help_text="Date by which the customer must clear their balance")
     
     def pay_balance(self, amount):
         self.remaining_balance = max(0, self.remaining_balance - amount)
@@ -118,32 +156,98 @@ class Customer(models.Model):
     def __str__(self):
         return self.name
 
-class Sale(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="sales")
-    quantity_sold = models.PositiveIntegerField()
-    price_per_unit = models.DecimalField(max_digits=10, decimal_places=2)
-    total_amount = models.DecimalField(max_digits=12, decimal_places=2, editable=False)
-    date_sold = models.DateTimeField(auto_now_add=True)
-    aproved = models.BooleanField(default=False,)
-    deleted = models.BooleanField(default=False,)
-    rejected = models.BooleanField(default=False,)
-    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="created_sales")
-    customer = models.ForeignKey(
-        Customer, 
-        on_delete=models.SET_NULL, 
-        null=True, 
-        related_name="sales"
-    )
+# ── Sale Order ───────────────────────────────────────────────────────────────
+# Groups line items from a single cart checkout into one warehouse transaction.
+
+class SaleOrder(models.Model):
+    PENDING_PICKING  = 'PENDING_PICKING'
+    PICKING          = 'PICKING'
+    PARTIALLY_PICKED = 'PARTIALLY_PICKED'
+    PICKED           = 'PICKED'
+    VERIFIED         = 'VERIFIED'
+    RE_PICK_REQUIRED = 'RE_PICK_REQUIRED'
+    REJECTED         = 'REJECTED'
+    DISPATCHED       = 'DISPATCHED'
+    CANCELLED        = 'CANCELLED'
+
+    STATUS_CHOICES = [
+        (PENDING_PICKING,  'Pending Picking'),
+        (PICKING,          'Picking'),
+        (PARTIALLY_PICKED, 'Partially Picked'),
+        (PICKED,           'Picked'),
+        (VERIFIED,         'Verified'),
+        (RE_PICK_REQUIRED, 'Re-pick Required'),
+        (REJECTED,         'Rejected'),
+        (DISPATCHED,       'Dispatched'),
+        (CANCELLED,        'Cancelled'),
+    ]
+
+    customer        = models.ForeignKey('Customer', null=True, blank=True, on_delete=models.SET_NULL, related_name='orders')
+    created_by      = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='sale_orders')
+    workflow_status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=PENDING_PICKING)
+    notes           = models.TextField(blank=True)
+    created_at      = models.DateTimeField(auto_now_add=True)
+    updated_at      = models.DateTimeField(auto_now=True)
+    verified_by     = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='verified_orders')
+    verified_at     = models.DateTimeField(null=True, blank=True)
+    dispatched_at   = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    @property
+    def order_code(self):
+        return f"ZO{self.pk:03d}"
+
+    @property
+    def total_amount(self):
+        from django.db.models import Sum
+        return self.sales.aggregate(t=Sum('total_amount'))['t'] or Decimal('0')
+
+    def transition(self, new_status, changed_by, note=''):
+        old = self.workflow_status
+        self.workflow_status = new_status
+        self.save(update_fields=['workflow_status', 'updated_at'])
+        SaleStatusHistory.objects.create(
+            sale_order=self,
+            from_status=old,
+            to_status=new_status,
+            changed_by=changed_by,
+            note=note,
+        )
 
     def __str__(self):
-        return f"Sale of {self.product.name} - {self.quantity_sold} units"
+        return f"{self.order_code}"
+
+
+# ── Sale (line item) ─────────────────────────────────────────────────────────
+
+class Sale(models.Model):
+    order          = models.ForeignKey('SaleOrder', null=True, blank=True, on_delete=models.SET_NULL, related_name='sales')
+    product        = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="sales")
+    quantity_sold  = models.PositiveIntegerField()
+    price_per_unit = models.DecimalField(max_digits=10, decimal_places=2)
+    total_amount   = models.DecimalField(max_digits=12, decimal_places=2, editable=False)
+    date_sold      = models.DateTimeField(auto_now_add=True)
+    aproved        = models.BooleanField(default=False)
+    deleted        = models.BooleanField(default=False)
+    rejected       = models.BooleanField(default=False)
+    created_by     = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="created_sales")
+    customer       = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, related_name="sales")
+
+    @property
+    def sale_code(self):
+        return f"ZC{self.pk:03d}"
+
+    def __str__(self):
+        return f"{self.sale_code} — {self.product.name} × {self.quantity_sold}"
 
     def save(self, *args, **kwargs):
-        # Auto-calculate total amount
         self.total_amount = self.quantity_sold * self.price_per_unit
         super().save(*args, **kwargs)
-        # Update product after saving sale
-        self.product.update_stock_on_sale(self.quantity_sold, self.total_amount)
+        if self.order_id is None:
+            # Legacy path: reduce stock immediately (no warehouse workflow)
+            self.product.update_stock_on_sale(self.quantity_sold, self.total_amount)
         
 
 
@@ -232,11 +336,141 @@ class DocumentItem(models.Model):
 @receiver(post_delete, sender=Product)
 def clear_product_cache(sender, instance, **kwargs):
     cache.delete('product_list')
-    print("Product cache cleared.")
 
 @receiver(post_save, sender=Sale)
 @receiver(post_delete, sender=Sale)
 def clear_sales_cache(sender, instance, **kwargs):
     cache.delete('sales_summary')
-    print("Product cache cleared.")
+
+
+# ── Picking Order ─────────────────────────────────────────────────────────────
+
+class PickingOrder(models.Model):
+    PENDING          = 'PENDING'
+    ACCEPTED         = 'ACCEPTED'
+    PARTIALLY_PICKED = 'PARTIALLY_PICKED'
+    COMPLETED        = 'COMPLETED'
+    CANCELLED        = 'CANCELLED'
+
+    STATUS_CHOICES = [
+        (PENDING,          'Pending'),
+        (ACCEPTED,         'In Progress'),
+        (PARTIALLY_PICKED, 'Partially Picked'),
+        (COMPLETED,        'Completed'),
+        (CANCELLED,        'Cancelled'),
+    ]
+
+    sale_order   = models.ForeignKey(SaleOrder, on_delete=models.CASCADE, related_name='picking_orders')
+    picker       = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='picking_assignments')
+    status       = models.CharField(max_length=20, choices=STATUS_CHOICES, default=PENDING)
+    notes        = models.TextField(blank=True)
+    created_at   = models.DateTimeField(auto_now_add=True)
+    accepted_at  = models.DateTimeField(null=True, blank=True)
+    completed_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    @property
+    def picking_code(self):
+        return f"PK{self.pk:03d}"
+
+    @property
+    def is_fully_picked(self):
+        return self.items.exists() and all(item.is_complete for item in self.items.all())
+
+    def __str__(self):
+        return f"{self.picking_code}"
+
+
+class PickingOrderItem(models.Model):
+    picking_order = models.ForeignKey(PickingOrder, on_delete=models.CASCADE, related_name='items')
+    sale          = models.ForeignKey(Sale, on_delete=models.CASCADE, related_name='picking_items')
+    product       = models.ForeignKey(Product, on_delete=models.PROTECT, related_name='picking_items')
+    requested_qty = models.PositiveIntegerField()
+    picked_qty    = models.PositiveIntegerField(default=0)
+    notes         = models.TextField(blank=True)
+
+    @property
+    def is_complete(self):
+        return self.picked_qty >= self.requested_qty
+
+    @property
+    def shortfall(self):
+        return max(0, self.requested_qty - self.picked_qty)
+
+    def __str__(self):
+        return f"{self.product.name}: {self.picked_qty}/{self.requested_qty}"
+
+
+# ── Gate Pass ─────────────────────────────────────────────────────────────────
+
+class GatePass(models.Model):
+    sale_order       = models.OneToOneField(SaleOrder, on_delete=models.CASCADE, related_name='gate_pass')
+    gate_pass_number = models.CharField(max_length=20, unique=True, blank=True)
+    picking_order    = models.ForeignKey(PickingOrder, null=True, blank=True, on_delete=models.SET_NULL, related_name='gate_passes')
+    verified_by      = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='verified_gate_passes')
+    issued_at        = models.DateTimeField(auto_now_add=True)
+    is_used          = models.BooleanField(default=False)
+
+    def save(self, *args, **kwargs):
+        if not self.gate_pass_number:
+            super().save(*args, **kwargs)
+            GatePass.objects.filter(pk=self.pk).update(gate_pass_number=f"GP{self.pk:04d}")
+            self.gate_pass_number = f"GP{self.pk:04d}"
+        else:
+            super().save(*args, **kwargs)
+
+    @property
+    def gp_code(self):
+        return self.gate_pass_number or f"GP{self.pk:04d}"
+
+    def __str__(self):
+        return self.gp_code
+
+
+class GatePassItem(models.Model):
+    gate_pass     = models.ForeignKey(GatePass, on_delete=models.CASCADE, related_name='items')
+    product       = models.ForeignKey(Product, on_delete=models.PROTECT)
+    requested_qty = models.PositiveIntegerField()
+    picked_qty    = models.PositiveIntegerField()
+
+    def __str__(self):
+        return f"{self.product.name} × {self.picked_qty}"
+
+
+# ── Status Audit Log ──────────────────────────────────────────────────────────
+
+class SaleStatusHistory(models.Model):
+    sale_order  = models.ForeignKey(SaleOrder, on_delete=models.CASCADE, related_name='history')
+    from_status = models.CharField(max_length=20, blank=True)
+    to_status   = models.CharField(max_length=20)
+    changed_by  = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='status_changes')
+    note        = models.TextField(blank=True)
+    changed_at  = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['changed_at']
+
+    def __str__(self):
+        return f"{self.sale_order.order_code}: {self.from_status} → {self.to_status}"
+
+
+# ── Stock Refill ──────────────────────────────────────────────────────────────
+
+class StockRefill(models.Model):
+    product        = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='refills')
+    quantity_added = models.PositiveIntegerField()
+    quantity_after = models.PositiveIntegerField()  # stock level right after this refill (the new baseline)
+    refilled_by    = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='stock_refills')
+    notes          = models.TextField(blank=True)
+    created_at     = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"+{self.quantity_added} × {self.product.name} → {self.quantity_after} total"
+
+
 

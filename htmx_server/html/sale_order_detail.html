@@ -1,0 +1,329 @@
+{% load currency %}
+{% block content %}
+<div class="max-w-5xl mx-auto">
+
+    {% if messages %}
+    <div class="mb-4 space-y-2">
+        {% for message in messages %}
+        <div class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold
+                    {% if message.tags == 'success' %}bg-green-50 text-green-800 border border-green-100
+                    {% elif message.tags == 'warning' %}bg-amber-50 text-amber-800 border border-amber-100
+                    {% elif message.tags == 'error' %}bg-red-50 text-red-800 border border-red-100
+                    {% else %}bg-blue-50 text-blue-800 border border-blue-100{% endif %}">
+            <i class="bi {% if message.tags == 'success' %}bi-check-circle-fill text-green-500
+                        {% elif message.tags == 'warning' %}bi-exclamation-triangle-fill text-amber-500
+                        {% elif message.tags == 'error' %}bi-x-circle-fill text-red-500
+                        {% else %}bi-info-circle-fill text-blue-500{% endif %}"></i>
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Header -->
+    <div class="flex items-center gap-4 mb-6">
+        <button hx-get="{% url 'sale_order_list' %}" hx-target="#main-content"
+                class="w-9 h-9 flex items-center justify-center rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors">
+            <i class="bi bi-arrow-left text-sm"></i>
+        </button>
+        <div class="flex-1">
+            <div class="flex items-center gap-3 flex-wrap">
+                <h1 class="text-2xl font-black text-gray-900 font-mono">{{ order.order_code }}</h1>
+                {% include "partials/workflow_badge.html" with status=order.workflow_status %}
+            </div>
+            <p class="text-sm text-gray-500 mt-0.5">{{ order.created_at|date:"d F Y, H:i" }} · created by {{ order.created_by.username }}</p>
+        </div>
+        {% if gate_pass %}
+        <a hx-get="{% url 'gate_pass_detail' gate_pass.pk %}" hx-target="#main-content"
+           class="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold rounded-xl transition-all">
+            <i class="bi bi-file-check"></i> Gate Pass {{ gate_pass.gp_code }}
+        </a>
+        {% endif %}
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-6">
+
+        <!-- Line items -->
+        <div class="lg:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+            <div class="px-5 py-4 border-b border-gray-50 flex items-center gap-2">
+                <i class="bi bi-cart3 text-gray-400"></i>
+                <h3 class="text-xs font-black text-gray-400 uppercase tracking-wider">Order Items</h3>
+            </div>
+            <table class="w-full text-left">
+                <thead class="bg-gray-50 border-b border-gray-50">
+                    <tr>
+                        <th class="px-5 py-3 text-xs font-bold text-gray-400 uppercase">Product</th>
+                        <th class="px-5 py-3 text-xs font-bold text-gray-400 uppercase text-center">Qty</th>
+                        <th class="px-5 py-3 text-xs font-bold text-gray-400 uppercase text-right">Unit Price</th>
+                        <th class="px-5 py-3 text-xs font-bold text-gray-400 uppercase text-right">Total</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-50">
+                    {% for sale in order.sales.all %}
+                    <tr class="hover:bg-gray-50/30">
+                        <td class="px-5 py-3">
+                            <div class="text-sm font-semibold text-gray-800">{{ sale.product.name }}</div>
+                            <div class="text-[11px] font-mono text-gray-400">{{ sale.product.part_number }}</div>
+                        </td>
+                        <td class="px-5 py-3 text-center text-sm font-bold text-gray-700">{{ sale.quantity_sold }}</td>
+                        <td class="px-5 py-3 text-right text-sm text-gray-600">{{ sale.price_per_unit|tzs }}</td>
+                        <td class="px-5 py-3 text-right text-sm font-black text-gray-900">{{ sale.total_amount|tzs }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr class="bg-gray-50 border-t border-gray-100">
+                        <td colspan="3" class="px-5 py-3 text-xs font-black text-gray-400 uppercase text-right">Order Total</td>
+                        <td class="px-5 py-3 text-right text-lg font-black text-indigo-600">{{ order.total_amount|tzs }}</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="space-y-4">
+
+            <!-- Customer -->
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                <h3 class="text-xs font-black text-gray-400 uppercase tracking-wider mb-3">Customer</h3>
+                {% if order.customer %}
+                <p class="font-black text-gray-900">{{ order.customer.name }}</p>
+                <p class="text-xs text-gray-500 mt-0.5">{{ order.customer.phone|default:"No phone" }}</p>
+                {% else %}
+                <p class="text-sm text-gray-400">Walk-in Customer</p>
+                {% endif %}
+            </div>
+
+            <!-- Picking summary -->
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                <h3 class="text-xs font-black text-gray-400 uppercase tracking-wider mb-3">Picking History</h3>
+                {% for po in order.picking_orders.all %}
+                <div class="flex items-start justify-between gap-2 py-2 {% if not forloop.last %}border-b border-gray-50{% endif %}">
+                    <div>
+                        <span class="font-mono text-xs font-bold text-gray-600">{{ po.picking_code }}</span>
+                        <p class="text-[11px] text-gray-400 mt-0.5">
+                            {% if po.picker %}{{ po.picker.username }}{% else %}Unassigned{% endif %}
+                        </p>
+                    </div>
+                    <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded
+                        {% if po.status == 'COMPLETED' %}bg-green-100 text-green-700
+                        {% elif po.status == 'ACCEPTED' or po.status == 'PARTIALLY_PICKED' %}bg-blue-100 text-blue-700
+                        {% else %}bg-gray-100 text-gray-500{% endif %}">
+                        {{ po.get_status_display }}
+                    </span>
+                </div>
+                {% empty %}
+                <p class="text-xs text-gray-400">No picking orders yet.</p>
+                {% endfor %}
+            </div>
+
+            <!-- Verification / Gate Pass info -->
+            {% if order.verified_by %}
+            <div class="bg-green-50 rounded-2xl border border-green-100 p-5">
+                <h3 class="text-xs font-black text-green-700 uppercase tracking-wider mb-2">Verified</h3>
+                <p class="text-sm font-bold text-green-800">{{ order.verified_by.username }}</p>
+                <p class="text-xs text-green-600 mt-0.5">{{ order.verified_at|date:"d M Y, H:i" }}</p>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+
+    <!-- ── Action Panel ───────────────────────────────────────────── -->
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex flex-wrap gap-3 items-start">
+
+        {% if order.workflow_status == 'PENDING_PICKING' %}
+        <div class="w-full flex items-center gap-3 p-3 bg-amber-50 rounded-xl border border-amber-100">
+            <i class="bi bi-hourglass-split text-amber-500 text-lg shrink-0"></i>
+            <p class="text-sm text-amber-700">Waiting for a picker to accept this order in the warehouse.</p>
+        </div>
+        {% if active_picking and user.is_picker or user.is_admin or user.is_superuser %}
+        {% if active_picking %}
+        <form hx-post="{% url 'picking_accept' active_picking.pk %}" hx-target="#main-content">
+            {% csrf_token %}
+            <button class="flex items-center gap-2 px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white text-sm font-bold rounded-xl transition-all">
+                <i class="bi bi-hand-index-thumb"></i> Accept & Start Picking
+            </button>
+        </form>
+        {% endif %}
+        {% endif %}
+
+        {% elif order.workflow_status == 'PICKING' %}
+        <div class="w-full flex items-center gap-3 p-3 bg-blue-50 rounded-xl border border-blue-100">
+            <i class="bi bi-box-arrow-in-down text-blue-500 text-lg shrink-0"></i>
+            <p class="text-sm text-blue-700">
+                Picker {% if active_picking and active_picking.picker %}<strong>{{ active_picking.picker.username }}</strong>{% endif %} is working on this order.
+            </p>
+        </div>
+        {% if active_picking %}
+        {% if user == active_picking.picker or user.is_admin or user.is_superuser %}
+        <button hx-get="{% url 'picking_detail' active_picking.pk %}" hx-target="#main-content"
+                class="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-xl transition-all">
+            <i class="bi bi-clipboard-check"></i> Update Picking
+        </button>
+        {% endif %}
+        {% endif %}
+
+        {% elif order.workflow_status == 'RE_PICK_REQUIRED' %}
+        <div class="w-full flex items-center gap-3 p-3 bg-purple-50 rounded-xl border border-purple-100">
+            <i class="bi bi-arrow-repeat text-purple-500 text-lg shrink-0"></i>
+            <p class="text-sm text-purple-700">Re-pick was requested. Waiting for a picker to accept the new picking request.</p>
+        </div>
+        {% if active_picking %}
+        {% if user.is_picker or user.is_admin or user.is_superuser %}
+        <form hx-post="{% url 'picking_accept' active_picking.pk %}" hx-target="#main-content">
+            {% csrf_token %}
+            <button class="flex items-center gap-2 px-5 py-2.5 bg-purple-600 hover:bg-purple-700 text-white text-sm font-bold rounded-xl transition-all">
+                <i class="bi bi-hand-index-thumb"></i> Accept Re-pick
+            </button>
+        </form>
+        {% endif %}
+        {% endif %}
+
+        {% elif order.workflow_status == 'PICKED' or order.workflow_status == 'PARTIALLY_PICKED' %}
+        {% if order.workflow_status == 'PARTIALLY_PICKED' %}
+        <div class="w-full flex items-center gap-3 p-3 bg-orange-50 rounded-xl border border-orange-100">
+            <i class="bi bi-pie-chart-fill text-orange-500 text-lg shrink-0"></i>
+            <p class="text-sm text-orange-700">Items were partially picked. You can approve the partial quantity, request a re-pick, or reject the order.</p>
+        </div>
+        {% else %}
+        <div class="w-full flex items-center gap-3 p-3 bg-cyan-50 rounded-xl border border-cyan-100">
+            <i class="bi bi-check2-square text-cyan-600 text-lg shrink-0"></i>
+            <p class="text-sm text-cyan-700">All items have been picked. Please verify the quantities and approve or reject below.</p>
+        </div>
+        {% endif %}
+
+        <!-- Comparison table using last_completed_picking passed from the view -->
+        {% if last_completed_picking %}
+        <div class="w-full overflow-hidden rounded-xl border border-gray-200 mb-1">
+            <table class="w-full text-left text-sm">
+                <thead class="bg-gray-50 border-b border-gray-100">
+                    <tr>
+                        <th class="px-4 py-2.5 text-xs font-bold text-gray-400 uppercase">Product</th>
+                        <th class="px-4 py-2.5 text-xs font-bold text-gray-400 uppercase text-center">Requested</th>
+                        <th class="px-4 py-2.5 text-xs font-bold text-gray-400 uppercase text-center">Picked</th>
+                        <th class="px-4 py-2.5 text-xs font-bold text-gray-400 uppercase text-center">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-50">
+                    {% for item in last_completed_picking.items.all %}
+                    <tr class="hover:bg-gray-50/30">
+                        <td class="px-4 py-2.5 font-semibold text-gray-800">
+                            {{ item.product.name }}
+                            <div class="text-[11px] font-mono text-gray-400">{{ item.product.part_number }}</div>
+                        </td>
+                        <td class="px-4 py-2.5 text-center text-gray-600">{{ item.requested_qty }}</td>
+                        <td class="px-4 py-2.5 text-center font-bold {% if item.is_complete %}text-green-600{% else %}text-orange-500{% endif %}">
+                            {{ item.picked_qty }}
+                        </td>
+                        <td class="px-4 py-2.5 text-center">
+                            {% if item.is_complete %}
+                            <span class="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-md"><i class="bi bi-check-circle-fill"></i> Complete</span>
+                            {% else %}
+                            <span class="text-[10px] font-bold text-orange-500 bg-orange-50 px-2 py-0.5 rounded-md"><i class="bi bi-exclamation-triangle"></i> Short {{ item.shortfall }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+
+        <!-- Verification form — note textarea + 3 action buttons each with their own hx-vals.
+             HTMX does NOT send clicked submit button name/value, so each button carries its own
+             action via hx-vals and pulls in the note field via hx-include. -->
+        <div class="w-full" id="verify-form">
+            {% csrf_token %}
+            <textarea id="verify-note" name="note" rows="2"
+                      placeholder="Verification note (optional)"
+                      class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-indigo-400 mb-3 resize-none"></textarea>
+
+            <div class="flex flex-wrap gap-2">
+                <button type="button"
+                        hx-post="{% url 'sale_order_verify' order.pk %}"
+                        hx-target="#main-content"
+                        hx-include="#verify-note"
+                        hx-vals='{"action": "approve"}'
+                        class="flex items-center gap-2 px-5 py-2.5 bg-green-600 hover:bg-green-700 active:scale-95 text-white text-sm font-bold rounded-xl transition-all shadow-sm shadow-green-100">
+                    <i class="bi bi-patch-check-fill"></i> Approve &amp; Generate Gate Pass
+                </button>
+                <button type="button"
+                        hx-post="{% url 'sale_order_verify' order.pk %}"
+                        hx-target="#main-content"
+                        hx-include="#verify-note"
+                        hx-vals='{"action": "re_pick"}'
+                        class="flex items-center gap-2 px-5 py-2.5 bg-purple-50 hover:bg-purple-100 active:scale-95 text-purple-700 text-sm font-bold rounded-xl transition-all">
+                    <i class="bi bi-arrow-repeat"></i> Request Re-pick
+                </button>
+                <button type="button"
+                        hx-post="{% url 'sale_order_verify' order.pk %}"
+                        hx-target="#main-content"
+                        hx-include="#verify-note"
+                        hx-vals='{"action": "reject"}'
+                        hx-confirm="Reject this order? This cannot be undone."
+                        class="flex items-center gap-2 px-5 py-2.5 bg-red-50 hover:bg-red-100 active:scale-95 text-red-700 text-sm font-bold rounded-xl transition-all ml-auto">
+                    <i class="bi bi-x-circle"></i> Reject Order
+                </button>
+            </div>
+        </div>
+
+        {% elif order.workflow_status == 'VERIFIED' %}
+        <div class="w-full flex items-center gap-3 p-3 bg-green-50 rounded-xl border border-green-100">
+            <i class="bi bi-patch-check-fill text-green-500 text-lg shrink-0"></i>
+            <p class="text-sm text-green-700">Order verified. Gate pass issued — goods can leave the store.</p>
+        </div>
+        <form hx-post="{% url 'dispatch_order' order.pk %}" hx-target="#main-content"
+              hx-confirm="Mark this order as dispatched? Stock will be reduced.">
+            {% csrf_token %}
+            <button class="flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold rounded-xl shadow-sm transition-all">
+                <i class="bi bi-truck"></i> Confirm Dispatch
+            </button>
+        </form>
+
+        {% elif order.workflow_status == 'DISPATCHED' %}
+        <div class="w-full flex items-center gap-3 p-3 bg-emerald-50 rounded-xl border border-emerald-100">
+            <i class="bi bi-truck text-emerald-500 text-lg shrink-0"></i>
+            <p class="text-sm text-emerald-700">Dispatched on {{ order.dispatched_at|date:"d M Y, H:i" }}. Stock has been updated.</p>
+        </div>
+
+        {% elif order.workflow_status == 'REJECTED' %}
+        <div class="w-full flex items-center gap-3 p-3 bg-red-50 rounded-xl border border-red-100">
+            <i class="bi bi-x-circle-fill text-red-500 text-lg shrink-0"></i>
+            <p class="text-sm text-red-700">This order was rejected.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Audit Timeline -->
+    <div class="mt-5 bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <h3 class="text-xs font-black text-gray-400 uppercase tracking-wider mb-4">Audit Trail</h3>
+        <div class="space-y-3">
+            {% for entry in order.history.all %}
+            <div class="flex items-start gap-3">
+                <div class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center shrink-0 mt-0.5">
+                    <i class="bi bi-clock-history text-gray-400 text-xs"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        {% if entry.from_status %}
+                        {% include "partials/workflow_badge.html" with status=entry.from_status %}
+                        <i class="bi bi-arrow-right text-gray-300 text-xs"></i>
+                        {% endif %}
+                        {% include "partials/workflow_badge.html" with status=entry.to_status %}
+                    </div>
+                    <p class="text-xs text-gray-400 mt-1">
+                        {{ entry.changed_at|date:"d M Y, H:i" }}
+                        {% if entry.changed_by %} · {{ entry.changed_by.username }}{% endif %}
+                        {% if entry.note %} · <em>{{ entry.note }}</em>{% endif %}
+                    </p>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-xs text-gray-400">No history yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,138 @@
+{% load currency %}
+{% block content %}
+<div class="max-w-3xl mx-auto">
+
+    <div class="flex items-center gap-4 mb-6">
+        <button hx-get="{% url 'sale_order_detail' gp.sale_order.pk %}" hx-target="#main-content"
+                class="w-9 h-9 flex items-center justify-center rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-600 transition-colors">
+            <i class="bi bi-arrow-left text-sm"></i>
+        </button>
+        <div class="flex-1">
+            <h1 class="text-2xl font-black text-gray-900">Gate Pass
+                <span class="font-mono text-emerald-600">{{ gp.gp_code }}</span>
+            </h1>
+            <p class="text-sm text-gray-500">Issued {{ gp.issued_at|date:"d F Y, H:i" }}</p>
+        </div>
+        <a href="{% url 'gate_pass_print' gp.pk %}" target="_blank"
+           class="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-900 text-white text-sm font-bold rounded-xl transition-all">
+            <i class="bi bi-printer"></i> Print
+        </a>
+    </div>
+
+    <!-- Gate Pass Card -->
+    <div class="bg-white rounded-2xl border-2 border-gray-200 shadow-sm overflow-hidden">
+
+        <!-- Heading bar -->
+        <div class="bg-emerald-600 px-6 py-4 flex items-center justify-between">
+            <div class="text-white">
+                <p class="text-xs font-black uppercase tracking-wider opacity-80">Msaidizi Plumbing Operations</p>
+                <p class="text-xl font-black mt-0.5">WAREHOUSE GATE PASS</p>
+            </div>
+            <div class="text-right text-white">
+                <p class="text-3xl font-black font-mono">{{ gp.gp_code }}</p>
+                {% if gp.is_used %}
+                <span class="text-xs font-bold uppercase bg-white/20 px-2 py-0.5 rounded">Used</span>
+                {% else %}
+                <span class="text-xs font-bold uppercase bg-white/20 px-2 py-0.5 rounded">Active</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="p-6 grid grid-cols-2 gap-6">
+
+            <!-- Left meta -->
+            <div class="space-y-4">
+                <div>
+                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-wider">Sale Order</p>
+                    <p class="text-sm font-black text-gray-900 font-mono">{{ gp.sale_order.order_code }}</p>
+                </div>
+                <div>
+                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-wider">Customer</p>
+                    <p class="text-sm font-black text-gray-900">{{ gp.sale_order.customer.name|default:"Walk-in" }}</p>
+                </div>
+                <div>
+                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-wider">Prepared by (Sales)</p>
+                    <p class="text-sm font-black text-gray-900">{{ gp.sale_order.created_by.username }}</p>
+                </div>
+            </div>
+
+            <!-- Right meta -->
+            <div class="space-y-4">
+                <div>
+                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-wider">Picker</p>
+                    <p class="text-sm font-black text-gray-900">
+                        {% if gp.picking_order and gp.picking_order.picker %}
+                            {{ gp.picking_order.picker.username }}
+                        {% else %}—{% endif %}
+                    </p>
+                </div>
+                <div>
+                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-wider">Verified by</p>
+                    <p class="text-sm font-black text-gray-900">
+                        {% if gp.verified_by %}{{ gp.verified_by.username }}{% else %}—{% endif %}
+                    </p>
+                </div>
+                <div>
+                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-wider">Date / Time</p>
+                    <p class="text-sm font-black text-gray-900">{{ gp.issued_at|date:"d M Y, H:i" }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Items table -->
+        <div class="border-t border-gray-100">
+            <table class="w-full text-left">
+                <thead class="bg-gray-50 border-b border-gray-100">
+                    <tr>
+                        <th class="px-6 py-3 text-xs font-black text-gray-400 uppercase">#</th>
+                        <th class="px-6 py-3 text-xs font-black text-gray-400 uppercase">Product</th>
+                        <th class="px-6 py-3 text-xs font-black text-gray-400 uppercase text-center">Requested</th>
+                        <th class="px-6 py-3 text-xs font-black text-gray-400 uppercase text-center">Released</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-50">
+                    {% for item in gp.items.all %}
+                    <tr>
+                        <td class="px-6 py-3 text-xs text-gray-400">{{ forloop.counter }}</td>
+                        <td class="px-6 py-3">
+                            <p class="text-sm font-semibold text-gray-800">{{ item.product.name }}</p>
+                            <p class="text-[11px] font-mono text-gray-400">{{ item.product.part_number }}</p>
+                        </td>
+                        <td class="px-6 py-3 text-center text-sm text-gray-600">{{ item.requested_qty }}</td>
+                        <td class="px-6 py-3 text-center text-sm font-black
+                            {% if item.picked_qty >= item.requested_qty %}text-green-600{% else %}text-orange-500{% endif %}">
+                            {{ item.picked_qty }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Signature strip -->
+        <div class="px-6 py-5 border-t border-gray-100 grid grid-cols-3 gap-6">
+            <div class="text-center">
+                <div class="border-t-2 border-gray-300 pt-2 mt-8">
+                    <p class="text-xs font-bold text-gray-500">Sales Person Signature</p>
+                    <p class="text-[11px] text-gray-400">{{ gp.sale_order.created_by.username }}</p>
+                </div>
+            </div>
+            <div class="text-center">
+                <div class="border-t-2 border-gray-300 pt-2 mt-8">
+                    <p class="text-xs font-bold text-gray-500">Picker Signature</p>
+                    <p class="text-[11px] text-gray-400">
+                        {% if gp.picking_order and gp.picking_order.picker %}{{ gp.picking_order.picker.username }}{% else %}—{% endif %}
+                    </p>
+                </div>
+            </div>
+            <div class="text-center">
+                <div class="border-t-2 border-gray-300 pt-2 mt-8">
+                    <p class="text-xs font-bold text-gray-500">Gate Security Signature</p>
+                    <p class="text-[11px] text-gray-400">Date: ___________</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

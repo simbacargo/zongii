@@ -24,7 +24,7 @@
         {% if next_statuses %}
         <div class="flex gap-2 flex-wrap">
             {% for ns in next_statuses %}
-            <form method="post" action="{% url 'document_status' doc.pk %}">
+            <form hx-post="{% url 'document_status' doc.pk %}" hx-target="#main-content">
                 {% csrf_token %}
                 <input type="hidden" name="status" value="{{ ns }}">
                 <button type="submit" class="px-4 py-2 text-xs font-black rounded-xl border transition-all
@@ -43,8 +43,8 @@
            class="h-9 px-4 flex items-center gap-2 rounded-xl bg-white border border-gray-200 hover:bg-gray-50 text-gray-600 text-xs font-bold transition-colors shadow-sm no-underline">
             <i class="bi bi-file-earmark-pdf"></i> Download PDF
         </a>
-        <form method="post" action="{% url 'document_delete' doc.pk %}"
-              onsubmit="return confirm('Delete {{ doc.number }}? This cannot be undone.')">
+        <form hx-post="{% url 'document_delete' doc.pk %}" hx-target="#main-content"
+              hx-confirm="Delete {{ doc.number }}? This cannot be undone.">
             {% csrf_token %}
             <button type="submit"
                     class="h-9 w-9 flex items-center justify-center rounded-xl bg-white border border-red-200 hover:bg-red-50 text-red-400 transition-colors shadow-sm">

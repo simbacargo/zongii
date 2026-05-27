@@ -1,67 +1,144 @@
 
 {% block content %}
-<div class="max-w-5xl mx-auto p-4">
-    <div class="mb-8">
+<div class="max-w-6xl mx-auto p-4">
+    <div class="mb-6">
         <h1 class="text-3xl font-extrabold text-gray-900">Checkout</h1>
-        <p class="text-gray-500">Search for products and record a new sale.</p>
+        <p class="text-gray-500">Search for products, build your order, then complete the transaction.</p>
     </div>
 
-    <form hx-post="{% url 'sale_create' %}" hx-target="#main-content" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {% csrf_token %}
-        
-        <div class="lg:col-span-2 space-y-6">
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
-                
-                <div class="relative mb-6">
-                    <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Find Product</label>
-                    <input type="text" name="q" 
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+        <!-- LEFT COLUMN: Search + Cart -->
+        <div class="lg:col-span-2 space-y-4">
+
+            <!-- Product Search -->
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200">
+                <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Find Product</label>
+                <div class="relative">
+                    <i class="bi bi-search absolute left-4 top-3.5 text-gray-400 pointer-events-none"></i>
+                    <input type="text"
+                           id="product-search-input"
+                           name="q"
                            placeholder="Type product name or part number..."
-                           class="w-full p-4 pl-12 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition"
-                           hx-get="{% url 'sale_create' %}" 
-                           hx-trigger="keyup changed delay:300ms" 
+                           class="w-full p-3 pl-11 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition"
+                           hx-get="{% url 'checkout_product_search' %}"
+                           hx-trigger="input delay:300ms"
                            hx-target="#search-results"
+                           hx-indicator="#search-spinner"
                            autocomplete="off">
-                    <i class="bi bi-search absolute left-4 top-10 text-gray-400"></i>
-                    
-                    <div id="search-results" class="relative"></div>
-                </div>
-
-                <input type="hidden" name="product" id="selected-product-id">
-
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Quantity</label>
-                        <input type="number" name="quantity_sold" id="qty-input" value="1" min="1"
-                               class="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"
-                               hx-get="{% url 'sale_create' %}"
-                               hx-trigger="keyup changed"
-                               hx-include="#selected-product-id"
-                               hx-target="#calc-area">
+                    <div id="search-spinner" class="htmx-indicator absolute right-4 top-3.5">
+                        <div class="h-5 w-5 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
                     </div>
+                    <div id="search-results" class="absolute left-0 right-0 z-50 mt-1"></div>
+                </div>
+            </div>
+
+            <!-- Cart -->
+            <div id="cart-container"
+                 class="bg-white rounded-2xl shadow-sm border border-gray-200 p-10 text-center text-gray-400"
+                 hx-get="{% url 'manage_cart' %}"
+                 hx-trigger="load"
+                 hx-swap="outerHTML">
+                <div class="h-6 w-6 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
+                <span class="text-sm">Loading cart…</span>
+            </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN: Customer + Submit -->
+        <div class="lg:col-span-1">
+            <form hx-post="{% url 'checkout_submit' %}"
+                  hx-target="#main-content"
+                  hx-indicator="#submit-spinner">
+
+                {% csrf_token %}
+
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 space-y-5">
+                    <h3 class="font-bold text-gray-800 text-sm uppercase tracking-wide">Order Details</h3>
+
+                    <!-- Existing Customer -->
                     <div>
-                        <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Assign Customer</label>
-                        <select name="customer" class="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl outline-none">
+                        <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Customer</label>
+                        <select name="customer"
+                                id="existing-customer-select"
+                                class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl outline-none text-sm focus:ring-2 focus:ring-indigo-500">
                             <option value="">Walk-in Customer</option>
                             {% for c in customers %}
                             <option value="{{ c.id }}">{{ c.name }}</option>
                             {% endfor %}
                         </select>
                     </div>
+
+                    <!-- New Customer Toggle -->
+                    <div class="border border-gray-200 rounded-xl p-4 bg-gray-50">
+                        <label class="flex items-center gap-2 cursor-pointer select-none">
+                            <input type="checkbox"
+                                   id="new-customer-toggle"
+                                   onchange="toggleNewCustomer(this)"
+                                   class="w-4 h-4 accent-indigo-600">
+                            <span class="text-xs font-semibold text-gray-600">Create new customer on this sale</span>
+                        </label>
+
+                        <div id="new-customer-fields" class="hidden mt-4 space-y-3">
+                            <input type="text"
+                                   name="new_customer_name"
+                                   id="new-customer-name"
+                                   placeholder="Full name *"
+                                   class="w-full p-3 bg-white border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                            <input type="tel"
+                                   name="new_customer_phone"
+                                   placeholder="Phone number"
+                                   class="w-full p-3 bg-white border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                            <input type="email"
+                                   name="new_customer_email"
+                                   placeholder="Email (optional)"
+                                   class="w-full p-3 bg-white border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-1">Payment Due Date</label>
+                                <input type="date"
+                                       name="customer_due_date"
+                                       class="w-full p-3 bg-white border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                            </div>
+                            <p class="text-[11px] text-indigo-600 font-medium leading-relaxed">
+                                <i class="bi bi-info-circle mr-1"></i>
+                                Customer will be created and linked to this sale. Their outstanding balance will equal the order total.
+                            </p>
+                        </div>
+                    </div>
                 </div>
-            </div>
+
+                <button type="submit"
+                        class="w-full mt-4 bg-gray-900 text-white font-bold py-5 rounded-2xl hover:bg-black transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2">
+                    <span id="submit-spinner" class="htmx-indicator h-5 w-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                    <i class="bi bi-check2-circle text-lg"></i>
+                    Complete Transaction
+                </button>
+            </form>
         </div>
 
-        <div class="lg:col-span-1">
-            <div id="calc-area" class="bg-indigo-600 rounded-3xl p-8 text-white shadow-xl sticky top-4">
-                <div class="text-center py-10 opacity-50 italic text-sm">
-                    Select a product to see the total
-                </div>
-            </div>
-            
-            <button type="submit" class="w-full mt-4 bg-gray-900 text-white font-bold py-5 rounded-2xl hover:bg-black transition-all shadow-lg active:scale-95">
-                Complete Transaction
-            </button>
-        </div>
-    </form>
+    </div>
 </div>
+
+<script>
+function toggleNewCustomer(checkbox) {
+    var fields  = document.getElementById('new-customer-fields');
+    var select  = document.getElementById('existing-customer-select');
+    var nameIn  = document.getElementById('new-customer-name');
+    if (checkbox.checked) {
+        fields.classList.remove('hidden');
+        select.disabled = true;
+        select.value = '';
+        nameIn.required = true;
+    } else {
+        fields.classList.add('hidden');
+        select.disabled = false;
+        nameIn.required = false;
+    }
+}
+
+function clearSearch() {
+    document.getElementById('product-search-input').value = '';
+    document.getElementById('search-results').innerHTML = '';
+}
+</script>
 {% endblock %}

@@ -43,7 +43,9 @@ urlpatterns = [
     path("sales/<int:pk>/approve/",    views.sale_approve,     name="sale_approve"),
     path("sales/<int:pk>/reject/",     views.sale_reject,      name="sale_reject"),
 
-path('sales/new/', views.sale_create_view, name='sale_create'),    
+path('sales/new/', views.sale_create_view, name='sale_create'),
+path('sales/checkout/', views.checkout_submit, name='checkout_submit'),
+path('sales/search/', views.checkout_product_search, name='checkout_product_search'),
 path('cart/manage/', views.manage_cart, name='manage_cart'),
     
     
@@ -61,6 +63,21 @@ path('cart/manage/', views.manage_cart, name='manage_cart'),
     path("", views.dashboard, name="dashboard"),
     path("dashboard/", views.dashboard, name="dashboard"),
     path("products/<int:product_id>/sell/", views.product_sell, name="product_sell"),
+
+    # ── Warehouse Workflow ───────────────────────
+    path("orders/",                         views.sale_order_list,    name="sale_order_list"),
+    path("orders/<int:pk>/",                views.sale_order_detail,  name="sale_order_detail"),
+    path("orders/<int:pk>/verify/",         views.sale_order_verify,  name="sale_order_verify"),
+    path("orders/<int:pk>/dispatch/",       views.dispatch_order,     name="dispatch_order"),
+    path("picking/",                        views.picker_dashboard,   name="picker_dashboard"),
+    path("picking/<int:pk>/",              views.picking_detail,     name="picking_detail"),
+    path("picking/<int:pk>/accept/",       views.picking_accept,     name="picking_accept"),
+    path("picking/<int:pk>/save/",         views.picking_save,       name="picking_save"),
+    path("gate-pass/<int:pk>/",            views.gate_pass_detail,   name="gate_pass_detail"),
+    path("gate-pass/<int:pk>/print/",      views.gate_pass_print,    name="gate_pass_print"),
+
+    # ── Stock Refill ───────────────────────────────
+    path("products/<int:pk>/refill/",    views.stock_refill_view,  name="stock_refill"),
 
     # ── User Management ─────────────────────────
     path("users/",                     views.user_list,          name="user_list"),

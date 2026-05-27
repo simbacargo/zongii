@@ -23,16 +23,17 @@
     <div>
       <ul class="space-y-1">
         <li>
-          <a href="{% url 'dashboard' %}"
+          <button hx-get="{% url 'dashboard' %}" hx-target="#main-content"
              class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group text-gray-600 hover:bg-gray-50 hover:text-gray-900">
             <i class="bi bi-grid-1x2 text-base group-hover:text-indigo-600"></i>
             <span class="text-sm font-semibold">Dashboard</span>
-          </a>
+          </button>
         </li>
       </ul>
     </div>
 
     <!-- Inventory -->
+    {% if 'inventory' in user.accessible_sections %}
     <div>
       <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em] mb-2 px-3">Inventory</p>
       <ul class="space-y-1">
@@ -43,6 +44,7 @@
             <span class="text-sm font-semibold">Products</span>
           </button>
         </li>
+        {% if user.is_admin or user.is_superuser %}
         <li>
           <button hx-get="{% url 'product_create' %}"
              class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group text-gray-600 hover:bg-gray-50 hover:text-gray-900">
@@ -57,10 +59,13 @@
             <span class="text-sm font-semibold">Categories</span>
           </button>
         </li>
+        {% endif %}
       </ul>
     </div>
+    {% endif %}
 
     <!-- Sales -->
+    {% if 'sales' in user.accessible_sections %}
     <div>
       <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em] mb-2 px-3">Sales</p>
       <ul class="space-y-1">
@@ -75,22 +80,40 @@
           <button hx-get="{% url 'sale_list' %}"
              class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group text-gray-600 hover:bg-gray-50 hover:text-gray-900">
             <i class="bi bi-receipt text-base group-hover:text-indigo-600"></i>
-            <span class="text-sm font-semibold">All Sales</span>
+            <span class="text-sm font-semibold">Sales History</span>
           </button>
         </li>
-        {% if user.is_staff %}
+      </ul>
+    </div>
+    {% endif %}
+
+    <!-- Warehouse Orders -->
+    {% if 'orders' in user.accessible_sections %}
+    <div>
+      <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em] mb-2 px-3">Warehouse</p>
+      <ul class="space-y-1">
         <li>
-          <button hx-get="{% url 'sale_list' %}?status=pending"
-             class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group text-gray-600 hover:bg-amber-50 hover:text-amber-800">
-            <i class="bi bi-patch-check text-base group-hover:text-amber-600"></i>
-            <span class="text-sm font-semibold">Approve Sales</span>
+          <button hx-get="{% url 'sale_order_list' %}"
+             class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group text-gray-600 hover:bg-gray-50 hover:text-gray-900">
+            <i class="bi bi-box-seam text-base group-hover:text-indigo-600"></i>
+            <span class="text-sm font-semibold">Orders</span>
+          </button>
+        </li>
+        {% if user.is_picker or user.is_admin or user.is_superuser %}
+        <li>
+          <button hx-get="{% url 'picker_dashboard' %}"
+             class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group text-gray-600 hover:bg-amber-50 hover:text-amber-900">
+            <i class="bi bi-boxes text-base group-hover:text-amber-600"></i>
+            <span class="text-sm font-semibold">Picker Dashboard</span>
           </button>
         </li>
         {% endif %}
       </ul>
     </div>
+    {% endif %}
 
     <!-- Customers -->
+    {% if 'customers' in user.accessible_sections %}
     <div>
       <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em] mb-2 px-3">Customers</p>
       <ul class="space-y-1">
@@ -110,8 +133,10 @@
         </li>
       </ul>
     </div>
+    {% endif %}
 
-    <!-- Invoices & Quotations -->
+    <!-- Billing -->
+    {% if 'billing' in user.accessible_sections %}
     <div>
       <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em] mb-2 px-3">Billing</p>
       <ul class="space-y-1">
@@ -131,9 +156,10 @@
         </li>
       </ul>
     </div>
+    {% endif %}
 
-    <!-- Admin: User Management -->
-    {% if user.is_admin or user.is_superuser %}
+    <!-- Administration -->
+    {% if 'users' in user.accessible_sections %}
     <div>
       <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em] mb-2 px-3">Administration</p>
       <ul class="space-y-1">
@@ -155,6 +181,20 @@
     </div>
     {% endif %}
 
+    <!-- Notifications -->
+    <div>
+      <ul class="space-y-1">
+        <li>
+          <button hx-get="{% url 'notification_list' %}"
+             class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all group text-gray-600 hover:bg-amber-50 hover:text-amber-900">
+            <i class="bi bi-bell text-base group-hover:text-amber-600"></i>
+            <span class="text-sm font-semibold">Notifications</span>
+            {% include "partials/notification_badge.html" with count=unread_notification_count %}
+          </button>
+        </li>
+      </ul>
+    </div>
+
   </nav>
 
   <!-- User footer -->
@@ -165,7 +205,7 @@
       </div>
       <div class="flex-1 min-w-0">
         <p class="text-sm font-bold text-gray-800 truncate">{{ user.username }}</p>
-        <p class="text-[10px] text-gray-400 truncate">{% if user.is_superuser %}Super Admin{% elif user.is_staff %}Staff{% else %}User{% endif %}</p>
+        <p class="text-[10px] text-gray-400 truncate">{% if user.is_superuser %}Super Admin{% elif user.is_admin %}Manager{% elif user.is_picker %}Picker{% else %}Staff{% endif %}</p>
       </div>
       <a href="{% url 'logout' %}" class="text-gray-400 hover:text-red-500 transition-colors" title="Logout">
         <i class="bi bi-box-arrow-right text-sm"></i>

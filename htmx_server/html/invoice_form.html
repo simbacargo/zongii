@@ -24,7 +24,7 @@
         </div>
     </div>
 
-    <form method="post" action="{% url 'document_create' %}" id="doc-form">
+    <form hx-post="{% url 'document_create' %}" hx-target="#main-content" id="doc-form">
         {% csrf_token %}
         <input type="hidden" name="doc_type" id="doc-type-input" value="invoice">
 

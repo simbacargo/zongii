@@ -354,7 +354,8 @@ def product_update(request, pk):
             product.reorder_point = data.get("reorder_point", product.reorder_point)
             product.weight = data.get("weight") or None
             product.bin_location = data.get("bin_location", product.bin_location)
-            product.is_active = data.get("is_active") == "on"
+            if "is_active" in data:
+                product.is_active = data.get("is_active") == "on"
 
             if request.FILES.get("product_photo"):
                 product.product_photo = request.FILES["product_photo"]

@@ -3,23 +3,28 @@ import * as Device from 'expo-device';
 import Constants from 'expo-constants';
 import { Platform } from 'react-native';
 
-// Show alert + play sound for foreground notifications
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: true,
-    shouldShowBanner: true,
-    shouldShowList: true,
-  }),
-});
+// Remote push notifications were removed from Expo Go in SDK 53.
+// This flag lets us skip registration gracefully without crashing.
+const isExpoGo = Constants.appOwnership === 'expo';
 
 export async function registerForPushNotifications(
   registerWithServer: (token: string) => Promise<unknown>,
 ): Promise<string | null> {
-  if (!Device.isDevice) {
-    return null; // Simulators cannot receive push notifications
+  if (isExpoGo || !Device.isDevice) {
+    // Requires a development build or production build, not Expo Go
+    return null;
   }
+
+  // Configure how notifications appear when the app is in the foreground
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: true,
+      shouldShowBanner: true,
+      shouldShowList: true,
+    }),
+  });
 
   if (Platform.OS === 'android') {
     await Notifications.setNotificationChannelAsync('default', {
@@ -51,7 +56,7 @@ export async function registerForPushNotifications(
   try {
     await registerWithServer(token);
   } catch {
-    // Token sync failure is non-fatal; push will work on next login
+    // Non-fatal: push will sync on next login
   }
 
   return token;

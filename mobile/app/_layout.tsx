@@ -6,8 +6,11 @@ import { StatusBar } from 'expo-status-bar';
 import { useColorScheme } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import * as Notifications from 'expo-notifications';
+import Constants from 'expo-constants';
 import { AuthProvider, useAuth } from '@/context/AuthContext';
 import { ThemeProvider } from '@/lib/theme';
+
+const isExpoGo = Constants.appOwnership === 'expo';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -33,6 +36,7 @@ function AuthGate() {
 
   // Navigate to the relevant screen when the user taps a push notification
   useEffect(() => {
+    if (isExpoGo) return; // Push notifications not available in Expo Go
     responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
       const data = response.notification.request.content.data as {
         type?: string;

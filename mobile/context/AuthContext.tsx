@@ -1,7 +1,10 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { AppState } from 'react-native';
 import { authAPI, pushTokenAPI } from '@/lib/api';
 import { Storage } from '@/lib/storage';
 import { registerForPushNotifications } from '@/lib/pushNotifications';
+
+const INACTIVITY_LIMIT_MS = 72 * 60 * 60 * 1000; // 72 hours
 
 export interface User {
   id: string;
@@ -35,15 +38,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Update lastActive whenever the app returns to the foreground
+  useEffect(() => {
+    const sub = AppState.addEventListener('change', state => {
+      if (state === 'active') Storage.setLastActive();
+    });
+    return () => sub.remove();
+  }, []);
+
   useEffect(() => {
     (async () => {
       const stored = await Storage.getAccess();
       if (stored) {
+        // Force logout if the app hasn't been used in 72 hours
+        const lastActive = await Storage.getLastActive();
+        const elapsed = lastActive ? Date.now() - Number(lastActive) : Infinity;
+        if (elapsed > INACTIVITY_LIMIT_MS) {
+          await Storage.clear();
+          setIsLoading(false);
+          return;
+        }
+
         setToken(stored);
         try {
           const { data } = await authAPI.me();
           setUser(data);
           await Storage.setUser(data);
+          await Storage.setLastActive();
           // Re-register push token in case it changed (new device/build)
           registerForPushNotifications(token => pushTokenAPI.register(token)).catch(() => {});
         } catch {
@@ -58,6 +79,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   async function login(username: string, password: string) {
     const { data } = await authAPI.login(username, password);
     await Storage.setTokens(data.access, data.refresh);
+    await Storage.setLastActive();
     setToken(data.access);
     const me = await authAPI.me();
     setUser(me.data);

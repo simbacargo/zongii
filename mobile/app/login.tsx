@@ -37,11 +37,11 @@ export default function LoginScreen() {
       <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
 
         <View style={styles.logoWrap}>
-          <View style={styles.logoBox}>
-		  <Image source={'../assets/logo.png'} />
-            <Text style={styles.logoIcon}>📦</Text>
-          </View>
-          <Text style={styles.appName}>Zongii</Text>
+          <Image
+            source={require('@/assets/images/logo.png')}
+            style={styles.logo}
+            resizeMode="contain"
+          />
           <Text style={styles.appSub}>Plumbing Operations</Text>
         </View>
 
@@ -79,9 +79,7 @@ const makeStyles = (C: ReturnType<typeof useColors>) => StyleSheet.create({
   flex:        { flex: 1, backgroundColor: C.bg },
   container:   { flexGrow: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 24, paddingVertical: 48 },
   logoWrap:    { alignItems: 'center', marginBottom: 32 },
-  logoBox:     { width: 72, height: 72, borderRadius: 20, backgroundColor: C.primary, alignItems: 'center', justifyContent: 'center', marginBottom: 12, shadowColor: C.primary, shadowOpacity: 0.4, shadowRadius: 16, elevation: 8 },
-  logoIcon:    { fontSize: 32 },
-  appName:     { fontSize: 28, fontWeight: '900', color: C.text, letterSpacing: -0.5 },
+  logo:        { width: 200, height: 80, marginBottom: 8 },
   appSub:      { fontSize: 13, color: C.textMuted, marginTop: 2 },
   card:        { backgroundColor: C.card, borderRadius: 24, padding: 28, width: '100%', borderWidth: 1, borderColor: C.border, shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 20, elevation: 4 },
   heading:     { fontSize: 22, fontWeight: '900', color: C.text, marginBottom: 4 },

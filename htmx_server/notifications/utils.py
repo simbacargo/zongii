@@ -99,6 +99,15 @@ def notify_pickers(notification_type, title, message='', link='', entity_id=None
     _bulk_notify(recipients, notification_type, title, message, link, entity_id)
 
 
+def notify_accountants(notification_type, title, message='', link='', entity_id=None):
+    """Broadcast a notification to every active accountant (and admins)."""
+    recipients = User.objects.filter(
+        _models.Q(is_accountant=True) | _models.Q(is_admin=True) | _models.Q(is_superuser=True),
+        is_active=True,
+    )
+    _bulk_notify(recipients, notification_type, title, message, link, entity_id)
+
+
 def _bulk_notify(recipients, notification_type, title, message, link, entity_id):
     records = [
         Notification(

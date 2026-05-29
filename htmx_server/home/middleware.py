@@ -36,7 +36,11 @@ class HtmxBaseMiddleware:
         if 'text/html' not in response.get('Content-Type', ''):
             return False
         # Skip already-complete pages (login, signup, print, PDF, admin, etc.)
-        preview = response.content[:400].decode('utf-8', errors='ignore')
+        preview = response.content[:400].decode('utf-8', errors='ignore').lstrip()
         if '<!DOCTYPE' in preview or '<html' in preview:
+            return False
+        # Skip table/form fragments that are HTMX-only partials
+        _FRAGMENT_TAGS = ('<tr', '<td', '<th', '<tbody', '<thead', '<tfoot', '<option', '<li')
+        if any(preview.startswith(tag) for tag in _FRAGMENT_TAGS):
             return False
         return True

@@ -7,6 +7,7 @@ from authentication.models import User
 class Notification(models.Model):
     # ── Types ──────────────────────────────────────────────────────────────────
     LOW_STOCK         = 'low_stock'
+    ORDER_APPROVAL    = 'order_approval'
     ORDER_CREATED     = 'order_created'
     ORDER_PICKED      = 'order_picked'
     ORDER_VERIFIED    = 'order_verified'
@@ -16,6 +17,7 @@ class Notification(models.Model):
 
     TYPE_CHOICES = [
         (LOW_STOCK,         'Low Stock'),
+        (ORDER_APPROVAL,    'Pending Approval'),
         (ORDER_CREATED,     'New Order'),
         (ORDER_PICKED,      'Order Picked'),
         (ORDER_VERIFIED,    'Order Verified'),
@@ -27,6 +29,7 @@ class Notification(models.Model):
     # Icon and colour per type — used by templates
     _ICON = {
         LOW_STOCK:         'bi-exclamation-triangle-fill',
+        ORDER_APPROVAL:    'bi-shield-check',
         ORDER_CREATED:     'bi-cart-plus-fill',
         ORDER_PICKED:      'bi-box-seam-fill',
         ORDER_VERIFIED:    'bi-patch-check-fill',
@@ -36,6 +39,7 @@ class Notification(models.Model):
     }
     _COLOR = {
         LOW_STOCK:         'amber',
+        ORDER_APPROVAL:    'violet',
         ORDER_CREATED:     'indigo',
         ORDER_PICKED:      'cyan',
         ORDER_VERIFIED:    'green',

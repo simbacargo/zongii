@@ -132,7 +132,41 @@
     <!-- ── Action Panel ───────────────────────────────────────────── -->
     <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex flex-wrap gap-3 items-start">
 
-        {% if order.workflow_status == 'PENDING_PICKING' %}
+        {% if order.workflow_status == 'PENDING_APPROVAL' %}
+        <div class="w-full flex items-center gap-3 p-3 bg-violet-50 rounded-xl border border-violet-100">
+            <i class="bi bi-shield-check text-violet-500 text-lg shrink-0"></i>
+            <p class="text-sm text-violet-700">Waiting for an accountant to review and approve this order before it goes to the warehouse.</p>
+        </div>
+
+        {% if user.is_accountant or user.is_admin or user.is_superuser %}
+        <div class="w-full" id="accountant-review-form">
+            {% csrf_token %}
+            <textarea id="accountant-note" name="note" rows="2"
+                      placeholder="Approval note (optional)"
+                      class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-violet-400 mb-3 resize-none"></textarea>
+            <div class="flex flex-wrap gap-2">
+                <button type="button"
+                        hx-post="{% url 'sale_order_accountant_review' order.pk %}"
+                        hx-target="#main-content"
+                        hx-include="#accountant-note"
+                        hx-vals='{"action": "approve"}'
+                        class="flex items-center gap-2 px-5 py-2.5 bg-violet-600 hover:bg-violet-700 active:scale-95 text-white text-sm font-bold rounded-xl transition-all shadow-sm">
+                    <i class="bi bi-shield-check"></i> Approve &amp; Send to Warehouse
+                </button>
+                <button type="button"
+                        hx-post="{% url 'sale_order_accountant_review' order.pk %}"
+                        hx-target="#main-content"
+                        hx-include="#accountant-note"
+                        hx-vals='{"action": "reject"}'
+                        hx-confirm="Reject this order? The sales person will be notified."
+                        class="flex items-center gap-2 px-5 py-2.5 bg-red-50 hover:bg-red-100 active:scale-95 text-red-700 text-sm font-bold rounded-xl transition-all ml-auto">
+                    <i class="bi bi-x-circle"></i> Reject Order
+                </button>
+            </div>
+        </div>
+        {% endif %}
+
+        {% elif order.workflow_status == 'PENDING_PICKING' %}
         <div class="w-full flex items-center gap-3 p-3 bg-amber-50 rounded-xl border border-amber-100">
             <i class="bi bi-hourglass-split text-amber-500 text-lg shrink-0"></i>
             <p class="text-sm text-amber-700">Waiting for a picker to accept this order in the warehouse.</p>

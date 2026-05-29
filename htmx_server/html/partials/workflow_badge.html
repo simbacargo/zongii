@@ -1,4 +1,8 @@
-{% if status == 'PENDING_PICKING' %}
+{% if status == 'PENDING_APPROVAL' %}
+  <span class="inline-flex items-center gap-1 px-2 py-1 text-[10px] font-bold uppercase bg-violet-100 text-violet-700 rounded-md">
+    <i class="bi bi-shield-check"></i> Pending Approval
+  </span>
+{% elif status == 'PENDING_PICKING' %}
   <span class="inline-flex items-center gap-1 px-2 py-1 text-[10px] font-bold uppercase bg-amber-100 text-amber-700 rounded-md">
     <i class="bi bi-hourglass-split"></i> Pending Picking
   </span>

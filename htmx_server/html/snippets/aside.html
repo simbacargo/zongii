@@ -4,12 +4,12 @@
   <!-- Logo -->
   <div class="px-6 py-5 border-b border-gray-50">
     <div class="flex items-center gap-3">
-      <div class="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-md shadow-indigo-100">
-        <i class="bi bi-box-seam-fill text-sm"></i>
+      <div class="w-9 h-9 rounded-xl overflow-hidden shadow-md shadow-indigo-100 shrink-0">
+        <img src="/assets/Logo.png" alt="Zongii Logo" class="w-full h-full object-cover">
       </div>
       <div>
-        <span class="text-base font-black text-gray-900 tracking-tight">Zongii</span>
-        <p class="text-[10px] text-gray-400 font-medium">Plumbing Operations</p>
+        <span class="text-base font-black text-amber-500 tracking-tight">Zongii <span class="text-[15px] text-amber-500 font-bold"> Mining</span> </span>
+		
       </div>
     </div>
   </div>
@@ -207,9 +207,12 @@
         <p class="text-sm font-bold text-gray-800 truncate">{{ user.username }}</p>
         <p class="text-[10px] text-gray-400 truncate">{% if user.is_superuser %}Super Admin{% elif user.is_admin %}Manager{% elif user.is_picker %}Picker{% else %}Staff{% endif %}</p>
       </div>
-      <a href="{% url 'logout' %}" class="text-gray-400 hover:text-red-500 transition-colors" title="Logout">
-        <i class="bi bi-box-arrow-right text-sm"></i>
-      </a>
+      <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="text-gray-400 hover:text-red-500 transition-colors" title="Logout">
+          <i class="bi bi-box-arrow-right text-sm"></i>
+        </button>
+      </form>
     </div>
   </div>
 

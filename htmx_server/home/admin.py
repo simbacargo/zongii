@@ -1,7 +1,6 @@
 from django.contrib import admin
-from .models import Product, Category, Sale, Customer,Business
+from .models import Category,Business,Product,Customer,SaleOrder,Sale,Document,DocumentItem,PickingOrder,PickingOrderItem,GatePass,GatePassItem,SaleStatusHistory,StockRefill
 
-admin.site.register(Business)
 
 # class ProductAdmin(admin.ModelAdmin):
 #     list_display = ('name', 'created_by', 'price', 'part_number', 'quantity', 'deleted')
@@ -19,9 +18,17 @@ admin.site.register(Business)
 #     list_editable = ("quantity_sold", "created_by", "aproved")
 
 
-admin.site.register(Product)
 admin.site.register(Category)
-admin.site.register(Sale)
+admin.site.register(Business)
+admin.site.register(Product)
 admin.site.register(Customer)
-# admin.site.register(Product, ProductAdmin)
-# admin.site.register(Sale, SaleAdmin)
+admin.site.register(SaleOrder)
+admin.site.register(Sale)
+admin.site.register(Document)
+admin.site.register(DocumentItem)
+admin.site.register(PickingOrder)
+admin.site.register(PickingOrderItem)
+admin.site.register(GatePass)
+admin.site.register(GatePassItem)
+admin.site.register(SaleStatusHistory)
+admin.site.register(StockRefill)

@@ -59,8 +59,8 @@
         <!-- Header: logo + company name + title -->
         <div style="display:flex; align-items:center; gap:16px; padding:18px 24px 10px; border-bottom:2px solid #333;">
             <!-- Logo mark -->
-            <div style="width:56px; height:56px; background:#1a3a5c; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                <span style="color:#fff; font-size:24px;">🔧</span>
+            <div style="width:56px; height:56px; border-radius:8px; overflow:hidden; flex-shrink:0;">
+                <img src="/assets/Logo.png" alt="Zongii Logo" style="width:100%; height:100%; object-fit:cover; display:block;">
             </div>
             <div style="flex:1; text-align:center;">
                 <div style="font-size:20px; font-weight:900; letter-spacing:0.5px; text-transform:uppercase;">ZONGII PLUMBING &amp; GENERAL SUPPLY LTD</div>
@@ -85,7 +85,7 @@
                     <tr><td style="padding:2px 6px 2px 0; color:#555; white-space:nowrap; font-weight:600;">INV NO.:</td><td style="padding:2px 0; font-weight:700;">{{ doc.number }}</td></tr>
                     <tr><td style="padding:2px 6px 2px 0; color:#555; white-space:nowrap; font-weight:600;">Date:</td><td style="padding:2px 0;">{{ doc.issue_date|date:"M jS, Y" }}</td></tr>
                     {% if doc.due_date %}<tr><td style="padding:2px 6px 2px 0; color:#555; white-space:nowrap; font-weight:600;">{% if doc.doc_type == 'invoice' %}Due Date:{% else %}Valid Until:{% endif %}</td><td style="padding:2px 0;">{{ doc.due_date|date:"M jS, Y" }}</td></tr>{% endif %}
-                    <tr><td style="padding:2px 6px 2px 0; color:#555; white-space:nowrap; font-weight:600;">Prepared by:</td><td style="padding:2px 0;">{% if doc.created_by %}{{ doc.created_by.get_full_name|default:doc.created_by.username }}{% endif %}</td></tr>
+                    <tr><td style="padding:2px 6px 2px 0; color:#555; white-space:nowrap; font-weight:600;">Prepared by:</td><td style="padding:2px 0;">{% if doc.created_by %}{{ doc.created_by.username }}{% endif %}</td></tr>
                     <tr><td style="padding:2px 6px 2px 0; color:#555; white-space:nowrap; font-weight:600;">Status:</td>
                         <td style="padding:2px 0; font-weight:700;
                             {% if doc.status == 'paid' or doc.status == 'accepted' %}color:#16a34a;

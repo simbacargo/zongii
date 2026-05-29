@@ -67,6 +67,7 @@ path('cart/manage/', views.manage_cart, name='manage_cart'),
     # ── Warehouse Workflow ───────────────────────
     path("orders/",                         views.sale_order_list,    name="sale_order_list"),
     path("orders/<int:pk>/",                views.sale_order_detail,  name="sale_order_detail"),
+    path("orders/<int:pk>/accountant-review/", views.sale_order_accountant_review, name="sale_order_accountant_review"),
     path("orders/<int:pk>/verify/",         views.sale_order_verify,  name="sale_order_verify"),
     path("orders/<int:pk>/dispatch/",       views.dispatch_order,     name="dispatch_order"),
     path("picking/",                        views.picker_dashboard,   name="picker_dashboard"),

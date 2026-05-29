@@ -160,6 +160,7 @@ class Customer(models.Model):
 # Groups line items from a single cart checkout into one warehouse transaction.
 
 class SaleOrder(models.Model):
+    PENDING_APPROVAL = 'PENDING_APPROVAL'
     PENDING_PICKING  = 'PENDING_PICKING'
     PICKING          = 'PICKING'
     PARTIALLY_PICKED = 'PARTIALLY_PICKED'
@@ -171,6 +172,7 @@ class SaleOrder(models.Model):
     CANCELLED        = 'CANCELLED'
 
     STATUS_CHOICES = [
+        (PENDING_APPROVAL, 'Pending Approval'),
         (PENDING_PICKING,  'Pending Picking'),
         (PICKING,          'Picking'),
         (PARTIALLY_PICKED, 'Partially Picked'),
@@ -184,7 +186,7 @@ class SaleOrder(models.Model):
 
     customer        = models.ForeignKey('Customer', null=True, blank=True, on_delete=models.SET_NULL, related_name='orders')
     created_by      = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='sale_orders')
-    workflow_status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=PENDING_PICKING)
+    workflow_status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=PENDING_APPROVAL)
     notes           = models.TextField(blank=True)
     created_at      = models.DateTimeField(auto_now_add=True)
     updated_at      = models.DateTimeField(auto_now=True)

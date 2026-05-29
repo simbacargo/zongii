@@ -21,7 +21,7 @@ from .models import (
     StockRefill,
 )
 from notifications.models import Notification
-from notifications.utils import notify, notify_admins, notify_pickers
+from notifications.utils import notify, notify_admins, notify_pickers, notify_accountants
 from authentication.models import User
 
 
@@ -1093,13 +1093,11 @@ def checkout_submit(request):
             sale_order = SaleOrder.objects.create(
                 customer_id=customer_id,
                 created_by=request.user,
+                workflow_status=SaleOrder.PENDING_APPROVAL,
                 notes=data.get('notes', ''),
             )
 
-            # Create PickingOrder
-            picking_order = PickingOrder.objects.create(sale_order=sale_order)
-
-            # Create Sale line items + PickingOrderItems
+            # Create Sale line items only — PickingOrder is created after accountant approval
             for p_id, item_data in list(cart.items()):
                 product = get_object_or_404(Product, pk=int(p_id))
                 qty   = _cart_item_qty(item_data)
@@ -1118,7 +1116,7 @@ def checkout_submit(request):
                         f"{product.min_price} and {product.max_price} (got {price})."
                     )
 
-                sale = Sale.objects.create(
+                Sale.objects.create(
                     order=sale_order,
                     product=product,
                     quantity_sold=qty,
@@ -1126,34 +1124,28 @@ def checkout_submit(request):
                     created_by=request.user,
                     customer_id=customer_id,
                 )
-                PickingOrderItem.objects.create(
-                    picking_order=picking_order,
-                    sale=sale,
-                    product=product,
-                    requested_qty=qty,
-                )
 
             SaleStatusHistory.objects.create(
                 sale_order=sale_order,
                 from_status='',
-                to_status=SaleOrder.PENDING_PICKING,
+                to_status=SaleOrder.PENDING_APPROVAL,
                 changed_by=request.user,
-                note='Order created via checkout',
+                note='Order created — awaiting accountant approval',
             )
             sale_order_pk = sale_order.pk
 
-        # Notify every active picker that a new order is waiting
-        notify_pickers(
-            Notification.ORDER_CREATED,
-            title=f"New order {sale_order.order_code} awaiting picking",
-            message=f"Created by {request.user.username}. {picking_order.items.count()} item(s).",
+        # Notify accountants that a new order needs approval
+        notify_accountants(
+            Notification.ORDER_APPROVAL,
+            title=f"New order {sale_order.order_code} awaiting approval",
+            message=f"Created by {request.user.username}. {sale_order.sales.count()} item(s). Please review and approve.",
             link=f"/orders/{sale_order.pk}/",
             entity_id=sale_order.pk,
         )
 
         request.session['cart'] = {}
         request.session.modified = True
-        messages.success(request, f"Order {sale_order.order_code} created and sent to warehouse.")
+        messages.success(request, f"Order {sale_order.order_code} submitted for accountant approval.")
 
     except (ValueError, KeyError) as exc:
         messages.error(request, str(exc))
@@ -1726,6 +1718,7 @@ def sale_order_list(request):
 
     # Build a structured stage list the template can iterate over
     STAGE_META = [
+        ('PENDING_APPROVAL', 'Pending Approval', 'bi-shield-check',         'violet'),
         ('PENDING_PICKING',  'Pending Picking',  'bi-hourglass-split',      'amber'),
         ('PICKING',          'Picking',           'bi-box-arrow-in-down',    'blue'),
         ('PARTIALLY_PICKED', 'Partially Picked',  'bi-pie-chart-fill',       'orange'),
@@ -1874,6 +1867,84 @@ def sale_order_verify(request, pk):
                     entity_id=order.pk,
                 )
                 messages.info(request, f"Re-pick requested for {order.order_code}.")
+
+            else:
+                messages.error(request, "Unknown action.")
+
+    except Exception as exc:
+        messages.error(request, f"Action failed: {exc}")
+
+    return redirect('sale_order_detail', pk=pk)
+
+
+@login_required
+@require_POST
+def sale_order_accountant_review(request, pk):
+    """Accountant approves or rejects a PENDING_APPROVAL order."""
+    order = get_object_or_404(SaleOrder, pk=pk)
+
+    if not (request.user.is_accountant or request.user.is_admin or request.user.is_superuser):
+        messages.error(request, "Only accountants can review orders.")
+        return redirect('sale_order_detail', pk=pk)
+
+    if order.workflow_status != SaleOrder.PENDING_APPROVAL:
+        messages.error(request, "This order is not awaiting approval.")
+        return redirect('sale_order_detail', pk=pk)
+
+    action = request.POST.get('action')
+    note   = request.POST.get('note', '').strip()
+
+    try:
+        with transaction.atomic():
+            if action == 'approve':
+                # Create the PickingOrder now that it's approved
+                picking_order = PickingOrder.objects.create(sale_order=order)
+                for sale in order.sales.select_related('product'):
+                    PickingOrderItem.objects.create(
+                        picking_order=picking_order,
+                        sale=sale,
+                        product=sale.product,
+                        requested_qty=sale.quantity_sold,
+                    )
+                order.transition(
+                    SaleOrder.PENDING_PICKING, request.user,
+                    note or f"Approved by {request.user.username}"
+                )
+                # Notify pickers
+                notify_pickers(
+                    Notification.ORDER_CREATED,
+                    title=f"New order {order.order_code} awaiting picking",
+                    message=f"Approved by {request.user.username}. {picking_order.items.count()} item(s).",
+                    link=f"/orders/{order.pk}/",
+                    entity_id=order.pk,
+                )
+                # Notify the sales person who created the order
+                if order.created_by:
+                    notify(
+                        order.created_by,
+                        Notification.ORDER_VERIFIED,
+                        title=f"Order {order.order_code} approved",
+                        message=note or f"Approved by {request.user.username} and sent to warehouse.",
+                        link=f"/orders/{order.pk}/",
+                        entity_id=order.pk,
+                    )
+                messages.success(request, f"Order {order.order_code} approved and sent to warehouse.")
+
+            elif action == 'reject':
+                order.transition(
+                    SaleOrder.REJECTED, request.user,
+                    note or f"Rejected by {request.user.username}"
+                )
+                if order.created_by:
+                    notify(
+                        order.created_by,
+                        Notification.ORDER_REJECTED,
+                        title=f"Order {order.order_code} rejected",
+                        message=note or f"Rejected by {request.user.username}.",
+                        link=f"/orders/{order.pk}/",
+                        entity_id=order.pk,
+                    )
+                messages.warning(request, f"Order {order.order_code} has been rejected.")
 
             else:
                 messages.error(request, "Unknown action.")

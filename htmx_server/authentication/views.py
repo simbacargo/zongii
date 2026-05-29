@@ -18,6 +18,14 @@ from django.contrib.auth import (
 User = get_user_model()
 
 
+from django.contrib.auth import logout as auth_logout
+
+@csrf_exempt
+def logout_view(request):
+    auth_logout(request)
+    return redirect('login')
+
+
 @csrf_exempt
 def signup_api(request):
     if request.method == 'POST':

@@ -1,4 +1,4 @@
-{% block content %}
+{% load humanize %}{% block content %}
 <div class="max-w-5xl mx-auto">
 
     <!-- Header -->
@@ -120,7 +120,7 @@
 
                     <!-- Amount -->
                     <div class="text-right shrink-0 w-36">
-                        <p class="text-base font-black text-gray-900">TZS {{ doc.total|floatformat:0 }}</p>
+                        <p class="text-base font-black text-gray-900">TZS {{ doc.total|floatformat:0|intcomma }}</p>
                         {% if doc.discount_percent %}
                         <p class="text-[10px] text-red-400 mt-0.5">{{ doc.discount_percent|floatformat:"-2" }}% off</p>
                         {% endif %}

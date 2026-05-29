@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+{% load humanize %}<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -204,6 +204,12 @@
           <td class="info-value">{{ doc.customer.email }}</td>
         </tr>
         {% endif %}
+        {% if doc.customer_tin %}
+        <tr>
+          <td class="info-label">TIN:</td>
+          <td class="info-value bold">{{ doc.customer_tin }}</td>
+        </tr>
+        {% endif %}
         <tr>
           <td class="info-label">Address:</td>
           <td class="info-value">Mwanza / Dar es Salaam, Tanzania</td>
@@ -268,8 +274,8 @@
         </td>
         <td class="td-qty">{{ item.quantity|floatformat:"-2" }}</td>
         <td class="td-unit">{{ item.unit }}</td>
-        <td class="td-price">{{ item.unit_price|floatformat:0 }}</td>
-        <td class="td-total">{{ item.total|floatformat:0 }}</td>
+        <td class="td-price">{{ item.unit_price|floatformat:0|intcomma }}</td>
+        <td class="td-total">{{ item.total|floatformat:0|intcomma }}</td>
       </tr>
       {% endfor %}
     </tbody>
@@ -279,20 +285,22 @@
   <table class="total-table">
     <tr class="total-row">
       <td class="total-label">
-        {% if doc.discount_percent %}
-          Subtotal: TZS {{ doc.subtotal|floatformat:0 }}&nbsp;&nbsp;|&nbsp;&nbsp;Discount ({{ doc.discount_percent|floatformat:"-2" }}%): &minus;TZS {{ doc.discount_amount|floatformat:0 }}
+        {% if doc.discount_percent or doc.vat_percent %}
+          Subtotal: TZS {{ doc.subtotal|floatformat:0|intcomma }}
+          {% if doc.discount_percent %}&nbsp;&nbsp;|&nbsp;&nbsp;Discount ({{ doc.discount_percent|floatformat:"-2" }}%): &minus;TZS {{ doc.discount_amount|floatformat:0|intcomma }}{% endif %}
+          {% if doc.vat_percent %}&nbsp;&nbsp;|&nbsp;&nbsp;VAT ({{ doc.vat_percent|floatformat:"-2" }}%): +TZS {{ doc.vat_amount|floatformat:0|intcomma }}{% endif %}
         {% else %}
           Factory / Shop Price
         {% endif %}
       </td>
       <td class="total-currency">TOTAL TZS</td>
-      <td class="total-amount">{{ doc.total|floatformat:0 }}</td>
+      <td class="total-amount">{{ doc.total|floatformat:0|intcomma }}</td>
     </tr>
   </table>
 
   <!-- Amount in words -->
   <div class="amount-words">
-    <strong>SAYS </strong><span id="words-placeholder">{{ doc.total|floatformat:0 }}</span><strong> TANZANIAN SHILLINGS ONLY.</strong>
+    <strong>SAYS </strong><strong>{{ doc.total|floatformat:0|intcomma }} TANZANIAN SHILLINGS ONLY.</strong>
   </div>
 
   <!-- Notes / Terms -->

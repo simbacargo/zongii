@@ -1,4 +1,4 @@
-{% block content %}
+{% load humanize %}{% block content %}
 <div class="max-w-4xl mx-auto">
 
     <!-- Header -->
@@ -121,7 +121,7 @@
                     <td class="px-5 py-3 text-sm text-gray-600">
                         {% if sale.customer %}{{ sale.customer.name }}{% else %}<span class="text-gray-400 italic">Walk-in</span>{% endif %}
                     </td>
-                    <td class="px-5 py-3 text-right text-sm font-black text-gray-900">TZS {{ sale.total_amount|floatformat:0 }}</td>
+                    <td class="px-5 py-3 text-right text-sm font-black text-gray-900">TZS {{ sale.total_amount|floatformat:0|intcomma }}</td>
                     <td class="px-5 py-3 text-center">
                         {% if sale.rejected %}
                             <span class="px-2 py-0.5 text-[10px] font-bold uppercase bg-red-100 text-red-600 rounded">Rejected</span>

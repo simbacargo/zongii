@@ -1,0 +1,6 @@
+{
+  "dependencies": {},
+  "devDependencies": {
+    "tailwind-merge": "^3.6.0"
+  }
+}

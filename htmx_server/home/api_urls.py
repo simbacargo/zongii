@@ -41,6 +41,7 @@ urlpatterns = [
     # Sale Orders
     path('orders/',                    views.sale_order_list,     name='api-order-list'),
     path('orders/<int:pk>/',           views.sale_order_detail,   name='api-order-detail'),
+    path('orders/<int:pk>/accountant-review/', views.sale_order_accountant_review, name='api-order-accountant-review'),
     path('orders/<int:pk>/verify/',    views.sale_order_verify,   name='api-order-verify'),
     path('orders/<int:pk>/dispatch/',  views.sale_order_dispatch, name='api-order-dispatch'),
 

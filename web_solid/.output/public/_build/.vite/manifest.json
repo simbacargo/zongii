@@ -1,0 +1,412 @@
+{
+  "_Badge-Bt-h5LU7.js": {
+    "file": "assets/Badge-Bt-h5LU7.js",
+    "name": "Badge",
+    "imports": [
+      "_api-BDlEm1m2.js",
+      "_utils-DIK23y8C.js"
+    ]
+  },
+  "_EmptyState-Bu1djVJF.js": {
+    "file": "assets/EmptyState-Bu1djVJF.js",
+    "name": "EmptyState",
+    "imports": [
+      "_api-BDlEm1m2.js"
+    ]
+  },
+  "_Modal-CL5Qg-bl.js": {
+    "file": "assets/Modal-CL5Qg-bl.js",
+    "name": "Modal",
+    "imports": [
+      "_api-BDlEm1m2.js"
+    ]
+  },
+  "_Spinner-CqBNS1yy.js": {
+    "file": "assets/Spinner-CqBNS1yy.js",
+    "name": "Spinner",
+    "imports": [
+      "_api-BDlEm1m2.js"
+    ]
+  },
+  "_api-BDlEm1m2.js": {
+    "file": "assets/api-BDlEm1m2.js",
+    "name": "api"
+  },
+  "_auth-xvxqRZLM.js": {
+    "file": "assets/auth-xvxqRZLM.js",
+    "name": "auth",
+    "imports": [
+      "_api-BDlEm1m2.js"
+    ]
+  },
+  "_index-KBzOSCQT.js": {
+    "file": "assets/index-KBzOSCQT.js",
+    "name": "index",
+    "imports": [
+      "_api-BDlEm1m2.js"
+    ]
+  },
+  "_preload-helper-CM3UJVvY.js": {
+    "file": "assets/preload-helper-CM3UJVvY.js",
+    "name": "preload-helper"
+  },
+  "_utils-DIK23y8C.js": {
+    "file": "assets/utils-DIK23y8C.js",
+    "name": "utils"
+  },
+  "node_modules/chart.js/auto/auto.js": {
+    "file": "assets/auto-B-LWvvbi.js",
+    "name": "auto",
+    "src": "node_modules/chart.js/auto/auto.js",
+    "isDynamicEntry": true
+  },
+  "src/routes/(app).tsx?pick=default&pick=$css": {
+    "file": "assets/(app)-Dt4i8Cp4.js",
+    "name": "(app)",
+    "src": "src/routes/(app).tsx?pick=default&pick=$css",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_api-BDlEm1m2.js",
+      "_index-KBzOSCQT.js",
+      "_auth-xvxqRZLM.js",
+      "_Spinner-CqBNS1yy.js"
+    ]
+  },
+  "src/routes/(app)/categories.tsx?pick=default&pick=$css": {
+    "file": "assets/categories-BkCeC_i2.js",
+    "name": "categories",
+    "src": "src/routes/(app)/categories.tsx?pick=default&pick=$css",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_api-BDlEm1m2.js",
+      "_Spinner-CqBNS1yy.js",
+      "_EmptyState-Bu1djVJF.js",
+      "_auth-xvxqRZLM.js"
+    ]
+  },
+  "src/routes/(app)/customers/[id].tsx?pick=default&pick=$css": {
+    "file": "assets/_id_-uU-VUdP2.js",
+    "name": "_id_",
+    "src": "src/routes/(app)/customers/[id].tsx?pick=default&pick=$css",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_api-BDlEm1m2.js",
+      "_index-KBzOSCQT.js",
+      "_utils-DIK23y8C.js",
+      "_Spinner-CqBNS1yy.js",
+      "_Modal-CL5Qg-bl.js"
+    ]
+  },
+  "src/routes/(app)/customers/index.tsx?pick=default&pick=$css": {
+    "file": "assets/index-DecLnjWw.js",
+    "name": "index",
+    "src": "src/routes/(app)/customers/index.tsx?pick=default&pick=$css",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_api-BDlEm1m2.js",
+      "_index-KBzOSCQT.js",
+      "_utils-DIK23y8C.js",
+      "_Spinner-CqBNS1yy.js",
+      "_EmptyState-Bu1djVJF.js",
+      "_Modal-CL5Qg-bl.js"
+    ]
+  },
+  "src/routes/(app)/documents/[id].tsx?pick=default&pick=$css": {
+    "file": "assets/_id_-CSS56xLW.js",
+    "name": "_id_",
+    "src": "src/routes/(app)/documents/[id].tsx?pick=default&pick=$css",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_api-BDlEm1m2.js",
+      "_index-KBzOSCQT.js",
+      "_utils-DIK23y8C.js",
+      "_Spinner-CqBNS1yy.js",
+      "_Modal-CL5Qg-bl.js"
+    ]
+  },
+  "src/routes/(app)/documents/index.tsx?pick=default&pick=$css": {
+    "file": "assets/index-CdWP7z1F.js",
+    "name": "index",
+    "src": "src/routes/(app)/documents/index.tsx?pick=default&pick=$css",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_api-BDlEm1m2.js",
+      "_index-KBzOSCQT.js",
+      "_utils-DIK23y8C.js",
+      "_Spinner-CqBNS1yy.js",
+      "_EmptyState-Bu1djVJF.js",
+      "_Modal-CL5Qg-bl.js"
+    ]
+  },
+  "src/routes/(app)/gate-passes/[id].tsx?pick=default&pick=$css": {
+    "file": "assets/_id_-oSjY-TJj.js",
+    "name": "_id_",
+    "src": "src/routes/(app)/gate-passes/[id].tsx?pick=default&pick=$css",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_api-BDlEm1m2.js",
+      "_index-KBzOSCQT.js",
+      "_utils-DIK23y8C.js",
+      "_Spinner-CqBNS1yy.js"
+    ]
+  },
+  "src/routes/(app)/gate-passes/index.tsx?pick=default&pick=$css": {
+    "file": "assets/index-DMVlXuEY.js",
+    "name": "index",
+    "src": "src/routes/(app)/gate-passes/index.tsx?pick=default&pick=$css",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_api-BDlEm1m2.js",
+      "_index-KBzOSCQT.js",
+      "_utils-DIK23y8C.js",
+      "_Spinner-CqBNS1yy.js",
+      "_EmptyState-Bu1djVJF.js"
+    ]
+  },
+  "src/routes/(app)/index.tsx?pick=default&pick=$css": {
+    "file": "assets/index-DYHrNj-5.js",
+    "name": "index",
+    "src": "src/routes/(app)/index.tsx?pick=default&pick=$css",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_preload-helper-CM3UJVvY.js",
+      "_api-BDlEm1m2.js",
+      "_index-KBzOSCQT.js",
+      "_utils-DIK23y8C.js",
+      "_Spinner-CqBNS1yy.js"
+    ],
+    "dynamicImports": [
+      "node_modules/chart.js/auto/auto.js"
+    ]
+  },
+  "src/routes/(app)/notifications.tsx?pick=default&pick=$css": {
+    "file": "assets/notifications-DmWhTXZv.js",
+    "name": "notifications",
+    "src": "src/routes/(app)/notifications.tsx?pick=default&pick=$css",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_api-BDlEm1m2.js",
+      "_utils-DIK23y8C.js",
+      "_Spinner-CqBNS1yy.js",
+      "_EmptyState-Bu1djVJF.js"
+    ]
+  },
+  "src/routes/(app)/orders/[id].tsx?pick=default&pick=$css": {
+    "file": "assets/_id_-CjWQWq2I.js",
+    "name": "_id_",
+    "src": "src/routes/(app)/orders/[id].tsx?pick=default&pick=$css",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_api-BDlEm1m2.js",
+      "_index-KBzOSCQT.js",
+      "_utils-DIK23y8C.js",
+      "_Spinner-CqBNS1yy.js",
+      "_Badge-Bt-h5LU7.js",
+      "_Modal-CL5Qg-bl.js",
+      "_auth-xvxqRZLM.js"
+    ]
+  },
+  "src/routes/(app)/orders/index.tsx?pick=default&pick=$css": {
+    "file": "assets/index-DSnpX0nD.js",
+    "name": "index",
+    "src": "src/routes/(app)/orders/index.tsx?pick=default&pick=$css",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_api-BDlEm1m2.js",
+      "_index-KBzOSCQT.js",
+      "_utils-DIK23y8C.js",
+      "_Spinner-CqBNS1yy.js",
+      "_EmptyState-Bu1djVJF.js",
+      "_Badge-Bt-h5LU7.js",
+      "_Modal-CL5Qg-bl.js"
+    ]
+  },
+  "src/routes/(app)/picking/[id].tsx?pick=default&pick=$css": {
+    "file": "assets/_id_-BTjC7bys.js",
+    "name": "_id_",
+    "src": "src/routes/(app)/picking/[id].tsx?pick=default&pick=$css",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_api-BDlEm1m2.js",
+      "_index-KBzOSCQT.js",
+      "_utils-DIK23y8C.js",
+      "_Spinner-CqBNS1yy.js",
+      "_auth-xvxqRZLM.js"
+    ]
+  },
+  "src/routes/(app)/picking/index.tsx?pick=default&pick=$css": {
+    "file": "assets/index-DGlhxrIS.js",
+    "name": "index",
+    "src": "src/routes/(app)/picking/index.tsx?pick=default&pick=$css",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_api-BDlEm1m2.js",
+      "_index-KBzOSCQT.js",
+      "_utils-DIK23y8C.js",
+      "_Spinner-CqBNS1yy.js",
+      "_EmptyState-Bu1djVJF.js",
+      "_auth-xvxqRZLM.js"
+    ]
+  },
+  "src/routes/(app)/products/[id].tsx?pick=default&pick=$css": {
+    "file": "assets/_id_-Dbv0L6lA.js",
+    "name": "_id_",
+    "src": "src/routes/(app)/products/[id].tsx?pick=default&pick=$css",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_api-BDlEm1m2.js",
+      "_index-KBzOSCQT.js",
+      "_utils-DIK23y8C.js",
+      "_Spinner-CqBNS1yy.js",
+      "_Modal-CL5Qg-bl.js",
+      "_Badge-Bt-h5LU7.js",
+      "_auth-xvxqRZLM.js"
+    ]
+  },
+  "src/routes/(app)/products/index.tsx?pick=default&pick=$css": {
+    "file": "assets/index-8yDtXffe.js",
+    "name": "index",
+    "src": "src/routes/(app)/products/index.tsx?pick=default&pick=$css",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_api-BDlEm1m2.js",
+      "_index-KBzOSCQT.js",
+      "_utils-DIK23y8C.js",
+      "_Spinner-CqBNS1yy.js",
+      "_EmptyState-Bu1djVJF.js",
+      "_Modal-CL5Qg-bl.js",
+      "_Badge-Bt-h5LU7.js",
+      "_auth-xvxqRZLM.js"
+    ]
+  },
+  "src/routes/(app)/sales/[id].tsx?pick=default&pick=$css": {
+    "file": "assets/_id_-BCn1HBFk.js",
+    "name": "_id_",
+    "src": "src/routes/(app)/sales/[id].tsx?pick=default&pick=$css",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_api-BDlEm1m2.js",
+      "_index-KBzOSCQT.js",
+      "_utils-DIK23y8C.js",
+      "_Spinner-CqBNS1yy.js",
+      "_Badge-Bt-h5LU7.js",
+      "_auth-xvxqRZLM.js"
+    ]
+  },
+  "src/routes/(app)/sales/index.tsx?pick=default&pick=$css": {
+    "file": "assets/index-BMQsBNWx.js",
+    "name": "index",
+    "src": "src/routes/(app)/sales/index.tsx?pick=default&pick=$css",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_api-BDlEm1m2.js",
+      "_index-KBzOSCQT.js",
+      "_utils-DIK23y8C.js",
+      "_Spinner-CqBNS1yy.js",
+      "_EmptyState-Bu1djVJF.js",
+      "_Badge-Bt-h5LU7.js",
+      "_Modal-CL5Qg-bl.js",
+      "_auth-xvxqRZLM.js"
+    ]
+  },
+  "src/routes/(app)/users/[id].tsx?pick=default&pick=$css": {
+    "file": "assets/_id_-B73HUyCP.js",
+    "name": "_id_",
+    "src": "src/routes/(app)/users/[id].tsx?pick=default&pick=$css",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_api-BDlEm1m2.js",
+      "_index-KBzOSCQT.js",
+      "_utils-DIK23y8C.js",
+      "_Spinner-CqBNS1yy.js",
+      "_Badge-Bt-h5LU7.js",
+      "_auth-xvxqRZLM.js"
+    ]
+  },
+  "src/routes/(app)/users/index.tsx?pick=default&pick=$css": {
+    "file": "assets/index-C_2M8h-n.js",
+    "name": "index",
+    "src": "src/routes/(app)/users/index.tsx?pick=default&pick=$css",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_api-BDlEm1m2.js",
+      "_index-KBzOSCQT.js",
+      "_utils-DIK23y8C.js",
+      "_Spinner-CqBNS1yy.js",
+      "_EmptyState-Bu1djVJF.js",
+      "_Badge-Bt-h5LU7.js",
+      "_Modal-CL5Qg-bl.js"
+    ]
+  },
+  "src/routes/login.tsx?pick=default&pick=$css": {
+    "file": "assets/login-DyyTh3kK.js",
+    "name": "login",
+    "src": "src/routes/login.tsx?pick=default&pick=$css",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_api-BDlEm1m2.js",
+      "_index-KBzOSCQT.js",
+      "_auth-xvxqRZLM.js",
+      "_Spinner-CqBNS1yy.js"
+    ]
+  },
+  "virtual:$vinxi/handler/client": {
+    "file": "assets/client-BSWCL-18.js",
+    "name": "client",
+    "src": "virtual:$vinxi/handler/client",
+    "isEntry": true,
+    "imports": [
+      "_api-BDlEm1m2.js",
+      "_preload-helper-CM3UJVvY.js",
+      "_index-KBzOSCQT.js",
+      "_auth-xvxqRZLM.js"
+    ],
+    "dynamicImports": [
+      "src/routes/(app).tsx?pick=default&pick=$css",
+      "src/routes/login.tsx?pick=default&pick=$css",
+      "src/routes/(app)/categories.tsx?pick=default&pick=$css",
+      "src/routes/(app)/index.tsx?pick=default&pick=$css",
+      "src/routes/(app)/notifications.tsx?pick=default&pick=$css",
+      "src/routes/(app)/customers/[id].tsx?pick=default&pick=$css",
+      "src/routes/(app)/customers/index.tsx?pick=default&pick=$css",
+      "src/routes/(app)/documents/[id].tsx?pick=default&pick=$css",
+      "src/routes/(app)/documents/index.tsx?pick=default&pick=$css",
+      "src/routes/(app)/gate-passes/[id].tsx?pick=default&pick=$css",
+      "src/routes/(app)/gate-passes/index.tsx?pick=default&pick=$css",
+      "src/routes/(app)/orders/[id].tsx?pick=default&pick=$css",
+      "src/routes/(app)/orders/index.tsx?pick=default&pick=$css",
+      "src/routes/(app)/picking/[id].tsx?pick=default&pick=$css",
+      "src/routes/(app)/picking/index.tsx?pick=default&pick=$css",
+      "src/routes/(app)/products/[id].tsx?pick=default&pick=$css",
+      "src/routes/(app)/products/index.tsx?pick=default&pick=$css",
+      "src/routes/(app)/sales/[id].tsx?pick=default&pick=$css",
+      "src/routes/(app)/sales/index.tsx?pick=default&pick=$css",
+      "src/routes/(app)/users/[id].tsx?pick=default&pick=$css",
+      "src/routes/(app)/users/index.tsx?pick=default&pick=$css"
+    ],
+    "css": [
+      "assets/client-Bj2uilB_.css"
+    ]
+  }
+}

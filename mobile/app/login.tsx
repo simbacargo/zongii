@@ -42,7 +42,7 @@ export default function LoginScreen() {
             style={styles.logo}
             resizeMode="contain"
           />
-          <Text style={styles.appSub}>Plumbing Operations</Text>
+          <Text style={styles.appSub}>Mining Operations</Text>
         </View>
 
         <View style={styles.card}>

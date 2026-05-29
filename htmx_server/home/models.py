@@ -274,8 +274,11 @@ class Document(models.Model):
     notes            = models.TextField(blank=True)
     terms            = models.TextField(blank=True)
     discount_percent = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    vat_percent      = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    customer_tin     = models.CharField(max_length=50, blank=True)
     subtotal         = models.DecimalField(max_digits=15, decimal_places=2, default=0, editable=False)
     discount_amount  = models.DecimalField(max_digits=15, decimal_places=2, default=0, editable=False)
+    vat_amount       = models.DecimalField(max_digits=15, decimal_places=2, default=0, editable=False)
     total            = models.DecimalField(max_digits=15, decimal_places=2, default=0, editable=False)
     created_at       = models.DateTimeField(auto_now_add=True)
     updated_at       = models.DateTimeField(auto_now=True)
@@ -296,12 +299,15 @@ class Document(models.Model):
         return f'{prefix}-{year}-{seq:04d}'
 
     def recompute_totals(self):
-        subtotal = sum(item.total for item in self.items.all())
-        discount = subtotal * (self.discount_percent /Decimal(100) )
-        self.subtotal       = subtotal
+        subtotal   = sum(item.total for item in self.items.all())
+        discount   = subtotal * (self.discount_percent / Decimal(100))
+        after_disc = subtotal - discount
+        vat        = after_disc * (self.vat_percent / Decimal(100))
+        self.subtotal        = subtotal
         self.discount_amount = discount
-        self.total          = subtotal - discount
-        self.save(update_fields=['subtotal', 'discount_amount', 'total'])
+        self.vat_amount      = vat
+        self.total           = after_disc + vat
+        self.save(update_fields=['subtotal', 'discount_amount', 'vat_amount', 'total'])
 
     def status_color(self):
         return {

@@ -34,18 +34,34 @@
 
                 <!-- Customer -->
                 <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">
-                        <i class="bi bi-person-fill mr-1 text-indigo-400"></i>Customer <span class="text-red-400">*</span>
-                    </label>
-                    <select name="customer" required
-                            class="w-full border-2 border-gray-100 focus:border-indigo-400 rounded-xl px-4 py-3 text-sm font-medium outline-none transition bg-gray-50 focus:bg-white">
-                        <option value="">— Select a customer —</option>
-                        {% for c in customers %}
-                        <option value="{{ c.pk }}" {% if data.customer == c.pk|stringformat:'s' %}selected{% endif %}>
-                            {{ c.name }}{% if c.phone %} · {{ c.phone }}{% endif %}
-                        </option>
-                        {% endfor %}
-                    </select>
+                    <div class="flex items-center justify-between mb-3">
+                        <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                            <i class="bi bi-person-fill mr-1 text-indigo-400"></i>Customer <span class="text-red-400">*</span>
+                        </label>
+                        <button type="button"
+                                hx-get="{% url 'customer_quick_create' %}"
+                                hx-target="#customer-quick-form"
+                                hx-swap="innerHTML"
+                                class="flex items-center gap-1 text-[11px] font-bold text-indigo-500 hover:text-indigo-700 transition-colors">
+                            <i class="bi bi-plus-circle text-sm"></i> New Customer
+                        </button>
+                    </div>
+                    <div class="relative">
+                        <input type="text"
+                               id="customer-display"
+                               placeholder="Search by name, phone, email…"
+                               autocomplete="off"
+                               hx-get="{% url 'customer_search' %}"
+                               hx-vals='js:{"q": event.target.value}'
+                               hx-trigger="keyup changed delay:200ms, focus"
+                               hx-target="#customer-results"
+                               hx-swap="innerHTML"
+                               onblur="setTimeout(()=>{ document.getElementById('customer-results').innerHTML=''; }, 200)"
+                               class="w-full border-2 border-gray-100 focus:border-indigo-400 rounded-xl px-4 py-3 text-sm outline-none transition bg-gray-50 focus:bg-white">
+                        <input type="hidden" name="customer" id="customer-id" value="">
+                        <div id="customer-results" class="absolute z-30 left-0 right-0 top-full mt-0.5"></div>
+                    </div>
+                    <div id="customer-quick-form"></div>
                 </div>
 
                 <!-- Dates -->
@@ -84,6 +100,31 @@
                                    class="w-full border-2 border-gray-100 focus:border-indigo-400 rounded-xl px-4 pr-10 py-3 text-sm font-bold outline-none transition bg-gray-50 focus:bg-white">
                             <span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">%</span>
                         </div>
+                    </div>
+
+                    <!-- VAT -->
+                    <div>
+                        <label class="flex items-center gap-2.5 cursor-pointer mb-3 select-none">
+                            <input type="checkbox" id="vat-toggle" onchange="toggleVat(this.checked)"
+                                   class="w-4 h-4 cursor-pointer accent-indigo-600">
+                            <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                                <i class="bi bi-percent mr-1 text-indigo-400"></i>Charge VAT (18%)
+                            </span>
+                        </label>
+                        <div id="vat-fields" class="hidden space-y-2">
+                            <div class="relative">
+                                <input type="number" name="vat_percent" id="vat-input"
+                                       value="18" min="0" max="100" step="0.1"
+                                       oninput="recalcTotal()"
+                                       class="w-full border-2 border-gray-100 focus:border-indigo-400 rounded-xl px-4 pr-10 py-3 text-sm font-bold outline-none transition bg-gray-50 focus:bg-white">
+                                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">%</span>
+                            </div>
+                            <input type="text" name="customer_tin" id="tin-input"
+                                   placeholder="Customer TIN (optional)"
+                                   class="w-full border-2 border-gray-100 focus:border-indigo-400 rounded-xl px-4 py-3 text-sm outline-none transition bg-gray-50 focus:bg-white">
+                        </div>
+                        <!-- submitted as 0 when VAT is off -->
+                        <input type="hidden" name="vat_percent" id="vat-hidden" value="0">
                     </div>
 
                     <div>
@@ -159,6 +200,10 @@
                             <span class="text-gray-500">Discount (<span id="discount-pct">0</span>%)</span>
                             <span class="font-bold text-red-500">− TZS <span id="discount-amount">0</span></span>
                         </div>
+                        <div class="flex justify-between text-sm transition-opacity hidden" id="vat-row">
+                            <span class="text-gray-500">VAT (<span id="vat-pct-label">18</span>%)</span>
+                            <span class="font-bold text-amber-600">+ TZS <span id="vat-amount">0</span></span>
+                        </div>
                         <div class="bg-indigo-600 rounded-2xl px-5 py-3.5 flex justify-between items-center mt-1">
                             <span class="text-white/80 text-xs font-black uppercase tracking-widest">Total</span>
                             <span class="text-white font-black text-base">TZS <span id="grand-total">0</span></span>
@@ -198,6 +243,18 @@
 
 <script>
 let itemIndex = 0;
+
+function selectCustomer(id, name) {
+    document.getElementById('customer-id').value = id;
+    document.getElementById('customer-display').value = name;
+    document.getElementById('customer-results').innerHTML = '';
+}
+
+// Called when a new customer is created via the quick-create form
+document.body.addEventListener('customerSelected', (e) => {
+    selectCustomer(e.detail.id, e.detail.name);
+});
+
 
 function setDocType(type) {
     document.getElementById('doc-type-input').value = type;
@@ -252,20 +309,34 @@ function recalcTotal() {
     });
     const discountPct    = parseFloat(document.getElementById('discount-input')?.value) || 0;
     const discountAmount = subtotal * discountPct / 100;
-    const total          = subtotal - discountAmount;
+    const afterDiscount  = subtotal - discountAmount;
+    const vatOn          = document.getElementById('vat-toggle')?.checked;
+    const vatPct         = vatOn ? (parseFloat(document.getElementById('vat-input')?.value) || 0) : 0;
+    const vatAmount      = afterDiscount * vatPct / 100;
+    const total          = afterDiscount + vatAmount;
     const fmt = n => n.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0});
 
     document.getElementById('subtotal').textContent        = fmt(subtotal);
     document.getElementById('discount-pct').textContent    = discountPct;
     document.getElementById('discount-amount').textContent = fmt(discountAmount);
-    document.getElementById('grand-total').textContent     = fmt(total);
     document.getElementById('discount-row').style.opacity  = discountPct > 0 ? '1' : '0.3';
+    document.getElementById('vat-pct-label').textContent   = vatPct;
+    document.getElementById('vat-amount').textContent      = fmt(vatAmount);
+    document.getElementById('grand-total').textContent     = fmt(total);
 }
 
-function selectProduct(index, productId, name, price, photoUrl) {
+function toggleVat(on) {
+    document.getElementById('vat-fields').classList.toggle('hidden', !on);
+    document.getElementById('vat-row').classList.toggle('hidden', !on);
+    document.getElementById('vat-hidden').disabled = on;
+    recalcTotal();
+}
+
+function selectProduct(index, productId, name, price, photoUrl, unit) {
     document.getElementById('item-pid-'   + index).value = productId;
     document.getElementById('item-desc-'  + index).value = name;
     document.getElementById('item-price-' + index).value = price;
+    if (unit) document.getElementById('item-unit-' + index).value = unit;
     const photoEl = document.getElementById('item-photo-' + index);
     photoEl.innerHTML = photoUrl
         ? `<img src="${photoUrl}" class="w-full h-full object-cover">`

@@ -128,7 +128,7 @@ export default function Footer() {
 
         {/* Bottom bar */}
         <div className="pt-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-navy-400">
-          <p>© {new Date().getFullYear()} Zongii Plumbing Co. Limited · All rights reserved · Mwanza, Tanzania</p>
+          <p>© {new Date().getFullYear()} Zongii Mining Co. Limited · All rights reserved · Mwanza, Tanzania</p>
           <p>Registered Business · TRA Certified</p>
         </div>
       </div>

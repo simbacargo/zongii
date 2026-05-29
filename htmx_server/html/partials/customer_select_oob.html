@@ -1,0 +1,14 @@
+{# OOB: replaces the customer <select> with the new customer pre-selected #}
+<select id="customer-select" name="customer" required
+        hx-swap-oob="true"
+        class="w-full border-2 border-gray-100 focus:border-indigo-400 rounded-xl px-4 py-3 text-sm font-medium outline-none transition bg-gray-50 focus:bg-white">
+    <option value="">— Select a customer —</option>
+    {% for c in customers %}
+    <option value="{{ c.pk }}" {% if c.pk == selected_id %}selected{% endif %}>
+        {{ c.name }}{% if c.phone %} · {{ c.phone }}{% endif %}
+    </option>
+    {% endfor %}
+</select>
+
+{# OOB: collapses the quick-create form panel #}
+<div id="customer-quick-form" hx-swap-oob="true"></div>

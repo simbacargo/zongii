@@ -36,7 +36,7 @@ export default function Hero() {
         {/* Headline */}
         <h1 className="hero-anim-2 font-display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black text-white leading-tight mb-6">
           Your Complete Source for{' '}
-          <span className="text-amber-400">Plumbing</span> &{' '}
+          <span className="text-amber-400">Mining</span> &{' '}
           <span className="text-amber-400">Construction</span> Supplies
         </h1>
 

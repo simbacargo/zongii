@@ -12,17 +12,28 @@
     <!-- Description / search -->
     <td class="px-2 py-3">
         <div class="relative">
-            <input type="text"
-                   name="description[]"
-                   id="item-desc-{{ index }}"
-                   placeholder="Search product or type description…"
-                   autocomplete="off"
-                   hx-get="{% url 'document_product_search' %}"
-                   hx-vals='js:{"q": event.target.value, "index": "{{ index }}"}'
-                   hx-trigger="keyup changed delay:250ms"
-                   hx-target="#item-results-{{ index }}"
-                   hx-swap="innerHTML"
-                   class="w-full border-2 border-gray-100 focus:border-amber-400 rounded-xl px-3 py-2.5 text-sm outline-none transition bg-gray-50 focus:bg-white">
+            <div class="flex gap-1.5">
+                <input type="text"
+                       name="description[]"
+                       id="item-desc-{{ index }}"
+                       placeholder="Type to search or browse…"
+                       autocomplete="off"
+                       hx-get="{% url 'document_product_search' %}"
+                       hx-vals='js:{"q": event.target.value, "index": "{{ index }}"}'
+                       hx-trigger="keyup changed delay:200ms, focus"
+                       hx-target="#item-results-{{ index }}"
+                       hx-swap="innerHTML"
+                       onblur="setTimeout(()=>{ const r=document.getElementById('item-results-{{ index }}'); if(r)r.innerHTML=''; }, 200)"
+                       class="flex-1 border-2 border-gray-100 focus:border-amber-400 rounded-xl px-3 py-2.5 text-sm outline-none transition bg-gray-50 focus:bg-white">
+                <button type="button"
+                        title="Browse products"
+                        hx-get="{% url 'document_product_search' %}?q=&index={{ index }}"
+                        hx-target="#item-results-{{ index }}"
+                        hx-swap="innerHTML"
+                        class="w-9 h-9 flex items-center justify-center rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-500 transition-colors shrink-0 self-center">
+                    <i class="bi bi-grid-3x3-gap text-sm"></i>
+                </button>
+            </div>
             <div id="item-results-{{ index }}" class="absolute z-30 left-0 right-0 top-full mt-0.5"></div>
         </div>
     </td>

@@ -9,7 +9,7 @@ from django.utils import timezone
 
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated, BasePermission
+from rest_framework.permissions import IsAuthenticated, BasePermission, AllowAny
 from rest_framework.response import Response
 
 from .models import (
@@ -236,7 +236,7 @@ def category_detail(request, pk):
 # ─────────────────────────────────────────────────────────────────────────────
 
 @api_view(['GET', 'POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def product_list(request):
     """
     GET  /api/products/?q=&category=&low_stock=true&include_inactive=true
@@ -661,6 +661,65 @@ def sale_order_detail(request, pk):
         ),
         pk=pk,
     )
+    return Response(SaleOrderSerializer(order).data)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def sale_order_accountant_review(request, pk):
+    """
+    POST /api/orders/{pk}/accountant-review/
+    Body: { "action": "approve|reject", "note": "..." }
+    """
+    order = get_object_or_404(SaleOrder, pk=pk)
+
+    if not (request.user.is_accountant or request.user.is_admin or request.user.is_superuser):
+        return Response({'error': 'Accountant access required.'}, status=status.HTTP_403_FORBIDDEN)
+
+    if order.workflow_status != SaleOrder.PENDING_APPROVAL:
+        return Response({'error': 'Order is not awaiting approval.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    action = request.data.get('action')
+    note   = request.data.get('note', '')
+
+    if action not in ('approve', 'reject'):
+        return Response({'error': 'action must be approve or reject.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    from notifications.utils import notify, notify_pickers
+    from notifications.models import Notification
+
+    with transaction.atomic():
+        if action == 'approve':
+            picking_order = PickingOrder.objects.create(sale_order=order)
+            for sale in order.sales.select_related('product'):
+                PickingOrderItem.objects.create(
+                    picking_order=picking_order,
+                    sale=sale,
+                    product=sale.product,
+                    requested_qty=sale.quantity_sold,
+                )
+            order.transition(SaleOrder.PENDING_PICKING, request.user, note or f'Approved by {request.user.username}')
+            notify_pickers(
+                Notification.ORDER_CREATED,
+                title=f'New order {order.order_code} awaiting picking',
+                message=f'Approved by {request.user.username}.',
+                link=f'/orders/{order.pk}/',
+                entity_id=order.pk,
+            )
+            if order.created_by:
+                notify(order.created_by, Notification.ORDER_VERIFIED,
+                       title=f'Order {order.order_code} approved',
+                       message=note or f'Approved by {request.user.username}.',
+                       link=f'/orders/{order.pk}/', entity_id=order.pk)
+        else:
+            order.transition(SaleOrder.REJECTED, request.user, note or f'Rejected by {request.user.username}')
+            if order.created_by:
+                notify(order.created_by, Notification.ORDER_REJECTED,
+                       title=f'Order {order.order_code} rejected',
+                       message=note or f'Rejected by {request.user.username}.',
+                       link=f'/orders/{order.pk}/', entity_id=order.pk)
+
+    order.refresh_from_db()
     return Response(SaleOrderSerializer(order).data)
 
 

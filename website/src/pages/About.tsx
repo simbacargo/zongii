@@ -59,7 +59,7 @@ export default function About() {
               </h2>
               <div className="space-y-4 text-slate-600 text-base leading-relaxed">
                 <p>
-                  Zongii Plumbing Co. Limited is a private company limited by shares, incorporated on
+                  Zongii Mining Co. Limited is a private company limited by shares, incorporated on
                   <strong className="text-navy-700"> 21st October 2009</strong> in accordance with the provisions of the
                   Registrar of Business Names Act as a wholly owned limited company.
                 </p>
@@ -81,7 +81,7 @@ export default function About() {
                 <h3 className="font-display text-2xl font-black text-navy-700 mb-6">Company Details</h3>
                 <div className="space-y-5">
                   {[
-                    { label: 'Registered Name', value: 'Zongii Plumbing Co. Limited' },
+                    { label: 'Registered Name', value: 'Zongii Mining Co. Limited' },
                     { label: 'Founded', value: 'April 5, 2002' },
                     { label: 'Incorporated', value: 'October 21, 2009' },
                     { label: 'Company Type', value: 'Private Limited Company' },

@@ -438,6 +438,41 @@ def customer_detail(request, pk):
 
 
 @login_required
+@require_GET
+def customer_search(request):
+    q = request.GET.get("q", "").strip()
+    if q:
+        customers = Customer.objects.filter(
+            Q(name__icontains=q) | Q(phone__icontains=q) | Q(email__icontains=q)
+        ).order_by("name")[:12]
+    else:
+        customers = Customer.objects.order_by("name")[:15]
+    return render(request, "partials/customer_search_results.html", {"customers": customers})
+
+
+@login_required
+@require_http_methods(["GET", "POST"])
+def customer_quick_create(request):
+    """Inline customer creation used from the invoice form."""
+    if request.method == "POST":
+        name = request.POST.get("name", "").strip()
+        if not name:
+            return render(request, "partials/customer_quick_create.html", {"error": "Name is required."})
+        customer = Customer.objects.create(
+            name=name,
+            phone=request.POST.get("phone", "").strip(),
+            email=request.POST.get("email", "").strip(),
+        )
+        import json as _json
+        response = HttpResponse("")  # clears #customer-quick-form
+        response["HX-Trigger"] = _json.dumps({
+            "customerSelected": {"id": str(customer.pk), "name": customer.name}
+        })
+        return response
+    return render(request, "partials/customer_quick_create.html")
+
+
+@login_required
 @require_http_methods(["GET", "POST"])
 def customer_create(request):
     if request.method == "POST":
@@ -1554,6 +1589,8 @@ def document_create(request):
             notes            = data.get('notes', ''),
             terms            = data.get('terms', ''),
             discount_percent = Decimal(data.get('discount_percent') or '0'),
+            vat_percent      = Decimal(data.get('vat_percent') or '0'),
+            customer_tin     = data.get('customer_tin', '').strip(),
         )
 
         descriptions = data.getlist('description[]')
@@ -1682,12 +1719,13 @@ def document_item_row(request):
 def document_product_search(request):
     q     = request.GET.get('q', '').strip()
     index = request.GET.get('index', 0)
-    products = []
-    if len(q) >= 2:
+    if q:
         products = Product.objects.filter(
             Q(name__icontains=q) | Q(part_number__icontains=q) | Q(brand__icontains=q),
             is_active=True,
-        ).select_related()[:8]
+        ).order_by('name')[:12]
+    else:
+        products = Product.objects.filter(is_active=True).order_by('name')[:15]
     return render(request, 'partials/invoice_product_results.html', {
         'products': products,
         'index': index,

@@ -36,35 +36,35 @@ export interface NewsArticle {
 
 export const FILTER_CATEGORIES = [
   'All', 'Building Materials', 'Building Tools',
-  'Engineering', 'General', 'Plumbing', 'PVC',
+  'Engineering', 'General', 'Mining', 'PVC',
 ] as const
 
 export const PRODUCTS: Product[] = [
   {
     id: 'water-sinks',
     name: 'Water Sinks',
-    categories: ['Building Tools', 'Plumbing'],
+    categories: ['Building Tools', 'Mining'],
     image: 'https://zongii.co.tz/wp-content/uploads/2020/08/products_watersinks_thumb.jpg',
     description: 'Premium quality sinks for residential and commercial installations.',
   },
   {
     id: 'water-pumps',
     name: 'Water Pumps',
-    categories: ['Engineering', 'Plumbing'],
+    categories: ['Engineering', 'Mining'],
     image: 'https://zongii.co.tz/wp-content/uploads/2020/07/products_waterpumps_thumb.jpg',
     description: 'Reliable pumping solutions for every scale of water system.',
   },
   {
     id: 'plumbing-accessories',
-    name: 'Plumbing Accessories & Fitting',
-    categories: ['Plumbing'],
+    name: 'Mining Accessories & Fitting',
+    categories: ['Mining'],
     image: 'https://zongii.co.tz/wp-content/uploads/2020/07/products_plumbingaccessories_thumb.jpg',
     description: 'Complete range of fittings, valves and connectors.',
   },
   {
     id: 'ceramic-wares',
     name: 'Ceramic Wares',
-    categories: ['Building Materials', 'Engineering', 'Plumbing'],
+    categories: ['Building Materials', 'Engineering', 'Mining'],
     image: 'https://zongii.co.tz/wp-content/uploads/2020/07/products_ceramic_thumb.jpg',
     description: 'High-grade ceramic basins, toilets and bathroom fittings.',
   },
@@ -85,21 +85,21 @@ export const PRODUCTS: Product[] = [
   {
     id: 'pvc-fittings',
     name: 'PVC Fittings',
-    categories: ['Building Materials', 'Building Tools', 'Plumbing', 'PVC'],
+    categories: ['Building Materials', 'Building Tools', 'Mining', 'PVC'],
     image: 'https://zongii.co.tz/wp-content/uploads/2020/07/products_pvc_fittings_thumb.jpg',
     description: 'Full selection of PVC elbows, tees, reducers and couplings.',
   },
   {
     id: 'polyethylene-tanks',
     name: 'Polyethylene Tanks',
-    categories: ['Engineering', 'Plumbing', 'PVC'],
+    categories: ['Engineering', 'Mining', 'PVC'],
     image: 'https://zongii.co.tz/wp-content/uploads/2020/07/products_polytanks_thumb.jpg',
     description: 'UV-stabilised water storage tanks in a range of capacities.',
   },
   {
     id: 'pvc-pipes',
     name: 'PVC Pipes',
-    categories: ['Building Materials', 'Engineering', 'Plumbing', 'PVC'],
+    categories: ['Building Materials', 'Engineering', 'Mining', 'PVC'],
     image: 'https://zongii.co.tz/wp-content/uploads/2018/11/products_pvc_thumb.jpg',
     description: 'Pressure-rated PVC pipes for water supply and drainage systems.',
   },
@@ -183,8 +183,8 @@ Visit our Pamba Road showroom or call our sales team on +255 769 005 007 to disc
     title: 'Celebrating 22 Years of Serving Tanzania',
     date: '2025-04-05',
     category: 'Company',
-    excerpt: 'On April 5th, 2025, Zongii Plumbing Co. Limited marks 22 years since its founding. We reflect on two decades of growth, trust and commitment to the Tanzanian construction industry.',
-    content: `On this day in 2002, Zongii Plumbing Co. Limited opened its doors for the first time. What began as a small specialist plumbing supplier in Mwanza has grown into one of Tanzania's most trusted names in building and construction materials.
+    excerpt: 'On April 5th, 2025, Zongii Mining Co. Limited marks 22 years since its founding. We reflect on two decades of growth, trust and commitment to the Tanzanian construction industry.',
+    content: `On this day in 2002, Zongii Mining Co. Limited opened its doors for the first time. What began as a small specialist plumbing supplier in Mwanza has grown into one of Tanzania's most trusted names in building and construction materials.
 
 Over the past 22 years, we have:
 

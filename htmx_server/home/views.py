@@ -1693,13 +1693,21 @@ def document_pdf(request, pk):
 @login_required
 @require_GET
 def document_pdf(request, pk):
+    import base64, os as _os
     from weasyprint import HTML
     doc = get_object_or_404(
         Document.objects.select_related('customer', 'created_by')
                         .prefetch_related('items__product'),
         pk=pk,
     )
-    html = render_to_string('invoice_pdf.html', {'doc': doc}, request=request)
+    # Embed stamp as base64 so WeasyPrint doesn't need to fetch it over HTTP
+    stamp_data_uri = ''
+    from django.conf import settings as _settings
+    stamp_path = _os.path.join(_settings.BASE_DIR, 'assets', 'stamp.png')
+    if _os.path.exists(stamp_path):
+        with open(stamp_path, 'rb') as f:
+            stamp_data_uri = 'data:image/png;base64,' + base64.b64encode(f.read()).decode()
+    html = render_to_string('invoice_pdf.html', {'doc': doc, 'stamp_data_uri': stamp_data_uri}, request=request)
     pdf  = HTML(string=html, base_url=request.build_absolute_uri('/')).write_pdf()
     filename = f"{doc.number}.pdf"
     response = HttpResponse(pdf, content_type='application/pdf')

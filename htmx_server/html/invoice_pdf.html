@@ -150,13 +150,6 @@
   .sig-label { color: #6b7280; margin-bottom: 28px; }
   .sig-line  { border-top: 1px solid #333; padding-top: 3px; color: #6b7280; font-size: 10px; }
   .sig-right { text-align: right; }
-  .stamp-circle {
-    width: 72px; height: 72px; border-radius: 50%;
-    border: 2px dashed #9ca3af;
-    display: flex; align-items: center; justify-content: center;
-    margin: 0 auto;
-    color: #d1d5db; font-size: 9px; text-align: center; line-height: 1.4;
-  }
 
   /* ── Footer ── */
   .doc-footer {
@@ -333,8 +326,12 @@
       <div class="sig-label">Signature &amp; Stamp:</div>
       <div class="sig-line">Signing Date: {{ doc.issue_date|date:"Y-m-d" }}</div>
     </div>
-    <div>
+    <div style="text-align:center;">
+      {% if stamp_data_uri %}
+      <img src="{{ stamp_data_uri }}" alt="Company Stamp" style="width:90px; height:90px; object-fit:contain; mix-blend-mode:multiply;">
+      {% else %}
       <div class="stamp-circle">Company<br>Stamp</div>
+      {% endif %}
     </div>
     <div class="sig-block sig-right">
       <div class="sig-party">Seller: Zongii Mining &amp; General Supply Ltd</div>

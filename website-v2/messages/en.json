@@ -1,0 +1,181 @@
+{
+  "Nav": {
+    "home": "Home",
+    "products": "Products",
+    "industries": "Industries",
+    "about": "About",
+    "news": "News",
+    "contact": "Contact",
+    "login": "Login",
+    "getQuote": "Get a Quote"
+  },
+  "Common": {
+    "language": "Language",
+    "english": "English",
+    "swahili": "Kiswahili",
+    "theme": "Theme",
+    "lightMode": "Light",
+    "darkMode": "Dark",
+    "system": "System",
+    "loading": "Loading",
+    "viewAll": "View all"
+  },
+  "Hero": {
+    "badge": "Tanzania's Trusted Supply Partner",
+    "titleLead": "Your complete source for",
+    "highlightA": "mining",
+    "and": "&",
+    "highlightB": "construction",
+    "titleTail": "supplies",
+    "subtitle": "Supplying quality products to contractors, developers and homeowners across Tanzania for over 22 years.",
+    "ctaPrimary": "Explore products",
+    "ctaSecondary": "Talk to us",
+    "scroll": "Scroll",
+    "trustLine": "Trusted across Mwanza, Dar es Salaam & upcountry Tanzania"
+  },
+  "Stats": {
+    "eyebrow": "By the numbers",
+    "heading": "Two decades of trusted supply"
+  },
+  "Products": {
+    "eyebrow": "Our Products",
+    "heading": "What we supply",
+    "subheading": "A complete range of building, plumbing and mining products — sourced to international standards and stocked in depth.",
+    "filterAll": "All",
+    "viewProduct": "Enquire",
+    "viewCatalogue": "View full catalogue"
+  },
+  "Why": {
+    "eyebrow": "Why Zongii",
+    "heading": "Built on trust, delivered with expertise",
+    "subheading": "For over 22 years we've helped Tanzania build — with the right products, sound advice and dependable supply."
+  },
+  "Industries": {
+    "eyebrow": "Industries we serve",
+    "heading": "One supplier, every sector",
+    "subheading": "From single homes to large-scale mining operations, we keep Tanzania's projects moving."
+  },
+  "News": {
+    "eyebrow": "News & Insights",
+    "heading": "From the Zongii desk",
+    "subheading": "Product updates, industry guidance and company news from Mwanza.",
+    "readMore": "Read article",
+    "viewAll": "View all news",
+    "backToNews": "Back to news",
+    "related": "More from the desk",
+    "publishedOn": "Published",
+    "englishOnlyNote": "This article is currently available in English only."
+  },
+  "Contact": {
+    "eyebrow": "Get in touch",
+    "heading": "Let's talk",
+    "subheading": "Need a quote, have a question, or want to discuss a project? We'd love to hear from you.",
+    "labelName": "Full name",
+    "labelCompany": "Company",
+    "labelPhone": "Phone",
+    "labelEmail": "Email",
+    "labelMessage": "Message",
+    "placeholderName": "e.g. Juma Hassan",
+    "placeholderCompany": "Your company name",
+    "placeholderPhone": "+255 7XX XXX XXX",
+    "placeholderEmail": "you@example.com",
+    "placeholderMessage": "Tell us about your project or enquiry…",
+    "optional": "optional",
+    "submit": "Send message",
+    "sending": "Sending…",
+    "successTitle": "Message sent!",
+    "successBody": "Thank you for reaching out. Our team will get back to you within one business day.",
+    "sendAnother": "Send another message",
+    "errorTitle": "Something went wrong",
+    "errorBody": "We couldn't send your message. Please try again or call us directly.",
+    "infoTitle": "Contact info",
+    "infoBody": "Reach us directly — we're happy to help with quotes, product availability and technical advice.",
+    "address": "Address",
+    "phone": "Phone",
+    "email": "Email",
+    "sales": "Sales",
+    "hours": "Hours",
+    "follow": "Follow us",
+    "validName": "Please enter your name.",
+    "validPhone": "Please enter a phone number.",
+    "validEmail": "Please enter a valid email.",
+    "validMessage": "Please enter a short message."
+  },
+  "Footer": {
+    "tagline": "Tanzania's trusted source for mining, building and construction supplies — serving contractors, developers and homeowners for over 22 years.",
+    "explore": "Explore",
+    "company": "Company",
+    "contactHeading": "Contact",
+    "rights": "All rights reserved.",
+    "established": "Established 2002 · Mwanza, Tanzania"
+  },
+  "Cta": {
+    "eyebrow": "Ready when you are",
+    "heading": "Let's build something that lasts",
+    "subheading": "Get a competitive quote and expert guidance from a team that has supplied Tanzania for over two decades.",
+    "primary": "Request a quote",
+    "secondary": "Browse products"
+  },
+  "Standards": {
+    "eyebrow": "Built to international standards",
+    "certified": "TBS Certified",
+    "tested": "Third-party tested",
+    "guaranteed": "Quality guaranteed",
+    "years": "22+ years of trust"
+  },
+  "Process": {
+    "eyebrow": "How we work",
+    "heading": "From enquiry to site, made simple",
+    "subheading": "A straightforward path from your first call to materials on your site — backed by expert advice at every step.",
+    "steps": {
+      "enquire": { "title": "Enquire", "desc": "Tell us your project, quantities and timeline — by phone, email or the form." },
+      "quote": { "title": "Quote", "desc": "Receive a clear, itemised quotation with competitive, project-based pricing." },
+      "supply": { "title": "Supply", "desc": "Fast, dependable delivery across Mwanza, Dar es Salaam and upcountry Tanzania." },
+      "support": { "title": "Support", "desc": "Technical guidance and after-sales backing — we stand behind everything we sell." }
+    }
+  },
+  "Faq": {
+    "eyebrow": "FAQ",
+    "heading": "Answers, before you ask",
+    "subheading": "The things contractors, developers and homeowners ask us most.",
+    "items": {
+      "range": { "q": "What products do you supply?", "a": "Nine product lines covering every stage of construction — PVC pipes & fittings, polyethylene tanks, water pumps, ceramic sanitaryware, hot water systems, mining pipes & tools, and more." },
+      "delivery": { "q": "Where do you deliver?", "a": "We supply across Mwanza, Dar es Salaam and upcountry Tanzania, with stock depth to support multi-month projects without stock-outs." },
+      "quality": { "q": "Are your products certified?", "a": "Yes. We source to international standards (BS EN ISO 1452, ASTM D1785, TZS 476) with test certificates, and replace any non-conforming product free of charge." },
+      "bulk": { "q": "Do you offer bulk pricing for developers and contractors?", "a": "Yes — we provide competitive project quotations and bulk rates for large-scale and multi-phase procurement." },
+      "quote": { "q": "How do I get a quote?", "a": "Send your requirements via the contact form, email sales@zongii.co.tz, or call +255 769 005 007 — we respond within one business day." },
+      "hours": { "q": "What are your opening hours?", "a": "Our Pamba Road branch in Mwanza is open Monday to Friday, 8:00 am – 5:00 pm EAT." }
+    }
+  },
+  "About": {
+    "metaTitle": "About",
+    "eyebrow": "Our Story",
+    "heading": "Supplying Tanzania since 2002",
+    "lead": "What began as a small specialist plumbing supplier in Mwanza has grown into one of Tanzania's most trusted names in building and construction materials.",
+    "bodyOne": "Zongii Mining Co. Limited opened its doors in 2002. Over 22 years we've grown from a handful of plumbing essentials into nine distinct product lines spanning every stage of construction — serving more than ten industry sectors across the country.",
+    "bodyTwo": "Our incorporation as a private limited company in 2009 formalised the trust our customers had placed in us from the very beginning. Today we're a fully registered entity with the Tanzania Revenue Authority and proud to stand behind everything we sell.",
+    "missionEyebrow": "What drives us",
+    "missionHeading": "Quality you can build on",
+    "missionBody": "We don't trade on price alone. Every product we stock is sourced from manufacturers who can prove quality, traceability and compliance — so you can specify with confidence.",
+    "credentialsHeading": "Registered & compliant",
+    "credentials": "Fully registered with the Tanzania Revenue Authority (TIN: 108-998-350) and compliant with the Tax Administration Act 2015.",
+    "valuesHeading": "What we stand for"
+  },
+  "ProductsPage": {
+    "metaTitle": "Products",
+    "eyebrow": "Catalogue",
+    "heading": "Everything you need, from one supplier",
+    "subheading": "Browse our full range of mining, building and plumbing products. Filter by category to find what your project needs."
+  },
+  "ContactPage": {
+    "metaTitle": "Contact"
+  },
+  "NewsPage": {
+    "metaTitle": "News"
+  },
+  "Meta": {
+    "siteName": "Zongii",
+    "homeTitle": "Mining, Building & Construction Supplies — Tanzania",
+    "description": "Zongii — Tanzania's trusted supplier of mining, plumbing, building and construction supplies. Serving contractors, developers and homeowners across Tanzania for over 22 years."
+  }
+}

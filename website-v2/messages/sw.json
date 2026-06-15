@@ -1,0 +1,181 @@
+{
+  "Nav": {
+    "home": "Nyumbani",
+    "products": "Bidhaa",
+    "industries": "Sekta",
+    "about": "Kuhusu",
+    "news": "Habari",
+    "contact": "Wasiliana",
+    "login": "Ingia",
+    "getQuote": "Pata Bei"
+  },
+  "Common": {
+    "language": "Lugha",
+    "english": "Kiingereza",
+    "swahili": "Kiswahili",
+    "theme": "Mwonekano",
+    "lightMode": "Mwangaza",
+    "darkMode": "Giza",
+    "system": "Mfumo",
+    "loading": "Inapakia",
+    "viewAll": "Ona zote"
+  },
+  "Hero": {
+    "badge": "Mshirika wa Kuaminika wa Usambazaji Tanzania",
+    "titleLead": "Chanzo chako kamili cha vifaa vya",
+    "highlightA": "madini",
+    "and": "na",
+    "highlightB": "ujenzi",
+    "titleTail": "",
+    "subtitle": "Tunasambaza bidhaa bora kwa wakandarasi, wajenzi na wamiliki wa nyumba kote Tanzania kwa zaidi ya miaka 22.",
+    "ctaPrimary": "Tazama bidhaa",
+    "ctaSecondary": "Wasiliana nasi",
+    "scroll": "Sogeza",
+    "trustLine": "Tunaaminika Mwanza, Dar es Salaam na mikoa yote ya Tanzania"
+  },
+  "Stats": {
+    "eyebrow": "Kwa takwimu",
+    "heading": "Miongo miwili ya usambazaji wa kuaminika"
+  },
+  "Products": {
+    "eyebrow": "Bidhaa Zetu",
+    "heading": "Tunachosambaza",
+    "subheading": "Aina kamili ya bidhaa za ujenzi, mabomba na madini — zenye viwango vya kimataifa na zinazopatikana kwa wingi.",
+    "filterAll": "Zote",
+    "viewProduct": "Uliza",
+    "viewCatalogue": "Ona katalogi kamili"
+  },
+  "Why": {
+    "eyebrow": "Kwa Nini Zongii",
+    "heading": "Tumejengwa kwa uaminifu, tunatoa kwa utaalamu",
+    "subheading": "Kwa zaidi ya miaka 22 tumeisaidia Tanzania kujenga — kwa bidhaa sahihi, ushauri thabiti na usambazaji wa kutegemewa."
+  },
+  "Industries": {
+    "eyebrow": "Sekta tunazohudumia",
+    "heading": "Msambazaji mmoja, kila sekta",
+    "subheading": "Kutoka nyumba moja hadi shughuli kubwa za madini, tunaendeleza miradi ya Tanzania."
+  },
+  "News": {
+    "eyebrow": "Habari na Maarifa",
+    "heading": "Kutoka dawati la Zongii",
+    "subheading": "Taarifa za bidhaa, mwongozo wa sekta na habari za kampuni kutoka Mwanza.",
+    "readMore": "Soma makala",
+    "viewAll": "Ona habari zote",
+    "backToNews": "Rudi kwenye habari",
+    "related": "Zaidi kutoka dawatini",
+    "publishedOn": "Imechapishwa",
+    "englishOnlyNote": "Makala hii kwa sasa inapatikana kwa Kiingereza pekee."
+  },
+  "Contact": {
+    "eyebrow": "Wasiliana nasi",
+    "heading": "Tuzungumze",
+    "subheading": "Unahitaji bei, una swali, au ungependa kujadili mradi? Tungependa kusikia kutoka kwako.",
+    "labelName": "Jina kamili",
+    "labelCompany": "Kampuni",
+    "labelPhone": "Simu",
+    "labelEmail": "Barua pepe",
+    "labelMessage": "Ujumbe",
+    "placeholderName": "mf. Juma Hassan",
+    "placeholderCompany": "Jina la kampuni yako",
+    "placeholderPhone": "+255 7XX XXX XXX",
+    "placeholderEmail": "wewe@mfano.com",
+    "placeholderMessage": "Tueleze kuhusu mradi au swali lako…",
+    "optional": "si lazima",
+    "submit": "Tuma ujumbe",
+    "sending": "Inatuma…",
+    "successTitle": "Ujumbe umetumwa!",
+    "successBody": "Asante kwa kuwasiliana nasi. Timu yetu itakujibu ndani ya siku moja ya kazi.",
+    "sendAnother": "Tuma ujumbe mwingine",
+    "errorTitle": "Kuna tatizo limetokea",
+    "errorBody": "Hatukuweza kutuma ujumbe wako. Tafadhali jaribu tena au tupigie simu moja kwa moja.",
+    "infoTitle": "Taarifa za mawasiliano",
+    "infoBody": "Wasiliana nasi moja kwa moja — tupo tayari kusaidia kuhusu bei, upatikanaji wa bidhaa na ushauri wa kiufundi.",
+    "address": "Anuani",
+    "phone": "Simu",
+    "email": "Barua pepe",
+    "sales": "Mauzo",
+    "hours": "Saa za kazi",
+    "follow": "Tufuate",
+    "validName": "Tafadhali weka jina lako.",
+    "validPhone": "Tafadhali weka namba ya simu.",
+    "validEmail": "Tafadhali weka barua pepe sahihi.",
+    "validMessage": "Tafadhali andika ujumbe mfupi."
+  },
+  "Footer": {
+    "tagline": "Chanzo cha kuaminika cha Tanzania kwa vifaa vya madini, ujenzi na ukandarasi — tukihudumia wakandarasi, wajenzi na wamiliki wa nyumba kwa zaidi ya miaka 22.",
+    "explore": "Vinjari",
+    "company": "Kampuni",
+    "contactHeading": "Mawasiliano",
+    "rights": "Haki zote zimehifadhiwa.",
+    "established": "Ilianzishwa 2002 · Mwanza, Tanzania"
+  },
+  "Cta": {
+    "eyebrow": "Tupo tayari",
+    "heading": "Tujenge kitu cha kudumu",
+    "subheading": "Pata bei nzuri na ushauri wa kitaalamu kutoka timu iliyoisambazia Tanzania kwa zaidi ya miongo miwili.",
+    "primary": "Omba bei",
+    "secondary": "Vinjari bidhaa"
+  },
+  "Standards": {
+    "eyebrow": "Imejengwa kwa viwango vya kimataifa",
+    "certified": "Imethibitishwa na TBS",
+    "tested": "Imepimwa na wahusika huru",
+    "guaranteed": "Ubora wa uhakika",
+    "years": "Miaka 22+ ya kuaminika"
+  },
+  "Process": {
+    "eyebrow": "Jinsi tunavyofanya kazi",
+    "heading": "Kutoka swali hadi eneo la kazi, kwa urahisi",
+    "subheading": "Njia rahisi kutoka simu yako ya kwanza hadi vifaa kufika eneo lako — ikisaidiwa na ushauri wa kitaalamu kila hatua.",
+    "steps": {
+      "enquire": { "title": "Uliza", "desc": "Tueleze mradi wako, kiasi na muda — kwa simu, barua pepe au fomu." },
+      "quote": { "title": "Bei", "desc": "Pata nukuu ya bei iliyo wazi na ya ushindani kulingana na mradi." },
+      "supply": { "title": "Usambazaji", "desc": "Utoaji wa haraka na wa kutegemewa kote Mwanza, Dar es Salaam na mikoa ya Tanzania." },
+      "support": { "title": "Msaada", "desc": "Ushauri wa kiufundi na msaada baada ya mauzo — tunasimamia kila tunachouza." }
+    }
+  },
+  "Faq": {
+    "eyebrow": "Maswali",
+    "heading": "Majibu, kabla hujauliza",
+    "subheading": "Mambo ambayo wakandarasi, wajenzi na wamiliki wa nyumba hutuuliza zaidi.",
+    "items": {
+      "range": { "q": "Mnauza bidhaa gani?", "a": "Aina tisa za bidhaa zinazohusisha kila hatua ya ujenzi — mabomba na viunganishi vya PVC, matangi ya polyethilini, pampu za maji, bidhaa za kauri za bafuni, mifumo ya maji ya moto, mabomba na vifaa vya madini, na zaidi." },
+      "delivery": { "q": "Mnasambaza wapi?", "a": "Tunasambaza kote Mwanza, Dar es Salaam na mikoa ya Tanzania, tukiwa na bidhaa za kutosha kuhudumia miradi ya miezi mingi bila kukosa." },
+      "quality": { "q": "Je, bidhaa zenu zimethibitishwa?", "a": "Ndiyo. Tunanunua kwa viwango vya kimataifa (BS EN ISO 1452, ASTM D1785, TZS 476) zikiwa na vyeti vya majaribio, na tunabadilisha bidhaa yoyote isiyokidhi viwango bila gharama." },
+      "bulk": { "q": "Mna bei ya jumla kwa wajenzi na wakandarasi?", "a": "Ndiyo — tunatoa nukuu za bei za ushindani na viwango vya jumla kwa ununuzi mkubwa na wa awamu nyingi." },
+      "quote": { "q": "Nipataje bei?", "a": "Tutumie mahitaji yako kupitia fomu, barua pepe sales@zongii.co.tz, au piga +255 769 005 007 — tunajibu ndani ya siku moja ya kazi." },
+      "hours": { "q": "Saa zenu za kazi ni zipi?", "a": "Tawi letu la Pamba Road mjini Mwanza limefunguliwa Jumatatu hadi Ijumaa, saa 2:00 asubuhi hadi saa 11:00 jioni." }
+    }
+  },
+  "About": {
+    "metaTitle": "Kuhusu",
+    "eyebrow": "Historia Yetu",
+    "heading": "Tukisambaza Tanzania tangu 2002",
+    "lead": "Kilichoanza kama msambazaji mdogo wa mabomba mjini Mwanza kimekua na kuwa moja ya majina yanayoaminika zaidi Tanzania katika vifaa vya ujenzi.",
+    "bodyOne": "Zongii Mining Co. Limited ilifungua milango yake mwaka 2002. Kwa miaka 22 tumekua kutoka bidhaa chache za mabomba hadi aina tisa tofauti za bidhaa zinazohusisha kila hatua ya ujenzi — tukihudumia zaidi ya sekta kumi nchini.",
+    "bodyTwo": "Usajili wetu kama kampuni binafsi yenye dhima ya kikomo mwaka 2009 ulirasimisha imani ambayo wateja wetu walikuwa nayo tangu mwanzo. Leo sisi ni taasisi iliyosajiliwa kikamilifu na Mamlaka ya Mapato Tanzania na tunajivunia kusimamia kila tunachouza.",
+    "missionEyebrow": "Kinachotuongoza",
+    "missionHeading": "Ubora unaoweza kuujengea",
+    "missionBody": "Hatuuzii bei pekee. Kila bidhaa tunayohifadhi inatoka kwa watengenezaji wanaoweza kuthibitisha ubora, ufuatiliaji na uzingatiaji wa viwango — ili uchague kwa kujiamini.",
+    "credentialsHeading": "Tumesajiliwa na tunazingatia sheria",
+    "credentials": "Tumesajiliwa kikamilifu na Mamlaka ya Mapato Tanzania (TIN: 108-998-350) na tunazingatia Sheria ya Usimamizi wa Kodi ya 2015.",
+    "valuesHeading": "Tunachosimamia"
+  },
+  "ProductsPage": {
+    "metaTitle": "Bidhaa",
+    "eyebrow": "Katalogi",
+    "heading": "Kila unachohitaji, kutoka msambazaji mmoja",
+    "subheading": "Vinjari aina yetu kamili ya bidhaa za madini, ujenzi na mabomba. Chuja kwa kategoria kupata kinachohitajika kwa mradi wako."
+  },
+  "ContactPage": {
+    "metaTitle": "Wasiliana"
+  },
+  "NewsPage": {
+    "metaTitle": "Habari"
+  },
+  "Meta": {
+    "siteName": "Zongii",
+    "homeTitle": "Vifaa vya Madini, Ujenzi na Ukandarasi — Tanzania",
+    "description": "Zongii — msambazaji wa kuaminika Tanzania wa vifaa vya madini, mabomba na ujenzi. Tukihudumia wakandarasi, wajenzi na wamiliki wa nyumba kote Tanzania kwa zaidi ya miaka 22."
+  }
+}

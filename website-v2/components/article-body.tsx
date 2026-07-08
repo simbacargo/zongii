@@ -34,7 +34,7 @@ export function ArticleBody({ content }: { content: string }) {
             <ul key={i} className="space-y-2 pl-1">
               {lines.map((l, j) => (
                 <li key={j} className="flex gap-3 text-foreground/85">
-                  <span className="mt-2.5 size-1.5 shrink-0 rounded-full bg-gold" />
+                  <span className="mt-2.5 size-1.5 shrink-0 rotate-45 bg-amber" />
                   <span className="leading-relaxed">
                     {inline(l.trim().slice(2))}
                   </span>
@@ -50,7 +50,7 @@ export function ArticleBody({ content }: { content: string }) {
             <ol key={i} className="space-y-2 pl-1">
               {lines.map((l, j) => (
                 <li key={j} className="flex gap-3 text-foreground/85">
-                  <span className="font-display text-sm font-semibold text-gold">
+                  <span className="font-mono text-xs font-medium text-brand-deep">
                     {j + 1}.
                   </span>
                   <span className="leading-relaxed">

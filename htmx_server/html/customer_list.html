@@ -1,21 +1,22 @@
+{% load i18n %}
 {% load currency %}
 {% block content %}
 <div class="max-w-5xl mx-auto p-6">
     <div class="flex justify-between items-end mb-8">
         <div>
-            <h1 class="text-3xl font-black text-slate-900 tracking-tight">Customers</h1>
-            <p class="text-slate-500 font-medium text-sm">Manage customers and track outstanding balances.</p>
+            <h1 class="text-3xl font-black text-gray-900 tracking-tight">{% trans "Customers" %}</h1>
+            <p class="text-gray-500 font-medium text-sm">{% trans "Manage customers and track outstanding balances." %}</p>
         </div>
         <div class="flex items-center gap-3">
             {% if total_debt %}
-            <div class="bg-rose-50 px-4 py-2 rounded-2xl border border-rose-100">
-                <span class="text-[10px] font-black text-rose-600 uppercase tracking-widest block">Total Receivables</span>
-                <span class="text-lg font-black text-rose-900">{{ total_debt|tzs }}</span>
+            <div class="bg-red-50 px-4 py-2 rounded-2xl border border-red-100">
+                <span class="text-[10px] font-black text-red-600 uppercase tracking-widest block">{% trans "Total Receivables" %}</span>
+                <span class="text-lg font-black text-red-900">{{ total_debt|tzs }}</span>
             </div>
             {% endif %}
             <button hx-get="{% url 'customer_create' %}" hx-target="#modal-content" hx-swap="innerHTML"
-                    class="bg-violet-600 hover:bg-violet-700 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-sm shadow-violet-100 transition-all flex items-center gap-2">
-                <i class="bi bi-person-plus-fill"></i> New Customer
+                    class="bg-amber-600 hover:bg-amber-700 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-sm shadow-amber-100 transition-all flex items-center gap-2">
+                <i class="bi bi-person-plus-fill"></i> {% trans "New Customer" %}
             </button>
         </div>
     </div>
@@ -24,8 +25,8 @@
     <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm mb-5">
         <div class="relative max-w-md">
             <span class="absolute left-4 top-3.5 text-gray-400"><i class="bi bi-search text-sm"></i></span>
-            <input type="text" name="q" value="{{ query }}" placeholder="Search by name, phone, email..."
-                   class="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition"
+            <input type="text" name="q" value="{{ query }}" placeholder="{% trans 'Search by name, phone, email...' %}"
+                   class="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:ring-2 focus:ring-amber-500 outline-none transition"
                    hx-get="{% url 'customer_list' %}"
                    hx-trigger="keyup changed delay:300ms"
                    hx-target="#main-content">
@@ -36,9 +37,9 @@
         <table class="w-full text-left">
             <thead class="bg-gray-50 border-b border-gray-100">
                 <tr>
-                    <th class="px-5 py-4 text-xs font-black text-gray-400 uppercase tracking-wider">Customer</th>
-                    <th class="px-5 py-4 text-xs font-black text-gray-400 uppercase tracking-wider">Contact</th>
-                    <th class="px-5 py-4 text-xs font-black text-gray-400 uppercase tracking-wider text-right">Balance</th>
+                    <th class="px-5 py-4 text-xs font-black text-gray-400 uppercase tracking-wider">{% trans "Customer" %}</th>
+                    <th class="px-5 py-4 text-xs font-black text-gray-400 uppercase tracking-wider">{% trans "Contact" %}</th>
+                    <th class="px-5 py-4 text-xs font-black text-gray-400 uppercase tracking-wider text-right">{% trans "Balance" %}</th>
                     <th class="px-5 py-4 text-xs font-black text-gray-400 uppercase tracking-wider"></th>
                 </tr>
             </thead>
@@ -47,7 +48,7 @@
                 <tr class="hover:bg-gray-50/50 transition-colors">
                     <td class="px-5 py-4">
                         <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center text-sm font-black shrink-0">
+                            <div class="w-8 h-8 bg-amber-100 text-amber-600 rounded-lg flex items-center justify-center text-sm font-black shrink-0">
                                 {{ customer.name|first|upper }}
                             </div>
                             <span class="text-sm font-bold text-gray-900">{{ customer.name }}</span>
@@ -59,17 +60,17 @@
                     </td>
                     <td class="px-5 py-4 text-right">
                         {% if customer.remaining_balance > 0 %}
-                            <span class="px-2.5 py-1 bg-rose-100 text-rose-700 text-xs font-black rounded-lg">
+                            <span class="px-2.5 py-1 bg-red-100 text-red-700 text-xs font-black rounded-lg">
                                 {{ customer.remaining_balance|tzs }}
                             </span>
                         {% else %}
-                            <span class="px-2.5 py-1 bg-green-100 text-green-600 text-xs font-bold rounded-lg">Clear</span>
+                            <span class="px-2.5 py-1 bg-green-100 text-green-600 text-xs font-bold rounded-lg">{% trans "Clear" %}</span>
                         {% endif %}
                     </td>
                     <td class="px-5 py-4 text-right">
                         <div class="flex justify-end gap-1">
                             <button hx-get="{% url 'customer_detail' customer.pk %}" hx-target="#main-content"
-                                    class="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-indigo-50 text-indigo-600 transition-colors text-sm">
+                                    class="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-amber-50 text-amber-600 transition-colors text-sm">
                                 <i class="bi bi-eye"></i>
                             </button>
                             <button hx-get="{% url 'customer_update' customer.pk %}" hx-target="#modal-content" hx-swap="innerHTML"
@@ -84,7 +85,7 @@
                     <td colspan="4" class="px-5 py-16 text-center">
                         <div class="opacity-30">
                             <i class="bi bi-people text-5xl block mb-3"></i>
-                            <p class="text-sm font-bold">No customers found</p>
+                            <p class="text-sm font-bold">{% trans "No customers found" %}</p>
                         </div>
                     </td>
                 </tr>
@@ -99,12 +100,12 @@
                 {% if page_obj.has_previous %}
                 <button hx-get="?page={{ page_obj.previous_page_number }}&q={{ query }}"
                         hx-target="#customer-table-body" hx-swap="innerHTML"
-                        class="px-3 py-1 bg-white border border-gray-200 rounded-lg text-xs font-bold hover:bg-gray-50">Prev</button>
+                        class="px-3 py-1 bg-white border border-gray-200 rounded-lg text-xs font-bold hover:bg-gray-50">{% trans "Prev" %}</button>
                 {% endif %}
                 {% if page_obj.has_next %}
                 <button hx-get="?page={{ page_obj.next_page_number }}&q={{ query }}"
                         hx-target="#customer-table-body" hx-swap="innerHTML"
-                        class="px-3 py-1 bg-white border border-gray-200 rounded-lg text-xs font-bold hover:bg-gray-50">Next</button>
+                        class="px-3 py-1 bg-white border border-gray-200 rounded-lg text-xs font-bold hover:bg-gray-50">{% trans "Next" %}</button>
                 {% endif %}
             </div>
         </div>

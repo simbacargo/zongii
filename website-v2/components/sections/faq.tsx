@@ -35,22 +35,23 @@ export async function Faq() {
       />
       <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr]">
         <Reveal>
-          <span className="inline-flex items-center gap-2 rounded-full border border-gold/30 bg-gold/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-gold">
-            {t("eyebrow")}
+          <span className="flex items-center gap-4">
+            <span className="h-px w-10 bg-brand/50" aria-hidden />
+            <span className="stamp">{t("eyebrow")}</span>
           </span>
-          <h2 className="mt-4 font-display text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
+          <h2 className="mt-5 font-display text-3xl leading-[1.12] tracking-tight text-foreground sm:text-4xl lg:text-[2.75rem]">
             {t("heading")}
           </h2>
-          <p className="mt-4 max-w-sm text-base leading-relaxed text-muted-foreground">
+          <p className="mt-5 max-w-sm font-serif text-base leading-relaxed text-muted-foreground">
             {t("subheading")}
           </p>
         </Reveal>
 
         <Reveal delay={0.1}>
-          <Accordion multiple={false} className="glass rounded-2xl px-5 sm:px-7">
+          <Accordion multiple={false} className="plate rounded-[4px] px-5 sm:px-7">
             {items.map((it) => (
               <AccordionItem key={it.key} value={it.key}>
-                <AccordionTrigger className="py-5 font-display text-base font-semibold sm:text-lg">
+                <AccordionTrigger className="py-5 font-serif text-base text-foreground sm:text-[1.0625rem]">
                   {it.q}
                 </AccordionTrigger>
                 <AccordionContent className="text-[0.95rem] leading-relaxed text-muted-foreground">

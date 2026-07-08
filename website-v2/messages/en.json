@@ -21,17 +21,14 @@
     "viewAll": "View all"
   },
   "Hero": {
-    "badge": "Tanzania's Trusted Supply Partner",
-    "titleLead": "Your complete source for",
-    "highlightA": "mining",
-    "and": "&",
-    "highlightB": "construction",
-    "titleTail": "supplies",
-    "subtitle": "Supplying quality products to contractors, developers and homeowners across Tanzania for over 22 years.",
-    "ctaPrimary": "Explore products",
+    "badge": "Supply merchants — Mwanza, Tanzania",
+    "title": "We keep Tanzania's water *moving.*",
+    "subtitle": "Plumbing, building and mining supplies — imported directly and stocked deep at our Mwanza counter. Contractors, developers and homeowners have bought from us for over twenty years.",
+    "ctaPrimary": "Browse the catalogue",
     "ctaSecondary": "Talk to us",
     "scroll": "Scroll",
-    "trustLine": "Trusted across Mwanza, Dar es Salaam & upcountry Tanzania"
+    "specLine": "PVC · HDPE · Steel — DN15 to DN300 — stocked in Mwanza",
+    "photoCaption": "Taps & fittings — supplied since 2002"
   },
   "Stats": {
     "eyebrow": "By the numbers",
@@ -128,10 +125,22 @@
     "heading": "From enquiry to site, made simple",
     "subheading": "A straightforward path from your first call to materials on your site — backed by expert advice at every step.",
     "steps": {
-      "enquire": { "title": "Enquire", "desc": "Tell us your project, quantities and timeline — by phone, email or the form." },
-      "quote": { "title": "Quote", "desc": "Receive a clear, itemised quotation with competitive, project-based pricing." },
-      "supply": { "title": "Supply", "desc": "Fast, dependable delivery across Mwanza, Dar es Salaam and upcountry Tanzania." },
-      "support": { "title": "Support", "desc": "Technical guidance and after-sales backing — we stand behind everything we sell." }
+      "enquire": {
+        "title": "Enquire",
+        "desc": "Tell us your project, quantities and timeline — by phone, email or the form."
+      },
+      "quote": {
+        "title": "Quote",
+        "desc": "Receive a clear, itemised quotation with competitive, project-based pricing."
+      },
+      "supply": {
+        "title": "Supply",
+        "desc": "Fast, dependable delivery across Mwanza, Dar es Salaam and upcountry Tanzania."
+      },
+      "support": {
+        "title": "Support",
+        "desc": "Technical guidance and after-sales backing — we stand behind everything we sell."
+      }
     }
   },
   "Faq": {
@@ -139,12 +148,30 @@
     "heading": "Answers, before you ask",
     "subheading": "The things contractors, developers and homeowners ask us most.",
     "items": {
-      "range": { "q": "What products do you supply?", "a": "Nine product lines covering every stage of construction — PVC pipes & fittings, polyethylene tanks, water pumps, ceramic sanitaryware, hot water systems, mining pipes & tools, and more." },
-      "delivery": { "q": "Where do you deliver?", "a": "We supply across Mwanza, Dar es Salaam and upcountry Tanzania, with stock depth to support multi-month projects without stock-outs." },
-      "quality": { "q": "Are your products certified?", "a": "Yes. We source to international standards (BS EN ISO 1452, ASTM D1785, TZS 476) with test certificates, and replace any non-conforming product free of charge." },
-      "bulk": { "q": "Do you offer bulk pricing for developers and contractors?", "a": "Yes — we provide competitive project quotations and bulk rates for large-scale and multi-phase procurement." },
-      "quote": { "q": "How do I get a quote?", "a": "Send your requirements via the contact form, email sales@zongii.co.tz, or call +255 769 005 007 — we respond within one business day." },
-      "hours": { "q": "What are your opening hours?", "a": "Our Pamba Road branch in Mwanza is open Monday to Friday, 8:00 am – 5:00 pm EAT." }
+      "range": {
+        "q": "What products do you supply?",
+        "a": "Nine product lines covering every stage of construction — PVC pipes & fittings, polyethylene tanks, water pumps, ceramic sanitaryware, hot water systems, mining pipes & tools, and more."
+      },
+      "delivery": {
+        "q": "Where do you deliver?",
+        "a": "We supply across Mwanza, Dar es Salaam and upcountry Tanzania, with stock depth to support multi-month projects without stock-outs."
+      },
+      "quality": {
+        "q": "Are your products certified?",
+        "a": "Yes. We source to international standards (BS EN ISO 1452, ASTM D1785, TZS 476) with test certificates, and replace any non-conforming product free of charge."
+      },
+      "bulk": {
+        "q": "Do you offer bulk pricing for developers and contractors?",
+        "a": "Yes — we provide competitive project quotations and bulk rates for large-scale and multi-phase procurement."
+      },
+      "quote": {
+        "q": "How do I get a quote?",
+        "a": "Send your requirements via the contact form, email sales@zongii.co.tz, or call +255 769 005 007 — we respond within one business day."
+      },
+      "hours": {
+        "q": "What are your opening hours?",
+        "a": "Our Pamba Road branch in Mwanza is open Monday to Friday, 8:00 am – 5:00 pm EAT."
+      }
     }
   },
   "About": {
@@ -159,13 +186,19 @@
     "missionBody": "We don't trade on price alone. Every product we stock is sourced from manufacturers who can prove quality, traceability and compliance — so you can specify with confidence.",
     "credentialsHeading": "Registered & compliant",
     "credentials": "Fully registered with the Tanzania Revenue Authority (TIN: 108-998-350) and compliant with the Tax Administration Act 2015.",
-    "valuesHeading": "What we stand for"
+    "valuesHeading": "What we stand for",
+    "established": "The Mwanza counter — established 2002"
   },
   "ProductsPage": {
     "metaTitle": "Products",
     "eyebrow": "Catalogue",
     "heading": "Everything you need, from one supplier",
     "subheading": "Browse our full range of mining, building and plumbing products. Filter by category to find what your project needs."
+  },
+  "ProductDetail": {
+    "backToProducts": "Back to catalogue",
+    "categories": "Categories",
+    "related": "You might also need"
   },
   "ContactPage": {
     "metaTitle": "Contact"

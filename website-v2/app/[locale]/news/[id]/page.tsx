@@ -52,14 +52,14 @@ export default async function ArticlePage({
       <article className="mx-auto max-w-3xl px-5 sm:px-8">
         <Link
           href="/news"
-          className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-gold"
+          className="stamp inline-flex items-center gap-2 transition-colors hover:text-brand"
         >
           <ArrowLeft className="size-4" />
           {t("backToNews")}
         </Link>
 
         <div className="mt-8 flex items-center gap-3">
-          <span className="rounded-full border border-gold/30 bg-gold/10 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-gold">
+          <span className="stamp text-[10px]">
             {article.category}
           </span>
           <span className="text-xs text-muted-foreground">
@@ -67,16 +67,16 @@ export default async function ArticlePage({
           </span>
         </div>
 
-        <h1 className="mt-4 font-display text-3xl font-bold leading-tight tracking-tight sm:text-4xl lg:text-5xl">
+        <h1 className="mt-4 font-display text-3xl leading-[1.12] tracking-tight text-foreground sm:text-4xl lg:text-5xl">
           {article.title}
         </h1>
-        <p className="mt-5 text-lg leading-relaxed text-muted-foreground">
+        <p className="mt-5 font-serif text-lg leading-relaxed text-muted-foreground">
           {article.excerpt}
         </p>
 
         {!isBodyLocalised(loc) && (
           <div className="mt-8 flex items-center gap-3 rounded-xl border border-border/60 bg-card/40 px-4 py-3 text-sm text-muted-foreground">
-            <Info className="size-4 shrink-0 text-gold" />
+            <Info className="size-4 shrink-0 text-brand-deep" />
             {t("englishOnlyNote")}
           </div>
         )}
@@ -91,7 +91,7 @@ export default async function ArticlePage({
       {related.length > 0 && (
         <section className="mx-auto mt-24 max-w-7xl px-5 pb-8 sm:px-8">
           <Reveal className="mb-10">
-            <h2 className="font-display text-2xl font-bold tracking-tight sm:text-3xl">
+            <h2 className="font-display text-2xl tracking-tight text-foreground sm:text-3xl">
               {t("related")}
             </h2>
           </Reveal>

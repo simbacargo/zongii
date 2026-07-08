@@ -1,0 +1,1770 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: zongii\n"
+"Language: sw\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "%(get_doc_type_display)s %(number)s created."
+msgstr "%(get_doc_type_display)s %(number)s imeundwa."
+
+msgid "&laquo; Prev"
+msgstr "&laquo; Nyuma"
+
+msgid "&times;"
+msgstr ""
+
+msgid "(leave 0 if none)"
+msgstr "(acha 0 kama hakuna)"
+
+msgid "(optional)"
+msgstr "(si lazima)"
+
+msgid "(user can log in)"
+msgstr "(mtumiaji anaweza kuingia)"
+
+msgid "(you)"
+msgstr "(wewe)"
+
+msgid "+ Add"
+msgstr "+ Ongeza"
+
+msgid "Accept"
+msgstr "Kubali"
+
+msgid "Accept & Start Picking"
+msgstr "Kubali na Anza Kuchukua"
+
+msgid "Accept Re-pick"
+msgstr "Kubali Kuchukua Upya"
+
+msgid "Accepted"
+msgstr "Imekubaliwa"
+
+msgid "Access to financial records, invoices, billing, and sales reports."
+msgstr ""
+"Uwezo wa kuona kumbukumbu za fedha, ankara, malipo na ripoti za mauzo."
+
+msgid "Account is active"
+msgstr "Akaunti inatumika"
+
+msgid "Accountant"
+msgstr "Mhasibu"
+
+msgid "Action Needed"
+msgstr "Hatua Inahitajika"
+
+msgid "Action failed: %(exc)s"
+msgstr "Kitendo kimeshindikana: %(exc)s"
+
+msgid "Active"
+msgstr "Inatumika"
+
+msgid "Add Customer"
+msgstr "Ongeza Mteja"
+
+msgid "Add Item"
+msgstr "Ongeza Kitu"
+
+msgid "Add Product"
+msgstr "Ongeza Bidhaa"
+
+msgid "Add Staff Member"
+msgstr "Ongeza Mfanyakazi"
+
+msgid "Add Stock"
+msgstr "Ongeza Stoku"
+
+msgid "Add User"
+msgstr "Ongeza Mtumiaji"
+
+msgid "Added %(qty)s units to %(name)s. New stock: %(quantity_after)s."
+msgstr ""
+"Umeongeza vitu %(qty)s kwenye %(name)s. Stoku mpya: %(quantity_after)s."
+
+msgid "Added by"
+msgstr "Imeongezwa na"
+
+msgid "Address:"
+msgstr "Anwani:"
+
+msgid "Admin"
+msgstr "Msimamizi"
+
+msgid "Admin role always has full access"
+msgstr "Msimamizi daima ana ruhusa zote"
+
+msgid "Admin role has full access — section settings are ignored."
+msgstr "Msimamizi ana ruhusa zote — mipangilio ya sehemu haitumiki."
+
+msgid "Administration"
+msgstr "Utawala"
+
+msgid "All"
+msgstr "Zote"
+
+msgid "All Orders"
+msgstr "Oda Zote"
+
+msgid "All Sales"
+msgstr "Mauzo Yote"
+
+msgid "All clear!"
+msgstr "Hakuna tatizo!"
+
+msgid ""
+"All items have been picked. Please verify the quantities and approve or "
+"reject below."
+msgstr ""
+"Bidhaa zote zimechukuliwa. Tafadhali hakiki idadi kisha idhinisha au kataa "
+"hapa chini."
+
+msgid "All stock OK"
+msgstr "Stoku zote ziko sawa"
+
+msgid "All stock levels OK"
+msgstr "Viwango vyote vya stoku viko sawa"
+
+msgid "Allocated"
+msgstr "Imetengwa"
+
+msgid "Allowed range"
+msgstr "Kiwango kinachoruhusiwa"
+
+msgid "Already have an account?"
+msgstr "Tayari una akaunti?"
+
+msgid "Amount"
+msgstr "Kiasi"
+
+msgid "Any amount this customer already owes from before today."
+msgstr "Kiasi chochote ambacho mteja huyu anadaiwa kabla ya leo."
+
+msgid "Any overall notes for the sales person…"
+msgstr "Maelezo yoyote kwa muuzaji…"
+
+msgid "Approval note (optional)"
+msgstr "Maelezo ya idhini (si lazima)"
+
+msgid "Approve & reject sales"
+msgstr "Idhinisha na kataa mauzo"
+
+msgid "Approve &amp; Generate Gate Pass"
+msgstr "Idhinisha na Toa Pasi ya Geti"
+
+msgid "Approve &amp; Send to Warehouse"
+msgstr "Idhinisha na Tuma Ghalani"
+
+msgid "Approve Sale"
+msgstr "Idhinisha Mauzo"
+
+msgid "Approved"
+msgstr "Imeidhinishwa"
+
+msgid "Approved sales cannot be edited. Reject first."
+msgstr "Mauzo yaliyoidhinishwa hayawezi kuhaririwa. Kataa kwanza."
+
+msgid "Approved sales in period"
+msgstr "Mauzo yaliyoidhinishwa katika kipindi"
+
+msgid ""
+"Approves/rejects sales, manages customers, and views full financial reports."
+msgstr ""
+"Huidhinisha/hukataa mauzo, husimamia wateja, na huona ripoti kamili za "
+"fedha."
+
+msgid "Assign a customer to track purchase history and balances."
+msgstr "Weka mteja ili kufuatilia historia ya manunuzi na madeni."
+
+msgid "Associate brand"
+msgstr "Chapa shirikishi"
+
+msgid "Audit Trail"
+msgstr "Kumbukumbu za Ukaguzi"
+
+msgid "Authorized Dealer &amp; Associate Brands"
+msgstr "Muuzaji Rasmi na Chapa Shirikishi"
+
+msgid "Available"
+msgstr "Inapatikana"
+
+msgid "Average Selling Price"
+msgstr "Wastani wa Bei ya Kuuza"
+
+msgid "BANK: CRDB Bank / NMB Bank – Tanzania"
+msgstr ""
+
+msgid "Balance"
+msgstr "Salio"
+
+msgid "Ball Valves"
+msgstr ""
+
+msgid "Basic Information"
+msgstr "Taarifa za Msingi"
+
+msgid "Basic access — can view sales and customer records as assigned."
+msgstr ""
+"Ruhusa za kawaida — anaweza kuona mauzo na kumbukumbu za wateja "
+"alizopangiwa."
+
+msgid "Billing"
+msgstr "Malipo"
+
+msgid "Bin Location"
+msgstr "Mahali pa Kuhifadhi"
+
+msgid "Bin:"
+msgstr "Sehemu:"
+
+msgid "Box"
+msgstr "Boksi"
+
+msgid "Brand"
+msgstr "Chapa"
+
+msgid "Brand/MPN"
+msgstr "Chapa/Namba ya Kifaa"
+
+msgid "Browse products"
+msgstr "Vinjari bidhaa"
+
+msgid "Business"
+msgstr "Biashara"
+
+msgid "Business \"%(name)s\" created."
+msgstr "Biashara \"%(name)s\" imeundwa."
+
+msgid "Business Name"
+msgstr "Jina la Biashara"
+
+msgid "Business deleted."
+msgstr "Biashara imefutwa."
+
+msgid "Business health & operations overview"
+msgstr "Muhtasari wa afya ya biashara na uendeshaji"
+
+msgid "Business name is required."
+msgstr "Jina la biashara linahitajika."
+
+msgid "Business updated."
+msgstr "Biashara imesasishwa."
+
+msgid "Businesses"
+msgstr "Biashara"
+
+msgid "Buying Price"
+msgstr "Bei ya Kununua"
+
+msgid "Cancel"
+msgstr "Ghairi"
+
+msgid "Cancelled"
+msgstr "Imeghairiwa"
+
+msgid "Cannot dispatch: gate pass not found."
+msgstr "Haiwezi kusafirishwa: pasi ya geti haipatikani."
+
+msgid "Cart is empty"
+msgstr "Kikapu ni tupu"
+
+msgid "Cart is empty."
+msgstr "Kikapu ni tupu."
+
+msgid "Categories"
+msgstr "Kategoria"
+
+msgid "Category Name"
+msgstr "Jina la Kategoria"
+
+msgid "Category name is required."
+msgstr "Jina la kategoria linahitajika."
+
+msgid "Change Photo"
+msgstr "Badilisha Picha"
+
+msgid "Charge VAT (18%)"
+msgstr "Toza VAT (18%)"
+
+msgid "Checkout"
+msgstr "Maliza Ununuzi"
+
+msgid ""
+"Choose which parts of the app this user can access. Defaults are set by role"
+" — you can customise them here."
+msgstr ""
+"Chagua sehemu za mfumo ambazo mtumiaji huyu anaweza kufikia. Chaguo-msingi "
+"hupangwa na nafasi yake — unaweza kuzibadilisha hapa."
+
+msgid "Clear"
+msgstr "Futa"
+
+msgid "Clear Full Debt"
+msgstr "Lipa Deni Lote"
+
+msgid "Clear cart"
+msgstr "Futa kikapu"
+
+msgid "Click"
+msgstr "Bofya"
+
+msgid "Click image to upload. PNG, JPG up to 5MB."
+msgstr "Bofya picha kupakia. PNG, JPG hadi 5MB."
+
+msgid "Company"
+msgstr "Kampuni"
+
+msgid "Company Stamp"
+msgstr "Muhuri wa Kampuni"
+
+msgid "Complete"
+msgstr "Kamilisha"
+
+msgid "Complete Sale"
+msgstr "Kamilisha Mauzo"
+
+msgid "Complete Transaction"
+msgstr "Kamilisha Muamala"
+
+msgid "Completed"
+msgstr "Imekamilika"
+
+msgid "Completed sales"
+msgstr "Mauzo yaliyokamilika"
+
+msgid "Confirm Dispatch"
+msgstr "Thibitisha Usafirishaji"
+
+msgid "Confirm Password"
+msgstr "Thibitisha Nenosiri"
+
+msgid "Contact"
+msgstr "Mawasiliano"
+
+msgid "Continue"
+msgstr "Endelea"
+
+msgid "Copper Pipes"
+msgstr ""
+
+msgid "Cost Price"
+msgstr "Bei ya Gharama"
+
+msgid "Create & manage users"
+msgstr "Unda na simamia watumiaji"
+
+msgid "Create &amp; Select"
+msgstr "Unda na Chagua"
+
+msgid "Create Account"
+msgstr "Fungua Akaunti"
+
+msgid "Create Account | My Django App"
+msgstr "Fungua Akaunti | Zongii"
+
+msgid "Create Category"
+msgstr "Unda Kategoria"
+
+msgid "Create Invoice"
+msgstr "Unda Ankara"
+
+msgid "Create an invoice or quotation for a customer."
+msgstr "Unda ankara au kotesheni kwa mteja."
+
+msgid "Create new customer on this sale"
+msgstr "Unda mteja mpya kwenye mauzo haya"
+
+msgid "Create one"
+msgstr "Unda moja"
+
+msgid "Create sales & manage products"
+msgstr "Unda mauzo na simamia bidhaa"
+
+msgid "Created"
+msgstr "Imeundwa"
+
+msgid "Created by"
+msgstr "Imeundwa na"
+
+msgid "Creates and manages sales orders, tracks customers and inventory."
+msgstr "Huunda na kusimamia oda za mauzo, hufuatilia wateja na stoku."
+
+msgid "Customer"
+msgstr "Mteja"
+
+msgid "Customer \"%(name)s\" created."
+msgstr "Mteja \"%(name)s\" ameundwa."
+
+msgid "Customer (Optional)"
+msgstr "Mteja (Si Lazima)"
+
+msgid "Customer TIN (optional)"
+msgstr "TIN ya Mteja (si lazima)"
+
+msgid "Customer deleted."
+msgstr "Mteja amefutwa."
+
+msgid "Customer name is required."
+msgstr "Jina la mteja linahitajika."
+
+msgid "Customer updated."
+msgstr "Mteja amesasishwa."
+
+msgid ""
+"Customer will be created and linked to this sale. Their outstanding balance "
+"will equal the order total."
+msgstr ""
+"Mteja ataundwa na kuunganishwa na mauzo haya. Deni lake litakuwa sawa na "
+"jumla ya oda."
+
+msgid "Customers"
+msgstr "Wateja"
+
+msgid "Dark mode"
+msgstr "Hali ya giza"
+
+msgid "Dashboard"
+msgstr "Dashibodi"
+
+msgid "Date"
+msgstr "Tarehe"
+
+msgid "Date / Time"
+msgstr "Tarehe / Muda"
+
+msgid "Date:"
+msgstr "Tarehe:"
+
+msgid "Date: ___________"
+msgstr "Tarehe: ___________"
+
+msgid "Dates"
+msgstr "Tarehe"
+
+msgid "Deactivate"
+msgstr "Zima"
+
+msgid "Deactivate Product"
+msgstr "Zima Bidhaa"
+
+msgid "Deadline for the customer to clear their outstanding balance."
+msgstr "Tarehe ya mwisho kwa mteja kulipa deni lake."
+
+msgid "Delete"
+msgstr "Futa"
+
+msgid "Delete Account"
+msgstr "Futa Akaunti"
+
+msgid "Delete records & full system access"
+msgstr "Futa kumbukumbu na ruhusa zote za mfumo"
+
+msgid "Description"
+msgstr "Maelezo"
+
+msgid "Description of Goods"
+msgstr "Maelezo ya Bidhaa"
+
+msgid "Details"
+msgstr "Maelezo"
+
+msgid "Discount"
+msgstr "Punguzo"
+
+msgid "Discount ("
+msgstr "Punguzo ("
+
+msgid "Dispatched"
+msgstr "Imesafirishwa"
+
+msgid "Document deleted."
+msgstr "Waraka umefutwa."
+
+msgid "Documents"
+msgstr "Nyaraka"
+
+msgid "Doe"
+msgstr ""
+
+msgid "Don't have an account?"
+msgstr "Huna akaunti?"
+
+msgid "Download PDF"
+msgstr "Pakua PDF"
+
+msgid "Draft"
+msgstr "Rasimu"
+
+msgid "Due Date"
+msgstr "Tarehe ya Malipo"
+
+msgid "EBImax"
+msgstr ""
+
+msgid "Each"
+msgstr "Kimoja"
+
+msgid "Edit"
+msgstr "Hariri"
+
+msgid "Edit Product"
+msgstr "Hariri Bidhaa"
+
+msgid "Edit User"
+msgstr "Hariri Mtumiaji"
+
+msgid "Email"
+msgstr "Barua pepe"
+
+msgid "Email (optional)"
+msgstr "Barua pepe (si lazima)"
+
+msgid "Email Address"
+msgstr "Anwani ya Barua pepe"
+
+msgid "Email:"
+msgstr "Barua pepe:"
+
+msgid "Empty"
+msgstr "Tupu"
+
+msgid "Enter customer name…"
+msgstr "Andika jina la mteja…"
+
+msgid "Entered price"
+msgstr "Bei iliyoingizwa"
+
+msgid "Error updating product: %(exc)s"
+msgstr "Hitilafu kusasisha bidhaa: %(exc)s"
+
+msgid "Est. Profit"
+msgstr "Makadirio ya Faida"
+
+msgid "Executive Dashboard"
+msgstr "Dashibodi ya Uongozi"
+
+msgid "Factory / Shop Price"
+msgstr "Bei ya Kiwanda / Duka"
+
+msgid "Feet"
+msgstr "Futi"
+
+msgid "Female"
+msgstr "Mwanamke"
+
+msgid "Filters"
+msgstr "Vichujio"
+
+msgid "Find Product"
+msgstr "Tafuta Bidhaa"
+
+msgid "First Name"
+msgstr "Jina la Kwanza"
+
+msgid "Fittings"
+msgstr ""
+
+msgid "Fly-Way"
+msgstr ""
+
+msgid "Forgot password?"
+msgstr "Umesahau nenosiri?"
+
+msgid "Full Name"
+msgstr "Jina Kamili"
+
+msgid "Full access — manages users, roles, all records, and system settings."
+msgstr ""
+"Ruhusa zote — husimamia watumiaji, nafasi, kumbukumbu zote na mipangilio ya "
+"mfumo."
+
+msgid "Full name *"
+msgstr "Jina kamili *"
+
+msgid "Gate Pass"
+msgstr "Pasi ya Geti"
+
+msgid "Gate Pass No."
+msgstr "Namba ya Pasi ya Geti"
+
+msgid "Gate Security Signature"
+msgstr "Sahihi ya Mlinzi wa Geti"
+
+msgid "Gate Security · Date: ___________"
+msgstr "Mlinzi wa Geti · Tarehe: ___________"
+
+msgid "Gate Valves"
+msgstr ""
+
+msgid "Gender"
+msgstr "Jinsia"
+
+msgid "Got it"
+msgstr "Nimeelewa"
+
+msgid "Grand Total"
+msgstr "Jumla Kuu"
+
+msgid "Grundfos"
+msgstr ""
+
+msgid "Identification"
+msgstr "Utambulisho"
+
+msgid "In Progress"
+msgstr "Inaendelea"
+
+msgid "In Stock"
+msgstr "Ipo Stoo"
+
+msgid "In System"
+msgstr "Kwenye Mfumo"
+
+msgid "Inactive"
+msgstr "Haitumiki"
+
+msgid "Invalid payment amount: %(exc)s"
+msgstr "Kiasi cha malipo si sahihi: %(exc)s"
+
+msgid "Invalid username or password. Please try again."
+msgstr "Jina la mtumiaji au nenosiri si sahihi. Tafadhali jaribu tena."
+
+msgid "Inventory"
+msgstr "Stoku"
+
+msgid "Invoice"
+msgstr "Ankara"
+
+msgid "Invoices"
+msgstr "Ankara"
+
+msgid "Invoices &amp; Quotations"
+msgstr "Ankara na Kotesheni"
+
+msgid "Invoices and quotations for your customers."
+msgstr "Ankara na kotesheni kwa wateja wako."
+
+msgid "Issue Date"
+msgstr "Tarehe ya Kutolewa"
+
+msgid "Issue Date &amp; Time"
+msgstr "Tarehe na Muda wa Kutolewa"
+
+msgid "Items"
+msgstr "Bidhaa"
+
+msgid ""
+"Items were partially picked. You can approve the partial quantity, request a"
+" re-pick, or reject the order."
+msgstr ""
+"Bidhaa zilichukuliwa kwa sehemu. Unaweza kuidhinisha kiasi kilichopatikana, "
+"kuomba zichukuliwe upya, au kukataa oda."
+
+msgid "Jane"
+msgstr ""
+
+msgid "Join us today to get started"
+msgstr "Jiunge nasi leo kuanza"
+
+msgid "Last 10 transactions"
+msgstr "Miamala 10 ya mwisho"
+
+msgid "Last 7 Days"
+msgstr "Siku 7 Zilizopita"
+
+msgid "Last Name"
+msgstr "Jina la Ukoo"
+
+msgid "Last Seen"
+msgstr "Alionekana Mwisho"
+
+msgid "Last refill baseline"
+msgstr "Kiwango cha ujazo wa mwisho"
+
+msgid "Last updated"
+msgstr "Imesasishwa mwisho"
+
+msgid "Lead Free"
+msgstr "Haina Risasi"
+
+msgid "Leave blank to keep current password"
+msgstr "Acha wazi kubaki na nenosiri la sasa"
+
+msgid "Line Items"
+msgstr "Orodha ya Bidhaa"
+
+msgid "Load More Products..."
+msgstr "Pakia Bidhaa Zaidi..."
+
+msgid "Loading"
+msgstr "Inapakia"
+
+msgid "Loading cart…"
+msgstr "Inapakia kikapu…"
+
+msgid "Logout"
+msgstr "Toka"
+
+msgid "Low"
+msgstr "Chini"
+
+msgid "Low Stock"
+msgstr "Stoku Inakaribia Kuisha"
+
+msgid "MOBILE MONEY: M-Pesa / Airtel Money – +255 786 421 150"
+msgstr ""
+
+msgid "Male"
+msgstr "Mwanaume"
+
+msgid "Manage customers & view debt reports"
+msgstr "Simamia wateja na uone ripoti za madeni"
+
+msgid "Manage customers and track outstanding balances."
+msgstr "Simamia wateja na fuatilia madeni yao."
+
+msgid "Manage staff accounts and access levels."
+msgstr "Simamia akaunti za wafanyakazi na viwango vya ruhusa."
+
+msgid "Manage your business entities"
+msgstr "Simamia biashara zako"
+
+msgid "Manage your stock and technical specifications."
+msgstr "Simamia stoku yako na vipimo vya kiufundi."
+
+msgid "Manager"
+msgstr "Meneja"
+
+msgid "Mark all as read"
+msgstr "Weka zote kama zimesomwa"
+
+msgid "Mark read"
+msgstr "Imesomwa"
+
+msgid "Material"
+msgstr "Aina ya Nyenzo"
+
+msgid "Max Pressure"
+msgstr "Msukumo wa Juu"
+
+msgid "Max Price"
+msgstr "Bei ya Juu"
+
+msgid "Max Selling Price"
+msgstr "Bei ya Juu ya Kuuza"
+
+msgid "Members"
+msgstr "Wanachama"
+
+msgid "Min Price"
+msgstr "Bei ya Chini"
+
+msgid "Min Selling Price"
+msgstr "Bei ya Chini ya Kuuza"
+
+msgid "Minimum 6 characters"
+msgstr "Angalau herufi 6"
+
+msgid "Mobile"
+msgstr "Simu"
+
+msgid "Mwanza / Dar es Salaam, Tanzania"
+msgstr ""
+
+msgid ""
+"Mwanza / Dar es Salaam, Tanzania &nbsp;|&nbsp; info@zongii.co.tz "
+"&nbsp;|&nbsp; +255 786 421 150"
+msgstr ""
+
+msgid "Net Profit"
+msgstr "Faida Halisi"
+
+msgid "New Business"
+msgstr "Biashara Mpya"
+
+msgid "New Category"
+msgstr "Kategoria Mpya"
+
+msgid "New Customer"
+msgstr "Mteja Mpya"
+
+msgid "New Document"
+msgstr "Waraka Mpya"
+
+msgid "New Sale"
+msgstr "Mauzo Mapya"
+
+msgid "Next"
+msgstr "Mbele"
+
+msgid "Next &raquo;"
+msgstr "Mbele &raquo;"
+
+msgid "Next →"
+msgstr "Mbele →"
+
+msgid "No"
+msgstr "Hapana"
+
+msgid "No businesses yet"
+msgstr "Hakuna biashara bado"
+
+msgid "No categories yet. Add one above."
+msgstr "Hakuna kategoria bado. Ongeza moja hapo juu."
+
+msgid "No contact yet"
+msgstr "Hakuna mawasiliano bado"
+
+msgid "No customers found"
+msgstr "Hakuna wateja waliopatikana"
+
+msgid "No customers found."
+msgstr "Hakuna wateja waliopatikana."
+
+msgid "No documents found."
+msgstr "Hakuna nyaraka zilizopatikana."
+
+msgid "No history yet."
+msgstr "Hakuna historia bado."
+
+msgid "No items yet."
+msgstr "Hakuna bidhaa bado."
+
+msgid "No notifications"
+msgstr "Hakuna arifa"
+
+msgid "No orders in this stage"
+msgstr "Hakuna oda katika hatua hii"
+
+msgid "No pending picking requests right now."
+msgstr "Hakuna maombi ya kuchukua bidhaa kwa sasa."
+
+msgid "No picking orders yet."
+msgstr "Hakuna oda za kuchukua bado."
+
+msgid "No price"
+msgstr "Hakuna bei"
+
+msgid "No price set"
+msgstr "Bei haijawekwa"
+
+msgid "No products found"
+msgstr "Hakuna bidhaa zilizopatikana"
+
+msgid "No products found matching your search."
+msgstr "Hakuna bidhaa zinazolingana na utafutaji wako."
+
+msgid "No products found."
+msgstr "Hakuna bidhaa zilizopatikana."
+
+msgid "No sales data"
+msgstr "Hakuna taarifa za mauzo"
+
+msgid "No sales data yet"
+msgstr "Hakuna taarifa za mauzo bado"
+
+msgid "No sales found"
+msgstr "Hakuna mauzo yaliyopatikana"
+
+msgid "No sales recorded by this user yet."
+msgstr "Hakuna mauzo yaliyorekodiwa na mtumiaji huyu bado."
+
+msgid "No transactions yet"
+msgstr "Hakuna miamala bado"
+
+msgid "No users found."
+msgstr "Hakuna watumiaji waliopatikana."
+
+msgid "No."
+msgstr "Na."
+
+msgid "Non-Binary"
+msgstr "Nyingineyo"
+
+msgid "Not Enough Stock"
+msgstr "Stoku Haitoshi"
+
+msgid "Notes"
+msgstr "Maelezo"
+
+msgid "Notes (optional)"
+msgstr "Maelezo (si lazima)"
+
+msgid "Notifications"
+msgstr "Arifa"
+
+msgid "On Hand"
+msgstr "Iliyopo"
+
+msgid "Only accountants can review orders."
+msgstr "Wahasibu pekee wanaweza kukagua oda."
+
+msgid "Only the assigned picker can submit picks."
+msgstr "Mchukuzi aliyepangiwa pekee ndiye anaweza kuwasilisha uchukuaji."
+
+msgid "Only verified orders can be dispatched."
+msgstr "Oda zilizothibitishwa pekee ndizo zinaweza kusafirishwa."
+
+msgid "Opening Balance"
+msgstr "Salio la Kuanzia"
+
+msgid "Operations Portal"
+msgstr "Mfumo wa Uendeshaji"
+
+msgid "Order"
+msgstr "Oda"
+
+msgid "Order %(order_code)s approved and sent to warehouse."
+msgstr "Oda %(order_code)s imeidhinishwa na kutumwa ghalani."
+
+msgid "Order %(order_code)s dispatched. Stock updated."
+msgstr "Oda %(order_code)s imesafirishwa. Stoku imesasishwa."
+
+msgid "Order %(order_code)s has been rejected."
+msgstr "Oda %(order_code)s imekataliwa."
+
+msgid "Order %(order_code)s submitted for accountant approval."
+msgstr "Oda %(order_code)s imewasilishwa kwa idhini ya mhasibu."
+
+msgid "Order %(order_code)s verified. Gate Pass %(gp_code)s generated."
+msgstr ""
+"Oda %(order_code)s imethibitishwa. Pasi ya Geti %(gp_code)s imetolewa."
+
+msgid "Order Detail"
+msgstr "Maelezo ya Oda"
+
+msgid "Order Details"
+msgstr "Maelezo ya Oda"
+
+msgid "Order Items"
+msgstr "Bidhaa za Oda"
+
+msgid "Order Summary"
+msgstr "Muhtasari wa Oda"
+
+msgid "Order Total"
+msgstr "Jumla ya Oda"
+
+msgid "Order verified. Gate pass issued — goods can leave the store."
+msgstr ""
+"Oda imethibitishwa. Pasi ya geti imetolewa — bidhaa zinaweza kutoka ghalani."
+
+msgid "Orders"
+msgstr "Oda"
+
+msgid "Organise your plumbing product catalogue."
+msgstr "Panga orodha ya bidhaa zako."
+
+msgid "Organise your product catalogue"
+msgstr "Panga orodha ya bidhaa zako"
+
+msgid "Out of Stock"
+msgstr "Imeisha Stoo"
+
+msgid "Out of stock"
+msgstr "Imeisha stoo"
+
+msgid "Outstanding Debt"
+msgstr "Deni Lililobaki"
+
+msgid "Outstanding customer debt"
+msgstr "Madeni ya wateja yaliyobaki"
+
+msgid "Overall Picking Notes"
+msgstr "Maelezo ya Jumla ya Uchukuaji"
+
+msgid "Owes"
+msgstr "Anadaiwa"
+
+msgid "Owner"
+msgstr "Mmiliki"
+
+msgid "PVC Pipes"
+msgstr ""
+
+msgid "Paid"
+msgstr "Imelipwa"
+
+msgid "Part No."
+msgstr "Namba ya Kifaa"
+
+msgid "Part Number"
+msgstr "Namba ya Kifaa"
+
+msgid "Partial"
+msgstr "Sehemu"
+
+msgid "Partial — items still needed"
+msgstr "Sehemu — bidhaa bado zinahitajika"
+
+msgid "Partially Picked"
+msgstr "Imechukuliwa kwa Sehemu"
+
+msgid "Password"
+msgstr "Nenosiri"
+
+msgid "Pay"
+msgstr "Lipa"
+
+msgid "Payment Due Date"
+msgstr "Tarehe ya Mwisho ya Malipo"
+
+msgid "Payment instructions, conditions…"
+msgstr "Maelekezo ya malipo, masharti…"
+
+msgid "Payment of %(amount)s applied. Remaining: %(remaining_balance)s."
+msgstr "Malipo ya %(amount)s yamepokelewa. Salio: %(remaining_balance)s."
+
+msgid "Pedrollo"
+msgstr ""
+
+msgid "Pending"
+msgstr "Inasubiri"
+
+msgid "Pending Approval"
+msgstr "Inasubiri Idhini"
+
+msgid "Pending Picking"
+msgstr "Inasubiri Kuchukuliwa"
+
+msgid "Pending approvals"
+msgstr "Zinasubiri idhini"
+
+msgid "Period:"
+msgstr "Kipindi:"
+
+msgid "Permissions"
+msgstr "Ruhusa"
+
+msgid "Phone"
+msgstr "Simu"
+
+msgid "Phone number"
+msgstr "Namba ya simu"
+
+msgid "Picked"
+msgstr "Imechukuliwa"
+
+msgid "Picked Qty"
+msgstr "Idadi Iliyochukuliwa"
+
+msgid "Picker"
+msgstr "Mchukuzi"
+
+msgid "Picker (Warehouse)"
+msgstr "Mchukuzi (Ghala)"
+
+msgid "Picker / Store Staff"
+msgstr "Mchukuzi / Mfanyakazi wa Ghala"
+
+msgid "Picker Dashboard"
+msgstr "Dashibodi ya Mchukuzi"
+
+msgid "Picker Signature"
+msgstr "Sahihi ya Mchukuzi"
+
+msgid "Picking"
+msgstr "Inachukuliwa"
+
+msgid "Picking History"
+msgstr "Historia ya Uchukuaji"
+
+msgid "Picking saved."
+msgstr "Uchukuaji umehifadhiwa."
+
+msgid "Picture"
+msgstr "Picha"
+
+msgid "Please fix the following:"
+msgstr "Tafadhali rekebisha yafuatayo:"
+
+msgid "Please select a customer."
+msgstr "Tafadhali chagua mteja."
+
+msgid "Post Transaction"
+msgstr "Wasilisha Muamala"
+
+msgid "Prepared by (Sales)"
+msgstr "Imeandaliwa na (Mauzo)"
+
+msgid "Prepared by:"
+msgstr "Imeandaliwa na:"
+
+msgid "Prev"
+msgstr "Nyuma"
+
+msgid "Preview"
+msgstr "Hakiki"
+
+msgid "Price"
+msgstr "Bei"
+
+msgid "Price / Unit"
+msgstr "Bei / Kimoja"
+
+msgid "Price Out of Range"
+msgstr "Bei Iko Nje ya Kiwango"
+
+msgid "Price per unit"
+msgstr "Bei kwa kimoja"
+
+msgid "Pricing"
+msgstr "Bei"
+
+msgid "Print"
+msgstr "Chapisha"
+
+msgid "Processing..."
+msgstr "Inashughulikiwa..."
+
+msgid "Product"
+msgstr "Bidhaa"
+
+msgid "Product \"%(name)s\" created."
+msgstr "Bidhaa \"%(name)s\" imeundwa."
+
+msgid "Product \"%(name)s\" deactivated."
+msgstr "Bidhaa \"%(name)s\" imezimwa."
+
+msgid "Product Details"
+msgstr "Maelezo ya Bidhaa"
+
+msgid "Product Name"
+msgstr "Jina la Bidhaa"
+
+msgid "Product Photo"
+msgstr "Picha ya Bidhaa"
+
+msgid "Product updated."
+msgstr "Bidhaa imesasishwa."
+
+msgid "Products"
+msgstr "Bidhaa"
+
+msgid "Products below reorder point"
+msgstr "Bidhaa zilizo chini ya kiwango cha kuagiza"
+
+msgid "Pumps"
+msgstr ""
+
+msgid "Qty"
+msgstr "Idadi"
+
+msgid "Qty Sold"
+msgstr "Idadi Iliyouzwa"
+
+msgid "Quantity"
+msgstr "Idadi"
+
+msgid "Quantity must be a positive number."
+msgstr "Idadi lazima iwe namba chanya."
+
+msgid "Quick Tips"
+msgstr "Vidokezo vya Haraka"
+
+msgid "Quick suggestions"
+msgstr "Mapendekezo ya haraka"
+
+msgid "Quotation"
+msgstr "Kotesheni"
+
+msgid "Quotations"
+msgstr "Kotesheni"
+
+msgid "Range"
+msgstr "Kiwango"
+
+msgid "Re-pick"
+msgstr "Chukua Upya"
+
+msgid "Re-pick Required"
+msgstr "Inahitaji Kuchukuliwa Upya"
+
+msgid "Re-pick requested for %(order_code)s."
+msgstr "Imeombwa kuchukuliwa upya kwa oda %(order_code)s."
+
+msgid ""
+"Re-pick was requested. Waiting for a picker to accept the new picking "
+"request."
+msgstr ""
+"Imeombwa bidhaa zichukuliwe upya. Inasubiri mchukuzi akubali ombi jipya."
+
+msgid "Receivables"
+msgstr "Madeni ya Kupokea"
+
+msgid ""
+"Receives picking requests, picks items from the warehouse, and confirms "
+"quantities."
+msgstr ""
+"Hupokea maombi ya kuchukua bidhaa, huchukua bidhaa ghalani, na kuthibitisha "
+"idadi."
+
+msgid "Recent Sales Activity"
+msgstr "Shughuli za Mauzo za Hivi Karibuni"
+
+msgid "Recent Transactions"
+msgstr "Miamala ya Hivi Karibuni"
+
+msgid "Recorded by"
+msgstr "Imerekodiwa na"
+
+msgid "Refill History"
+msgstr "Historia ya Kujaza Stoku"
+
+msgid "Registered"
+msgstr "Amesajiliwa"
+
+msgid "Reject"
+msgstr "Kataa"
+
+msgid "Reject Order"
+msgstr "Kataa Oda"
+
+msgid "Rejected"
+msgstr "Imekataliwa"
+
+msgid "Released"
+msgstr "Imetolewa"
+
+msgid "Remember me on this device"
+msgstr "Nikumbuke kwenye kifaa hiki"
+
+msgid "Reorder"
+msgstr "Agiza Tena"
+
+msgid "Reorder Point"
+msgstr "Kiwango cha Kuagiza Tena"
+
+msgid "Request Re-pick"
+msgstr "Omba Kuchukuliwa Upya"
+
+msgid "Request access"
+msgstr "Omba ruhusa"
+
+msgid "Requested"
+msgstr "Imeombwa"
+
+msgid "Revenue"
+msgstr "Mapato"
+
+msgid "Revenue Analytics"
+msgstr "Uchambuzi wa Mapato"
+
+msgid "Review Now →"
+msgstr "Kagua Sasa →"
+
+msgid "Role"
+msgstr "Nafasi"
+
+msgid "Roll"
+msgstr "Roli"
+
+msgid "Run every shop,"
+msgstr "Endesha kila duka,"
+
+msgid "Sale"
+msgstr "Mauzo"
+
+msgid "Sale #%(pk)s approved and stock updated."
+msgstr "Mauzo #%(pk)s yameidhinishwa na stoku imesasishwa."
+
+msgid "Sale #%(pk)s recorded."
+msgstr "Mauzo #%(pk)s yamerekodiwa."
+
+msgid "Sale #%(pk)s rejected."
+msgstr "Mauzo #%(pk)s yamekataliwa."
+
+msgid "Sale #%(pk)s removed."
+msgstr "Mauzo #%(pk)s yameondolewa."
+
+msgid "Sale Order"
+msgstr "Oda ya Mauzo"
+
+msgid "Sale is already approved."
+msgstr "Mauzo tayari yameidhinishwa."
+
+msgid "Sale updated."
+msgstr "Mauzo yamesasishwa."
+
+msgid "Sales"
+msgstr "Mauzo"
+
+msgid "Sales History"
+msgstr "Historia ya Mauzo"
+
+msgid "Sales Person"
+msgstr "Muuzaji"
+
+msgid "Sales Person Signature"
+msgstr "Sahihi ya Muuzaji"
+
+msgid "Save"
+msgstr "Hifadhi"
+
+msgid "Save Picks"
+msgstr "Hifadhi Uchukuaji"
+
+msgid "Sealants"
+msgstr ""
+
+msgid "Search ZO001, customer…"
+msgstr "Tafuta ZO001, mteja…"
+
+msgid "Search by ID (ZC001), product, customer…"
+msgstr "Tafuta kwa ID (ZC001), bidhaa, mteja…"
+
+msgid "Search by name or username..."
+msgstr "Tafuta kwa jina au jina la mtumiaji..."
+
+msgid "Search by name, phone, email..."
+msgstr "Tafuta kwa jina, simu, barua pepe..."
+
+msgid "Search by name, phone, email…"
+msgstr "Tafuta kwa jina, simu, barua pepe…"
+
+msgid "Search customer..."
+msgstr "Tafuta mteja..."
+
+msgid "Search for a product..."
+msgstr "Tafuta bidhaa..."
+
+msgid "Search for products above and click"
+msgstr "Tafuta bidhaa hapo juu kisha bofya"
+
+msgid "Search for products, build your order, then complete the transaction."
+msgstr "Tafuta bidhaa, jenga oda yako, kisha kamilisha muamala."
+
+msgid "Search name, brand, supplier, category, description…"
+msgstr "Tafuta jina, chapa, msambazaji, kategoria, maelezo…"
+
+msgid "Search product..."
+msgstr "Tafuta bidhaa..."
+
+msgid "Section Access"
+msgstr "Ruhusa za Sehemu"
+
+msgid "Select Product"
+msgstr "Chagua Bidhaa"
+
+msgid "Select a product to see pricing details"
+msgstr "Chagua bidhaa kuona maelezo ya bei"
+
+msgid "Sell"
+msgstr "Uza"
+
+msgid "Seller: ZONGII MINING COMPANY Ltd"
+msgstr ""
+
+msgid "Selling Price"
+msgstr "Bei ya Kuuza"
+
+msgid "Sent"
+msgstr "Imetumwa"
+
+msgid "Sign Up"
+msgstr "Jisajili"
+
+msgid "Sign in"
+msgstr "Ingia"
+
+msgid "Sign in to access your dashboard."
+msgstr "Ingia ili kufikia dashibodi yako."
+
+msgid "Sign in | Zongii Mining Company Ltd"
+msgstr "Ingia | Zongii Mining Company Ltd"
+
+msgid "Signature &amp; Stamp:"
+msgstr "Sahihi na Muhuri:"
+
+msgid "Staff"
+msgstr "Mfanyakazi"
+
+msgid "Stage"
+msgstr "Hatua"
+
+msgid "Stamp"
+msgstr "Muhuri"
+
+msgid "Start typing a name…"
+msgstr "Anza kuandika jina…"
+
+msgid "Status"
+msgstr "Hali"
+
+msgid "Status updated to %(new_status)s."
+msgstr "Hali imebadilishwa kuwa %(new_status)s."
+
+msgid "Status:"
+msgstr "Hali:"
+
+msgid "Stock"
+msgstr "Stoku"
+
+msgid "Stock (Tons)"
+msgstr "Stoku (Tani)"
+
+msgid "Stock Alerts"
+msgstr "Tahadhari za Stoku"
+
+msgid "Stock after sale"
+msgstr "Stoku baada ya mauzo"
+
+msgid "Stock is automatically deducted upon completion."
+msgstr "Stoku hupunguzwa kiotomatiki mauzo yanapokamilika."
+
+msgid "Stock level"
+msgstr "Kiwango cha stoku"
+
+msgid "Stock on Hand"
+msgstr "Stoku Iliyopo"
+
+msgid "Subtotal"
+msgstr "Jumla Ndogo"
+
+msgid "Summary"
+msgstr "Muhtasari"
+
+msgid "Supplier"
+msgstr "Msambazaji"
+
+msgid "TERMS &amp; CONDITIONS:"
+msgstr "VIGEZO NA MASHARTI:"
+
+msgid "Tag"
+msgstr "Lebo"
+
+msgid "Tanks"
+msgstr ""
+
+msgid "Taps & Faucets"
+msgstr ""
+
+msgid "Tax Rate"
+msgstr "Kiwango cha Kodi"
+
+msgid "Technical Specs"
+msgstr "Vipimo vya Kiufundi"
+
+msgid "Tel:"
+msgstr "Simu:"
+
+msgid "Terms"
+msgstr "Masharti"
+
+msgid "The price has been reset to"
+msgstr "Bei imerudishwa kuwa"
+
+msgid "The price must be within the allowed range for this product."
+msgstr "Bei lazima iwe ndani ya kiwango kinachoruhusiwa kwa bidhaa hii."
+
+msgid "The quantity has been reset to"
+msgstr "Idadi imerudishwa kuwa"
+
+msgid "This Month"
+msgstr "Mwezi Huu"
+
+msgid "This order is not awaiting approval."
+msgstr "Oda hii haisubiri idhini."
+
+msgid "This order is not ready for verification."
+msgstr "Oda hii haiko tayari kuthibitishwa."
+
+msgid "This order was rejected."
+msgstr "Oda hii ilikataliwa."
+
+msgid "This picking order is complete. Awaiting sales person verification."
+msgstr "Oda hii ya kuchukua imekamilika. Inasubiri uthibitisho wa muuzaji."
+
+msgid "This product has been removed from your cart."
+msgstr "Bidhaa hii imeondolewa kwenye kikapu chako."
+
+msgid "This sale cannot be completed as requested."
+msgstr "Mauzo haya hayawezi kukamilika kama yalivyoombwa."
+
+msgid "Time"
+msgstr "Muda"
+
+msgid "To:"
+msgstr "Kwa:"
+
+msgid "Tons"
+msgstr "Tani"
+
+msgid "Tools"
+msgstr ""
+
+msgid "Top Products"
+msgstr "Bidhaa Zinazoongoza"
+
+msgid "Total"
+msgstr "Jumla"
+
+msgid "Total Amount"
+msgstr "Jumla ya Kiasi"
+
+msgid "Total Collected"
+msgstr "Jumla Iliyokusanywa"
+
+msgid "Total Receivables"
+msgstr "Jumla ya Madeni ya Kupokea"
+
+msgid "Total Users"
+msgstr "Jumla ya Watumiaji"
+
+msgid "Total registered"
+msgstr "Jumla waliosajiliwa"
+
+msgid "Track every sale through each warehouse stage"
+msgstr "Fuatilia kila mauzo kupitia kila hatua ya ghala"
+
+msgid "Transaction Info"
+msgstr "Taarifa za Muamala"
+
+msgid "Transaction Total"
+msgstr "Jumla ya Muamala"
+
+msgid "Transactions"
+msgstr "Miamala"
+
+msgid "Trusted partner brands"
+msgstr "Chapa washirika wa kuaminika"
+
+msgid "Try a different filter or create a new document."
+msgstr "Jaribu kichujio kingine au unda waraka mpya."
+
+msgid "Tsh."
+msgstr ""
+
+msgid "Type product name or part number..."
+msgstr "Andika jina la bidhaa au namba ya kifaa..."
+
+msgid "Type to search or browse…"
+msgstr "Andika kutafuta au vinjari…"
+
+msgid "UPC / Barcode"
+msgstr "UPC / Msimbo"
+
+msgid "Unit"
+msgstr "Kipimo"
+
+msgid "Unit Price"
+msgstr "Bei ya Kimoja"
+
+msgid "Units to add"
+msgstr "Idadi ya kuongeza"
+
+msgid "Unknown action."
+msgstr "Kitendo hakijulikani."
+
+msgid "Update Picking"
+msgstr "Sasisha Uchukuaji"
+
+msgid "Use your profile settings to edit your own account."
+msgstr "Tumia mipangilio ya wasifu wako kuhariri akaunti yako."
+
+msgid "Used"
+msgstr "Imetumika"
+
+msgid "User"
+msgstr "Mtumiaji"
+
+msgid "User \"%(name)s\" %(status)s."
+msgstr "Mtumiaji \"%(name)s\" %(status)s."
+
+msgid "User \"%(name)s\" created."
+msgstr "Mtumiaji \"%(name)s\" ameundwa."
+
+msgid "User \"%(name)s\" deleted."
+msgstr "Mtumiaji \"%(name)s\" amefutwa."
+
+msgid "User \"%(name)s\" updated."
+msgstr "Mtumiaji \"%(name)s\" amesasishwa."
+
+msgid "User Management"
+msgstr "Usimamizi wa Watumiaji"
+
+msgid "Username"
+msgstr "Jina la mtumiaji"
+
+msgid "Users &amp; Permissions"
+msgstr "Watumiaji na Ruhusa"
+
+msgid "Verification note (optional)"
+msgstr "Maelezo ya uthibitisho (si lazima)"
+
+msgid "Verified"
+msgstr "Imethibitishwa"
+
+msgid "Verified by"
+msgstr "Imethibitishwa na"
+
+msgid "View"
+msgstr "Angalia"
+
+msgid "View All →"
+msgstr "Angalia Zote →"
+
+msgid "View Products"
+msgstr "Angalia Bidhaa"
+
+msgid "View all products associated with this business."
+msgstr "Angalia bidhaa zote za biashara hii."
+
+msgid "View and manage transactions"
+msgstr "Angalia na simamia miamala"
+
+msgid "View dashboard & reports"
+msgstr "Angalia dashibodi na ripoti"
+
+msgid "View debtors →"
+msgstr "Angalia wadaiwa →"
+
+msgid "View →"
+msgstr "Angalia →"
+
+msgid "Waiting for a picker to accept this order in the warehouse."
+msgstr "Inasubiri mchukuzi akubali oda hii ghalani."
+
+msgid ""
+"Waiting for an accountant to review and approve this order before it goes to"
+" the warehouse."
+msgstr ""
+"Inasubiri mhasibu akague na kuidhinisha oda hii kabla haijaenda ghalani."
+
+msgid "Walk-in"
+msgstr "Mteja wa Papo"
+
+msgid "Walk-in Customer"
+msgstr "Mteja wa Papo kwa Papo"
+
+msgid "Warehouse"
+msgstr "Ghala"
+
+msgid "Warehouse Gate Pass — Authorisation to Release Goods"
+msgstr "Pasi ya Geti ya Ghala — Idhini ya Kutoa Bidhaa"
+
+msgid "Warehouse picking requests and your active assignments"
+msgstr "Maombi ya kuchukua bidhaa ghalani na kazi zako zinazoendelea"
+
+msgid "Water Heaters"
+msgstr ""
+
+msgid "Weight"
+msgstr "Uzito"
+
+msgid "Welcome back"
+msgstr "Karibu tena"
+
+msgid "Wholesale"
+msgstr "Jumla"
+
+msgid "Yes"
+msgstr "Ndiyo"
+
+msgid "Yopa"
+msgstr ""
+
+msgid "You accepted picking order %(picking_code)s."
+msgstr "Umekubali oda ya kuchukua %(picking_code)s."
+
+msgid "You cannot deactivate your own account."
+msgstr "Huwezi kuzima akaunti yako mwenyewe."
+
+msgid "You cannot delete your own account."
+msgstr "Huwezi kufuta akaunti yako mwenyewe."
+
+msgid "You cannot verify picking you performed yourself."
+msgstr "Huwezi kuthibitisha uchukuaji uliofanya mwenyewe."
+
+msgid "You're all caught up."
+msgstr "Umemaliza kila kitu."
+
+msgid "Your Active Assignments"
+msgstr "Kazi Zako Zinazoendelea"
+
+msgid "Your personal alerts and updates"
+msgstr "Tahadhari na taarifa zako binafsi"
+
+msgid "Zongii Logo"
+msgstr ""
+
+msgid "Zongii Mining Company Ltd"
+msgstr ""
+
+msgid "Zongii Mining Operations"
+msgstr ""
+
+msgid "activated"
+msgstr "amewashwa"
+
+msgid "deactivated"
+msgstr "amezimwa"
+
+msgid "e.g. Amina"
+msgstr "mf. Amina"
+
+msgid "e.g. Juma"
+msgstr "mf. Juma"
+
+msgid "e.g. Juma Hassan"
+msgstr "mf. Juma Hassan"
+
+msgid "e.g. Main Warehouse"
+msgstr "mf. Ghala Kuu"
+
+msgid "e.g. PVC Pipes, Ball Valves…"
+msgstr "mf. Mabomba ya PVC, Vali…"
+
+msgid "e.g. Payment due within 30 days"
+msgstr "mf. Malipo ndani ya siku 30"
+
+msgid "e.g. alex_smith"
+msgstr ""
+
+msgid "e.g. amina_juma"
+msgstr ""
+
+msgid "e.g. shelf empty, partial batch"
+msgstr "mf. rafu tupu, kundi pungufu"
+
+msgid "email@example.com"
+msgstr ""
+
+msgid "from one place."
+msgstr "kutoka sehemu moja."
+
+msgid "johndoe123"
+msgstr ""
+
+msgid "left"
+msgstr "zimebaki"
+
+msgid "name@company.com"
+msgstr ""
+
+msgid "to add them."
+msgstr "kuziongeza."
+
+msgid "to get started."
+msgstr "kuanza."
+
+msgid "warehouse &amp; sale"
+msgstr "ghala na mauzo"
+
+msgid "· Warehouse stock:"
+msgstr "· Stoku ya ghala:"
+
+msgid "— Select a customer —"
+msgstr "— Chagua mteja —"
+
+msgid "— the maximum available."
+msgstr "— kiwango cha juu kinachopatikana."
+
+msgid "← Prev"
+msgstr "← Nyuma"
+
+msgid "🖨 Print Gate Pass"
+msgstr "🖨 Chapisha Pasi ya Geti"

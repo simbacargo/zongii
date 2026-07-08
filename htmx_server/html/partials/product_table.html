@@ -1,3 +1,4 @@
+{% load i18n %}
 {% load currency %}
 {% for product in page_obj %}
 <tr class="hover:bg-gray-50/50 transition-colors border-b border-gray-50 last:border-0">
@@ -26,10 +27,10 @@
             {{ product.min_price|tzs }}{% if product.max_price %} – {{ product.max_price|tzs }}{% endif %}
         </div>
         {% else %}
-        <div class="text-sm text-gray-400 italic">No price set</div>
+        <div class="text-sm text-gray-400 italic">{% trans "No price set" %}</div>
         {% endif %}
         {% if product.avg_selling_price %}
-        <div class="text-[10px] text-indigo-600 font-semibold">Avg: {{ product.avg_selling_price|floatformat:0|tzs }}</div>
+        <div class="text-[10px] text-amber-600 font-semibold">Avg: {{ product.avg_selling_price|floatformat:0|tzs }}</div>
         {% endif %}
         {% if product.buying_price %}
         <div class="text-[10px] text-gray-400">Cost: {{ product.buying_price|tzs }}</div>
@@ -41,14 +42,14 @@
                 {{ product.quantity_at_hand }}
             </span>
             {% if product.quantity_at_hand <= product.reorder_point %}
-            <span class="text-[8px] font-bold uppercase text-red-500 tracking-tighter">Low Stock</span>
+            <span class="text-[8px] font-bold uppercase text-red-500 tracking-tighter">{% trans "Low Stock" %}</span>
             {% endif %}
         </div>
     </td>
     <td class="p-4 text-right">
         <div class="flex justify-end gap-2">
             {% if user.is_admin or user.is_superuser %}
-            <a href="#" hx-get="{% url 'product_update' product.id %}" hx-target="#main-content" class="h-9 w-9 flex items-center justify-center rounded-xl bg-gray-50 text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 transition-all">
+            <a href="#" hx-get="{% url 'product_update' product.id %}" hx-target="#main-content" class="h-9 w-9 flex items-center justify-center rounded-xl bg-gray-50 text-gray-600 hover:bg-amber-50 hover:text-amber-600 transition-all">
                 <i class="bi bi-pencil-square"></i>
             </a>
             <button hx-post="{% url 'product_delete' product.id %}"
@@ -65,7 +66,7 @@
 {% empty %}
 <tr>
     <td colspan="5" class="p-20 text-center">
-        <p class="text-gray-400 italic">No products found matching your search.</p>
+        <p class="text-gray-400 italic">{% trans "No products found matching your search." %}</p>
     </td>
 </tr>
 {% endfor %}
@@ -74,11 +75,10 @@
 <tr id="load-more-row">
     <td colspan="5" class="p-4 text-center">
         <button hx-get="{% url 'product_list' %}?page={{ page_obj.next_page_number }}&q={{ query }}"
-                hx-target="#product-table-body"
-                hx-select="#product-table-body > tr"
-                hx-swap="beforeend"
-                class="text-xs font-bold text-indigo-600 hover:underline">
-            Load More Products...
+                hx-target="#load-more-row"
+                hx-swap="outerHTML"
+                class="text-xs font-bold text-amber-600 hover:underline">
+            {% trans "Load More Products..." %}
         </button>
     </td>
 </tr>

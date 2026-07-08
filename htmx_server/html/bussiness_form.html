@@ -1,3 +1,4 @@
+{% load i18n %}
 {% block content %}
 <div class="max-w-lg mx-auto">
 
@@ -29,20 +30,20 @@
 
             <div class="mb-5">
                 <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2">
-                    Business Name <span class="text-red-400">*</span>
+                    {% trans "Business Name" %} <span class="text-red-400">*</span>
                 </label>
                 <input type="text" name="name" value="{{ business.name|default:'' }}" required autofocus
-                       placeholder="e.g. Main Warehouse"
-                       class="w-full border-2 border-gray-100 focus:border-indigo-400 rounded-xl px-4 py-3 text-sm font-medium outline-none transition bg-gray-50 focus:bg-white">
+                       placeholder="{% trans 'e.g. Main Warehouse' %}"
+                       class="w-full border-2 border-gray-100 focus:border-amber-400 rounded-xl px-4 py-3 text-sm font-medium outline-none transition bg-gray-50 focus:bg-white">
             </div>
 
             <div class="flex gap-3 justify-end">
                 <button type="button" hx-get="{% url 'business_list' %}" hx-target="#main-content"
                         class="px-5 py-2.5 bg-white border border-gray-200 hover:bg-gray-50 text-gray-600 font-bold rounded-xl transition-all text-sm">
-                    Cancel
+                    {% trans "Cancel" %}
                 </button>
                 <button type="submit"
-                        class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-xl shadow-sm shadow-indigo-200 transition-all text-sm">
+                        class="px-6 py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-black rounded-xl shadow-sm shadow-amber-200 transition-all text-sm">
                     {% if business %}Save Changes{% else %}Create Business{% endif %}
                 </button>
             </div>

@@ -1,3 +1,4 @@
+{% load i18n %}
 {% load currency %}
 {% if products %}
 <div class="bg-white border border-gray-200 rounded-xl shadow-xl max-h-72 overflow-y-auto">
@@ -27,11 +28,11 @@
         </div>
         <div class="text-right shrink-0">
             {% if p.max_price %}
-            <p class="text-xs font-black text-indigo-600">{{ p.max_price|tzs }}</p>
+            <p class="text-xs font-black text-amber-600">{{ p.max_price|tzs }}</p>
             {% elif p.min_price %}
-            <p class="text-xs font-black text-indigo-600">{{ p.min_price|tzs }}</p>
+            <p class="text-xs font-black text-amber-600">{{ p.min_price|tzs }}</p>
             {% else %}
-            <p class="text-xs text-gray-400">No price</p>
+            <p class="text-xs text-gray-400">{% trans "No price" %}</p>
             {% endif %}
             <p class="text-[10px] text-gray-400">Stock: {{ p.quantity_at_hand }}</p>
         </div>

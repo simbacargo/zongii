@@ -6,6 +6,7 @@ from django.dispatch import receiver
 from django.db.models import F, Avg
 from authentication.models import User
 from django.core.validators import MinValueValidator
+from django.utils.translation import gettext_lazy as _
 from decimal import Decimal
 
 class Category(models.Model):
@@ -49,10 +50,11 @@ class Product(models.Model):
     tax_rate = models.DecimalField(max_digits=5, decimal_places=2, default=0.00, help_text="Percentage e.g. 15.00")
 
     # --- Logistics & Inventory ---
-    UOM_CHOICES = [('UNIT', 'Each'), ('FT', 'Feet'), ('RL', 'Roll'), ('BX', 'Box')]
+    UOM_CHOICES = [('UNIT', _('Each')), ('FT', _('Feet')), ('RL', _('Roll')), ('BX', _('Box'))]
     unit_of_measure = models.CharField(max_length=10, choices=UOM_CHOICES, default='UNIT')
     
     quantity_at_hand = models.IntegerField(default=0, verbose_name="Total Physical Stock")
+    quantity_tons = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, verbose_name="Stock (Tons)", help_text="For bulk items also tracked by weight in tons")
     quantity_allocated = models.IntegerField(default=0, help_text="Sold but not yet shipped/picked up")
     reorder_point = models.PositiveIntegerField(default=10)
     
@@ -172,16 +174,16 @@ class SaleOrder(models.Model):
     CANCELLED        = 'CANCELLED'
 
     STATUS_CHOICES = [
-        (PENDING_APPROVAL, 'Pending Approval'),
-        (PENDING_PICKING,  'Pending Picking'),
-        (PICKING,          'Picking'),
-        (PARTIALLY_PICKED, 'Partially Picked'),
-        (PICKED,           'Picked'),
-        (VERIFIED,         'Verified'),
-        (RE_PICK_REQUIRED, 'Re-pick Required'),
-        (REJECTED,         'Rejected'),
-        (DISPATCHED,       'Dispatched'),
-        (CANCELLED,        'Cancelled'),
+        (PENDING_APPROVAL, _('Pending Approval')),
+        (PENDING_PICKING,  _('Pending Picking')),
+        (PICKING,          _('Picking')),
+        (PARTIALLY_PICKED, _('Partially Picked')),
+        (PICKED,           _('Picked')),
+        (VERIFIED,         _('Verified')),
+        (RE_PICK_REQUIRED, _('Re-pick Required')),
+        (REJECTED,         _('Rejected')),
+        (DISPATCHED,       _('Dispatched')),
+        (CANCELLED,        _('Cancelled')),
     ]
 
     customer        = models.ForeignKey('Customer', null=True, blank=True, on_delete=models.SET_NULL, related_name='orders')
@@ -254,14 +256,14 @@ class Sale(models.Model):
 
 
 class Document(models.Model):
-    DOC_TYPES = [('invoice', 'Invoice'), ('quotation', 'Quotation')]
+    DOC_TYPES = [('invoice', _('Invoice')), ('quotation', _('Quotation'))]
     STATUSES  = [
-        ('draft',     'Draft'),
-        ('sent',      'Sent'),
-        ('paid',      'Paid'),
-        ('accepted',  'Accepted'),
-        ('rejected',  'Rejected'),
-        ('cancelled', 'Cancelled'),
+        ('draft',     _('Draft')),
+        ('sent',      _('Sent')),
+        ('paid',      _('Paid')),
+        ('accepted',  _('Accepted')),
+        ('rejected',  _('Rejected')),
+        ('cancelled', _('Cancelled')),
     ]
 
     doc_type         = models.CharField(max_length=10, choices=DOC_TYPES, default='invoice')
@@ -361,11 +363,11 @@ class PickingOrder(models.Model):
     CANCELLED        = 'CANCELLED'
 
     STATUS_CHOICES = [
-        (PENDING,          'Pending'),
-        (ACCEPTED,         'In Progress'),
-        (PARTIALLY_PICKED, 'Partially Picked'),
-        (COMPLETED,        'Completed'),
-        (CANCELLED,        'Cancelled'),
+        (PENDING,          _('Pending')),
+        (ACCEPTED,         _('In Progress')),
+        (PARTIALLY_PICKED, _('Partially Picked')),
+        (COMPLETED,        _('Completed')),
+        (CANCELLED,        _('Cancelled')),
     ]
 
     sale_order   = models.ForeignKey(SaleOrder, on_delete=models.CASCADE, related_name='picking_orders')

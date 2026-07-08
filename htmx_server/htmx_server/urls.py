@@ -7,6 +7,7 @@ from notifications.urls import urlpatterns as notif_urlpatterns
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('i18n/', include('django.conf.urls.i18n')),
     path('api/', include(api_urlpatterns)),
     path('', include(home_urlpatterns)),
     path('', include(notif_urlpatterns)),

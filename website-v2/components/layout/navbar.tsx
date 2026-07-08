@@ -11,7 +11,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { ThemeToggle } from "./theme-toggle";
 import { LangToggle } from "./lang-toggle";
 import { CtaButton } from "@/components/cta-button";
 import { cn } from "@/lib/utils";
@@ -28,12 +27,13 @@ function useNavLinks() {
 
 function Wordmark() {
   return (
-    <Link href="/" className="group flex items-center gap-2.5">
-      <span className="grid size-9 place-items-center rounded-xl bg-gold font-display text-lg font-bold text-on-accent shadow-[0_8px_24px_-8px_var(--glow-gold)] transition-transform group-hover:scale-105">
-        Z
+    <Link href="/" className="group flex items-baseline gap-3">
+      <span className="font-display text-xl tracking-[0.14em] text-foreground">
+        ZONGII
       </span>
-      <span className="font-display text-lg font-bold uppercase tracking-[0.2em] text-foreground">
-        Zongii
+      <span className="mb-0.5 hidden size-1.5 rotate-45 bg-amber sm:block" aria-hidden />
+      <span className="stamp hidden text-[10px] sm:block">
+        Mwanza · Est. 2002
       </span>
     </Link>
   );
@@ -58,9 +58,9 @@ export function Navbar() {
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
       className={cn(
-        "fixed inset-x-0 top-0 z-50 transition-all duration-300",
+        "fixed inset-x-0 top-0 z-50 bg-background transition-all duration-300",
         scrolled
-          ? "glass-strong border-b border-border/60 py-2.5"
+          ? "border-b border-border py-2.5"
           : "border-b border-transparent py-4",
       )}
     >
@@ -81,16 +81,15 @@ export function Navbar() {
               {isActive(link.href) && (
                 <motion.span
                   layoutId="nav-underline"
-                  className="absolute -bottom-1.5 left-0 h-0.5 w-full rounded-full bg-gold"
+                  className="absolute -bottom-1.5 left-0 h-px w-full bg-brand"
                 />
               )}
             </Link>
           ))}
         </div>
 
-        <div className="hidden items-center gap-3 lg:flex">
+        <div className="hidden items-center gap-4 lg:flex">
           <LangToggle />
-          <ThemeToggle />
           <CtaButton href="/contact" size="md">
             {t("getQuote")}
           </CtaButton>
@@ -98,17 +97,16 @@ export function Navbar() {
 
         {/* Mobile */}
         <div className="flex items-center gap-2 lg:hidden">
-          <ThemeToggle />
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger
               aria-label="Menu"
-              className="grid size-9 place-items-center rounded-full border border-border/60 text-foreground"
+              className="grid size-9 place-items-center rounded-[3px] border border-border text-foreground"
             >
               <Menu className="size-5" />
             </SheetTrigger>
             <SheetContent
               side="right"
-              className="glass-strong w-80 border-border/60"
+              className="w-80 border-border bg-background"
             >
               <SheetTitle className="sr-only">Menu</SheetTitle>
               <div className="flex h-full flex-col gap-1 px-6 pt-14">
@@ -117,7 +115,7 @@ export function Navbar() {
                     key={link.href}
                     href={link.href}
                     onClick={() => setOpen(false)}
-                    className="border-b border-border/40 py-4 font-display text-2xl font-semibold text-foreground/90 transition-colors hover:text-gold"
+                    className="border-b border-border/60 py-4 font-display text-2xl text-foreground/90 transition-colors hover:text-brand-deep"
                   >
                     {link.label}
                   </Link>
@@ -130,6 +128,9 @@ export function Navbar() {
                     {t("getQuote")}
                   </CtaButton>
                 </div>
+                <p className="stamp mt-auto pb-8 text-[10px]">
+                  Pamba Road · Mwanza · Est. 2002
+                </p>
               </div>
             </SheetContent>
           </Sheet>

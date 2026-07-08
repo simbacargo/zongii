@@ -32,8 +32,6 @@ export function TiltCard({
   const rotateX = useSpring(useTransform(py, [0, 1], [max, -max]), cfg);
   const rotateY = useSpring(useTransform(px, [0, 1], [-max, max]), cfg);
 
-  if (reduce) return <div className={className}>{children}</div>;
-
   function onMove(e: React.MouseEvent<HTMLDivElement>) {
     const el = ref.current;
     if (!el) return;
@@ -46,11 +44,14 @@ export function TiltCard({
     py.set(0.5);
   }
 
+  // Same DOM with and without reduced-motion — only the pointer listeners
+  // differ (nothing serialized), so SSR hydration always matches. At rest
+  // the springs sit at 0, so the style renders as `transform: none`.
   return (
     <div
       ref={ref}
-      onMouseMove={onMove}
-      onMouseLeave={onLeave}
+      onMouseMove={reduce ? undefined : onMove}
+      onMouseLeave={reduce ? undefined : onLeave}
       className={cn("[perspective:1000px]", className)}
     >
       <motion.div

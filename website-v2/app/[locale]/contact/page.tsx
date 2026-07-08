@@ -25,13 +25,14 @@ export default async function ContactPage({
   return (
     <div className="mx-auto max-w-7xl px-5 pt-32 pb-24 sm:px-8">
       <Reveal className="max-w-2xl">
-        <span className="inline-flex items-center gap-2 rounded-full border border-gold/30 bg-gold/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-gold">
-          {t("eyebrow")}
+        <span className="flex items-center gap-4">
+          <span className="h-px w-10 bg-brand/50" aria-hidden />
+          <span className="stamp">{t("eyebrow")}</span>
         </span>
-        <h1 className="mt-5 font-display text-4xl font-bold tracking-tight sm:text-5xl">
+        <h1 className="mt-6 font-display text-4xl leading-[1.08] tracking-tight text-foreground sm:text-5xl">
           {t("heading")}
         </h1>
-        <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
+        <p className="mt-5 font-serif text-lg leading-relaxed text-muted-foreground">
           {t("subheading")}
         </p>
       </Reveal>
@@ -42,8 +43,8 @@ export default async function ContactPage({
         </Reveal>
 
         <Reveal delay={0.1} className="lg:col-span-2">
-          <div className="glass h-full rounded-3xl p-8">
-            <h2 className="font-display text-xl font-semibold">
+          <div className="plate h-full rounded-[4px] p-8">
+            <h2 className="font-display text-2xl text-foreground">
               {t("infoTitle")}
             </h2>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
@@ -60,7 +61,7 @@ export default async function ContactPage({
                     <a
                       key={p}
                       href={`tel:${p.replace(/\s/g, "")}`}
-                      className="transition-colors hover:text-gold"
+                      className="transition-colors hover:text-brand-deep"
                     >
                       {p}
                     </a>
@@ -71,13 +72,13 @@ export default async function ContactPage({
                 <div className="flex flex-col gap-1">
                   <a
                     href={`mailto:${CONTACT_INFO.emailGeneral}`}
-                    className="transition-colors hover:text-gold"
+                    className="transition-colors hover:text-brand-deep"
                   >
                     {CONTACT_INFO.emailGeneral}
                   </a>
                   <a
                     href={`mailto:${CONTACT_INFO.emailSales}`}
-                    className="text-muted-foreground transition-colors hover:text-gold"
+                    className="text-muted-foreground transition-colors hover:text-brand-deep"
                   >
                     {t("sales")}: {CONTACT_INFO.emailSales}
                   </a>
@@ -89,7 +90,7 @@ export default async function ContactPage({
             </ul>
 
             <div className="mt-8 border-t border-border/60 pt-6">
-              <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+              <p className="stamp text-[10px]">
                 {t("follow")}
               </p>
               <div className="mt-4 flex gap-3">
@@ -102,7 +103,7 @@ export default async function ContactPage({
                     key={s.label}
                     href="#"
                     aria-label={s.label}
-                    className="grid size-10 place-items-center rounded-xl border border-border/60 bg-secondary/40 text-foreground/70 transition-colors hover:border-gold/50 hover:text-gold"
+                    className="grid size-10 place-items-center rounded-[3px] border border-border text-foreground/70 transition-colors hover:border-brand/60 hover:text-brand-deep"
                   >
                     <svg
                       className="size-4"
@@ -137,11 +138,11 @@ function InfoRow({
 }) {
   return (
     <li className="flex items-start gap-4">
-      <span className="grid size-10 shrink-0 place-items-center rounded-xl border border-gold/30 bg-gold/10 text-gold">
+      <span className="grid size-10 shrink-0 place-items-center rounded-[3px] border border-brand/40 text-brand-deep">
         {icon}
       </span>
       <div>
-        <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+        <p className="stamp text-[10px]">
           {label}
         </p>
         <div className="mt-0.5 font-medium text-foreground/90">{children}</div>

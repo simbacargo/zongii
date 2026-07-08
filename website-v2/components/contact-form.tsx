@@ -81,7 +81,7 @@ export function ContactForm() {
   }
 
   return (
-    <div className="glass-strong rounded-3xl p-6 sm:p-9">
+    <div className="plate rounded-[4px] p-6 sm:p-9">
       <AnimatePresence mode="wait">
         {status === "success" ? (
           <motion.div
@@ -91,10 +91,10 @@ export function ContactForm() {
             exit={{ opacity: 0 }}
             className="flex h-full min-h-[24rem] flex-col items-center justify-center text-center"
           >
-            <div className="grid size-16 place-items-center rounded-full border border-gold/30 bg-gold/10 text-gold">
+            <div className="grid size-16 place-items-center rounded-full border border-brand/40 text-brand-deep">
               <CheckCircle2 className="size-8" />
             </div>
-            <h3 className="mt-5 font-display text-2xl font-bold">
+            <h3 className="mt-5 font-display text-2xl text-foreground">
               {t("successTitle")}
             </h3>
             <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted-foreground">
@@ -102,7 +102,7 @@ export function ContactForm() {
             </p>
             <button
               onClick={reset}
-              className="mt-6 text-sm font-semibold text-gold underline-offset-4 hover:underline"
+              className="mt-6 text-sm font-semibold text-brand-deep underline-offset-4 hover:underline"
             >
               {t("sendAnother")}
             </button>
@@ -181,7 +181,7 @@ export function ContactForm() {
             <button
               type="submit"
               disabled={status === "submitting"}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-gold py-3.5 text-[0.95rem] font-semibold text-on-accent transition-colors hover:bg-gold-soft disabled:opacity-70"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-[3px] bg-primary py-3.5 font-mono text-xs font-medium uppercase tracking-[0.16em] text-primary-foreground transition-colors hover:bg-brand-deep disabled:opacity-70"
             >
               {status === "submitting" ? (
                 <>
@@ -217,7 +217,7 @@ function Field({
     <div>
       <Label className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
         {label}
-        {required && <span className="ml-0.5 text-gold">*</span>}
+        {required && <span className="ml-0.5 text-brand-deep">*</span>}
       </Label>
       {children}
       <AnimatePresence>

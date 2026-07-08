@@ -1,3 +1,4 @@
+{% load i18n %}
 {% load currency %}
 <div class="p-8 text-center">
 
@@ -7,25 +8,25 @@
     </div>
 
     <!-- Heading -->
-    <h3 class="text-xl font-black text-gray-900 mb-1">Not Enough Stock</h3>
-    <p class="text-sm text-gray-400 mb-6">This sale cannot be completed as requested.</p>
+    <h3 class="text-xl font-black text-gray-900 mb-1">{% trans "Not Enough Stock" %}</h3>
+    <p class="text-sm text-gray-400 mb-6">{% trans "This sale cannot be completed as requested." %}</p>
 
     <!-- Detail card -->
     <div class="bg-gray-50 border border-gray-200 rounded-2xl px-6 py-4 mb-6 text-left space-y-2">
         <div class="flex justify-between text-sm">
-            <span class="text-gray-500">Product</span>
+            <span class="text-gray-500">{% trans "Product" %}</span>
             <span class="font-bold text-gray-800 text-right max-w-[60%] truncate">{{ product.name }}</span>
         </div>
         <div class="flex justify-between text-sm">
-            <span class="text-gray-500">Requested</span>
+            <span class="text-gray-500">{% trans "Requested" %}</span>
             <span class="font-bold text-red-600">{{ requested }} unit{{ requested|pluralize }}</span>
         </div>
         <div class="flex justify-between text-sm border-t border-gray-200 pt-2">
-            <span class="text-gray-500">Available</span>
+            <span class="text-gray-500">{% trans "Available" %}</span>
             {% if available > 0 %}
             <span class="font-bold text-green-600">{{ available }} unit{{ available|pluralize }}</span>
             {% else %}
-            <span class="font-bold text-red-500">Out of stock</span>
+            <span class="font-bold text-red-500">{% trans "Out of stock" %}</span>
             {% endif %}
         </div>
     </div>
@@ -33,18 +34,18 @@
     <!-- Hint -->
     {% if available > 0 %}
     <p class="text-xs text-gray-400 mb-6">
-        The quantity has been reset to <strong>{{ available }}</strong> — the maximum available.
+        {% trans "The quantity has been reset to" %} <strong>{{ available }}</strong> {% trans "— the maximum available." %}
     </p>
     {% else %}
     <p class="text-xs text-gray-400 mb-6">
-        This product has been removed from your cart.
+        {% trans "This product has been removed from your cart." %}
     </p>
     {% endif %}
 
     <!-- Close button -->
     <button onclick="closeModal()"
             class="w-full bg-red-500 hover:bg-red-600 active:scale-95 text-white font-bold py-3 rounded-xl transition-all shadow-sm">
-        Got it
+        {% trans "Got it" %}
     </button>
 
 </div>

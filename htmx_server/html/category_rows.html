@@ -1,8 +1,9 @@
+{% load i18n %}
 {% for category in categories %}
 <tr id="category-row-{{ category.pk }}" class="hover:bg-gray-50/50 transition-colors">
     <td class="px-5 py-4">
         <div id="category-display-{{ category.pk }}" class="flex items-center gap-3">
-            <div class="w-8 h-8 bg-indigo-50 text-indigo-500 rounded-lg flex items-center justify-center text-xs font-black">
+            <div class="w-8 h-8 bg-amber-50 text-amber-500 rounded-lg flex items-center justify-center text-xs font-black">
                 {{ category.name|first|upper }}
             </div>
             <span class="text-sm font-bold text-gray-800">{{ category.name }}</span>
@@ -15,10 +16,10 @@
               class="hidden flex gap-2">
             {% csrf_token %}
             <input type="text" name="name" value="{{ category.name }}" required
-                   class="flex-1 border border-indigo-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
-            <button type="submit" class="px-3 py-1.5 bg-indigo-600 text-white text-xs font-bold rounded-lg hover:bg-indigo-700 transition-colors">Save</button>
+                   class="flex-1 border border-amber-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+            <button type="submit" class="px-3 py-1.5 bg-amber-600 text-white text-xs font-bold rounded-lg hover:bg-amber-700 transition-colors">{% trans "Save" %}</button>
             <button type="button" onclick="cancelEdit({{ category.pk }})"
-                    class="px-3 py-1.5 bg-gray-100 text-gray-600 text-xs font-bold rounded-lg hover:bg-gray-200 transition-colors">Cancel</button>
+                    class="px-3 py-1.5 bg-gray-100 text-gray-600 text-xs font-bold rounded-lg hover:bg-gray-200 transition-colors">{% trans "Cancel" %}</button>
         </form>
     </td>
     <td class="px-5 py-4 text-center">
@@ -29,8 +30,8 @@
     <td class="px-5 py-4">
         <div class="flex justify-end gap-1">
             <button onclick="startEdit({{ category.pk }})"
-                    class="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-indigo-50 text-indigo-500 transition-colors text-sm"
-                    title="Edit">
+                    class="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-amber-50 text-amber-500 transition-colors text-sm"
+                    title="{% trans 'Edit' %}">
                 <i class="bi bi-pencil"></i>
             </button>
             <button hx-post="{% url 'category_delete' category.pk %}"
@@ -38,7 +39,7 @@
                     hx-swap="innerHTML"
                     hx-confirm="Delete '{{ category.name }}'? Products in this category will be unlinked."
                     class="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-red-50 text-red-400 transition-colors text-sm"
-                    title="Delete">
+                    title="{% trans 'Delete' %}">
                 <i class="bi bi-trash3"></i>
             </button>
         </div>
@@ -49,7 +50,7 @@
     <td colspan="3" class="px-5 py-14 text-center">
         <div class="opacity-30">
             <i class="bi bi-tags text-5xl block mb-3"></i>
-            <p class="text-sm font-bold">No categories yet. Add one above.</p>
+            <p class="text-sm font-bold">{% trans "No categories yet. Add one above." %}</p>
         </div>
     </td>
 </tr>

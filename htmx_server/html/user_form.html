@@ -1,3 +1,4 @@
+{% load i18n %}
 {% block content %}
 <div class="max-w-2xl mx-auto">
 
@@ -34,7 +35,7 @@
         <div class="bg-red-50 border border-red-200 rounded-2xl p-4 flex gap-3">
             <i class="bi bi-exclamation-circle-fill text-red-500 text-lg shrink-0 mt-0.5"></i>
             <div>
-                <p class="text-sm font-black text-red-700 mb-1">Please fix the following:</p>
+                <p class="text-sm font-black text-red-700 mb-1">{% trans "Please fix the following:" %}</p>
                 <ul class="text-sm text-red-600 space-y-0.5 list-disc list-inside">
                     {% for field, msg in errors.items %}
                     <li>{{ msg }}</li>
@@ -48,34 +49,34 @@
         <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-50 flex items-center gap-2">
                 <i class="bi bi-person-vcard text-gray-400"></i>
-                <h3 class="text-xs font-black text-gray-400 uppercase tracking-wider">Basic Information</h3>
+                <h3 class="text-xs font-black text-gray-400 uppercase tracking-wider">{% trans "Basic Information" %}</h3>
             </div>
             <div class="p-6 space-y-4">
 
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-black text-gray-500 uppercase tracking-wider mb-1.5">First Name</label>
+                        <label class="block text-xs font-black text-gray-500 uppercase tracking-wider mb-1.5">{% trans "First Name" %}</label>
                         <input type="text" name="firstname" value="{{ vals.firstname }}" id="input-firstname"
-                               placeholder="e.g. Amina" autocomplete="off"
-                               class="w-full border-2 border-gray-200 focus:border-indigo-500 rounded-xl px-4 py-3 text-sm outline-none transition bg-gray-50 focus:bg-white">
+                               placeholder="{% trans 'e.g. Amina' %}" autocomplete="off"
+                               class="w-full border-2 border-gray-200 focus:border-amber-500 rounded-xl px-4 py-3 text-sm outline-none transition bg-gray-50 focus:bg-white">
                     </div>
                     <div>
-                        <label class="block text-xs font-black text-gray-500 uppercase tracking-wider mb-1.5">Last Name</label>
+                        <label class="block text-xs font-black text-gray-500 uppercase tracking-wider mb-1.5">{% trans "Last Name" %}</label>
                         <input type="text" name="lastname" value="{{ vals.lastname }}" id="input-lastname"
-                               placeholder="e.g. Juma" autocomplete="off"
-                               class="w-full border-2 border-gray-200 focus:border-indigo-500 rounded-xl px-4 py-3 text-sm outline-none transition bg-gray-50 focus:bg-white">
+                               placeholder="{% trans 'e.g. Juma' %}" autocomplete="off"
+                               class="w-full border-2 border-gray-200 focus:border-amber-500 rounded-xl px-4 py-3 text-sm outline-none transition bg-gray-50 focus:bg-white">
                     </div>
                 </div>
 
                 <div>
                     <label class="block text-xs font-black text-gray-500 uppercase tracking-wider mb-1.5">
-                        Username <span class="text-red-500">*</span>
+                        {% trans "Username" %} <span class="text-red-500">*</span>
                     </label>
                     <div class="relative">
                         <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 text-sm select-none">@</span>
                         <input type="text" name="username" required value="{{ vals.username }}"
-                               placeholder="e.g. amina_juma" autocomplete="off"
-                               class="w-full border-2 {% if errors.username %}border-red-400 bg-red-50{% else %}border-gray-200 bg-gray-50 focus:border-indigo-500 focus:bg-white{% endif %} rounded-xl pl-9 pr-4 py-3 text-sm outline-none transition">
+                               placeholder="{% trans 'e.g. amina_juma' %}" autocomplete="off"
+                               class="w-full border-2 {% if errors.username %}border-red-400 bg-red-50{% else %}border-gray-200 bg-gray-50 focus:border-amber-500 focus:bg-white{% endif %} rounded-xl pl-9 pr-4 py-3 text-sm outline-none transition">
                     </div>
                     {% if errors.username %}
                     <p class="text-xs text-red-600 mt-1.5 flex items-center gap-1">
@@ -86,39 +87,39 @@
 
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-black text-gray-500 uppercase tracking-wider mb-1.5">Email</label>
+                        <label class="block text-xs font-black text-gray-500 uppercase tracking-wider mb-1.5">{% trans "Email" %}</label>
                         <div class="relative">
                             <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300"><i class="bi bi-envelope text-sm"></i></span>
                             <input type="email" name="email" value="{{ vals.email }}"
-                                   placeholder="email@example.com" autocomplete="off"
-                                   class="w-full border-2 border-gray-200 focus:border-indigo-500 rounded-xl pl-11 py-3 text-sm outline-none transition bg-gray-50 focus:bg-white">
+                                   placeholder="{% trans 'email@example.com' %}" autocomplete="off"
+                                   class="w-full border-2 border-gray-200 focus:border-amber-500 rounded-xl pl-11 py-3 text-sm outline-none transition bg-gray-50 focus:bg-white">
                         </div>
                     </div>
                     <div>
-                        <label class="block text-xs font-black text-gray-500 uppercase tracking-wider mb-1.5">Mobile</label>
+                        <label class="block text-xs font-black text-gray-500 uppercase tracking-wider mb-1.5">{% trans "Mobile" %}</label>
                         <div class="relative">
                             <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300"><i class="bi bi-telephone text-sm"></i></span>
                             <input type="text" name="mobile" value="{{ vals.mobile }}"
                                    placeholder="+255 7XX XXX XXX" autocomplete="off"
-                                   class="w-full border-2 border-gray-200 focus:border-indigo-500 rounded-xl pl-11 py-3 text-sm outline-none transition bg-gray-50 focus:bg-white">
+                                   class="w-full border-2 border-gray-200 focus:border-amber-500 rounded-xl pl-11 py-3 text-sm outline-none transition bg-gray-50 focus:bg-white">
                         </div>
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-black text-gray-500 uppercase tracking-wider mb-1.5">Gender</label>
+                    <label class="block text-xs font-black text-gray-500 uppercase tracking-wider mb-1.5">{% trans "Gender" %}</label>
                     <div class="grid grid-cols-3 gap-2">
                         <label class="gender-opt flex items-center justify-center gap-2 py-2.5 rounded-xl border-2 cursor-pointer transition-all text-sm font-bold border-gray-200 text-gray-500 hover:border-gray-300">
                             <input type="radio" name="gender" value="M" {% if vals.gender == 'M' or not vals.gender %}checked{% endif %} class="sr-only">
-                            <i class="bi bi-gender-male"></i> Male
+                            <i class="bi bi-gender-male"></i> {% trans "Male" %}
                         </label>
                         <label class="gender-opt flex items-center justify-center gap-2 py-2.5 rounded-xl border-2 cursor-pointer transition-all text-sm font-bold border-gray-200 text-gray-500 hover:border-gray-300">
                             <input type="radio" name="gender" value="F" {% if vals.gender == 'F' %}checked{% endif %} class="sr-only">
-                            <i class="bi bi-gender-female"></i> Female
+                            <i class="bi bi-gender-female"></i> {% trans "Female" %}
                         </label>
                         <label class="gender-opt flex items-center justify-center gap-2 py-2.5 rounded-xl border-2 cursor-pointer transition-all text-sm font-bold border-gray-200 text-gray-500 hover:border-gray-300">
                             <input type="radio" name="gender" value="N" {% if vals.gender == 'N' %}checked{% endif %} class="sr-only">
-                            <i class="bi bi-gender-ambiguous"></i> Non-Binary
+                            <i class="bi bi-gender-ambiguous"></i> {% trans "Non-Binary" %}
                         </label>
                     </div>
                 </div>
@@ -130,7 +131,7 @@
         <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-50 flex items-center gap-2">
                 <i class="bi bi-shield-check text-gray-400"></i>
-                <h3 class="text-xs font-black text-gray-400 uppercase tracking-wider">Role</h3>
+                <h3 class="text-xs font-black text-gray-400 uppercase tracking-wider">{% trans "Role" %}</h3>
             </div>
             <div class="p-6 space-y-2">
 
@@ -141,8 +142,8 @@
                         <i class="bi bi-person text-sm"></i>
                     </div>
                     <div class="flex-1 min-w-0">
-                        <p class="text-sm font-black text-gray-800">Staff</p>
-                        <p class="text-xs text-gray-500 mt-0.5 leading-relaxed">Basic access — can view sales and customer records as assigned.</p>
+                        <p class="text-sm font-black text-gray-800">{% trans "Staff" %}</p>
+                        <p class="text-xs text-gray-500 mt-0.5 leading-relaxed">{% trans "Basic access — can view sales and customer records as assigned." %}</p>
                     </div>
                     <div class="role-check w-5 h-5 rounded-full border-2 border-gray-300 flex items-center justify-center shrink-0 mt-0.5 transition-all">
                         <div class="w-2.5 h-2.5 rounded-full bg-white scale-0 transition-transform duration-150"></div>
@@ -156,8 +157,8 @@
                         <i class="bi bi-cart-check text-sm"></i>
                     </div>
                     <div class="flex-1 min-w-0">
-                        <p class="text-sm font-black text-gray-800">Sales Person</p>
-                        <p class="text-xs text-gray-500 mt-0.5 leading-relaxed">Creates and manages sales orders, tracks customers and inventory.</p>
+                        <p class="text-sm font-black text-gray-800">{% trans "Sales Person" %}</p>
+                        <p class="text-xs text-gray-500 mt-0.5 leading-relaxed">{% trans "Creates and manages sales orders, tracks customers and inventory." %}</p>
                     </div>
                     <div class="role-check w-5 h-5 rounded-full border-2 border-gray-300 flex items-center justify-center shrink-0 mt-0.5 transition-all">
                         <div class="w-2.5 h-2.5 rounded-full bg-white scale-0 transition-transform duration-150"></div>
@@ -167,12 +168,12 @@
                 <!-- Accountant -->
                 <label class="role-card flex items-start gap-4 p-4 rounded-xl border-2 border-gray-100 cursor-pointer transition-all">
                     <input type="radio" name="role" value="accountant" {% if role == 'accountant' %}checked{% endif %} class="sr-only role-radio">
-                    <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5">
+                    <div class="w-9 h-9 rounded-xl bg-green-100 text-green-600 flex items-center justify-center shrink-0 mt-0.5">
                         <i class="bi bi-calculator text-sm"></i>
                     </div>
                     <div class="flex-1 min-w-0">
-                        <p class="text-sm font-black text-gray-800">Accountant</p>
-                        <p class="text-xs text-gray-500 mt-0.5 leading-relaxed">Access to financial records, invoices, billing, and sales reports.</p>
+                        <p class="text-sm font-black text-gray-800">{% trans "Accountant" %}</p>
+                        <p class="text-xs text-gray-500 mt-0.5 leading-relaxed">{% trans "Access to financial records, invoices, billing, and sales reports." %}</p>
                     </div>
                     <div class="role-check w-5 h-5 rounded-full border-2 border-gray-300 flex items-center justify-center shrink-0 mt-0.5 transition-all">
                         <div class="w-2.5 h-2.5 rounded-full bg-white scale-0 transition-transform duration-150"></div>
@@ -186,8 +187,8 @@
                         <i class="bi bi-boxes text-sm"></i>
                     </div>
                     <div class="flex-1 min-w-0">
-                        <p class="text-sm font-black text-gray-800">Picker (Warehouse)</p>
-                        <p class="text-xs text-gray-500 mt-0.5 leading-relaxed">Receives picking requests, picks items from the warehouse, and confirms quantities.</p>
+                        <p class="text-sm font-black text-gray-800">{% trans "Picker (Warehouse)" %}</p>
+                        <p class="text-xs text-gray-500 mt-0.5 leading-relaxed">{% trans "Receives picking requests, picks items from the warehouse, and confirms quantities." %}</p>
                     </div>
                     <div class="role-check w-5 h-5 rounded-full border-2 border-gray-300 flex items-center justify-center shrink-0 mt-0.5 transition-all">
                         <div class="w-2.5 h-2.5 rounded-full bg-white scale-0 transition-transform duration-150"></div>
@@ -197,12 +198,12 @@
                 <!-- Manager -->
                 <label class="role-card flex items-start gap-4 p-4 rounded-xl border-2 border-gray-100 cursor-pointer transition-all">
                     <input type="radio" name="role" value="manager" {% if role == 'manager' %}checked{% endif %} class="sr-only role-radio">
-                    <div class="w-9 h-9 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0 mt-0.5">
+                    <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center shrink-0 mt-0.5">
                         <i class="bi bi-person-gear text-sm"></i>
                     </div>
                     <div class="flex-1 min-w-0">
-                        <p class="text-sm font-black text-gray-800">Manager</p>
-                        <p class="text-xs text-gray-500 mt-0.5 leading-relaxed">Approves/rejects sales, manages customers, and views full financial reports.</p>
+                        <p class="text-sm font-black text-gray-800">{% trans "Manager" %}</p>
+                        <p class="text-xs text-gray-500 mt-0.5 leading-relaxed">{% trans "Approves/rejects sales, manages customers, and views full financial reports." %}</p>
                     </div>
                     <div class="role-check w-5 h-5 rounded-full border-2 border-gray-300 flex items-center justify-center shrink-0 mt-0.5 transition-all">
                         <div class="w-2.5 h-2.5 rounded-full bg-white scale-0 transition-transform duration-150"></div>
@@ -212,12 +213,12 @@
                 <!-- Admin -->
                 <label class="role-card flex items-start gap-4 p-4 rounded-xl border-2 border-gray-100 cursor-pointer transition-all">
                     <input type="radio" name="role" value="admin" {% if role == 'admin' %}checked{% endif %} class="sr-only role-radio">
-                    <div class="w-9 h-9 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center shrink-0 mt-0.5">
+                    <div class="w-9 h-9 rounded-xl bg-gray-900 text-amber-400 flex items-center justify-center shrink-0 mt-0.5">
                         <i class="bi bi-shield-lock text-sm"></i>
                     </div>
                     <div class="flex-1 min-w-0">
-                        <p class="text-sm font-black text-gray-800">Admin</p>
-                        <p class="text-xs text-gray-500 mt-0.5 leading-relaxed">Full access — manages users, roles, all records, and system settings.</p>
+                        <p class="text-sm font-black text-gray-800">{% trans "Admin" %}</p>
+                        <p class="text-xs text-gray-500 mt-0.5 leading-relaxed">{% trans "Full access — manages users, roles, all records, and system settings." %}</p>
                     </div>
                     <div class="role-check w-5 h-5 rounded-full border-2 border-gray-300 flex items-center justify-center shrink-0 mt-0.5 transition-all">
                         <div class="w-2.5 h-2.5 rounded-full bg-white scale-0 transition-transform duration-150"></div>
@@ -230,11 +231,11 @@
                             <input type="checkbox" name="is_active" id="is_active"
                                    {% if profile.is_active or not profile.pk %}checked{% endif %}
                                    class="sr-only peer">
-                            <div class="w-11 h-6 bg-gray-200 peer-checked:bg-indigo-600 rounded-full transition-colors duration-200"></div>
+                            <div class="w-11 h-6 bg-gray-200 peer-checked:bg-amber-600 rounded-full transition-colors duration-200"></div>
                             <div class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200 peer-checked:translate-x-5"></div>
                         </div>
                         <span class="text-sm font-semibold text-gray-700 group-hover:text-gray-900 transition-colors">
-                            Account is active <span class="text-gray-400 font-normal">(user can log in)</span>
+                            {% trans "Account is active" %} <span class="text-gray-400 font-normal">{% trans "(user can log in)" %}</span>
                         </span>
                     </label>
                 </div>
@@ -246,12 +247,12 @@
             <div class="px-6 py-4 border-b border-gray-50 flex items-center justify-between">
                 <div class="flex items-center gap-2">
                     <i class="bi bi-toggles text-gray-400"></i>
-                    <h3 class="text-xs font-black text-gray-400 uppercase tracking-wider">Section Access</h3>
+                    <h3 class="text-xs font-black text-gray-400 uppercase tracking-wider">{% trans "Section Access" %}</h3>
                 </div>
-                <span class="text-[10px] text-gray-400 font-medium">Admin role always has full access</span>
+                <span class="text-[10px] text-gray-400 font-medium">{% trans "Admin role always has full access" %}</span>
             </div>
             <div class="p-6">
-                <p class="text-xs text-gray-500 mb-4">Choose which parts of the app this user can access. Defaults are set by role — you can customise them here.</p>
+                <p class="text-xs text-gray-500 mb-4">{% trans "Choose which parts of the app this user can access. Defaults are set by role — you can customise them here." %}</p>
                 <div class="grid grid-cols-1 gap-2" id="sections-grid">
                     {% for key, label, icon in all_sections %}
                     <label class="section-toggle flex items-center gap-3 p-3 rounded-xl border-2 border-gray-100 cursor-pointer hover:border-gray-200 transition-all">
@@ -269,8 +270,8 @@
                     </label>
                     {% endfor %}
                 </div>
-                <p id="admin-note" class="hidden text-xs text-purple-600 font-semibold mt-3 flex items-center gap-1">
-                    <i class="bi bi-info-circle"></i> Admin role has full access — section settings are ignored.
+                <p id="admin-note" class="hidden text-xs text-amber-600 font-semibold mt-3 flex items-center gap-1">
+                    <i class="bi bi-info-circle"></i> {% trans "Admin role has full access — section settings are ignored." %}
                 </p>
             </div>
         </div>
@@ -280,10 +281,10 @@
             <div class="px-6 py-4 border-b border-gray-50 flex items-center justify-between">
                 <div class="flex items-center gap-2">
                     <i class="bi bi-key text-gray-400"></i>
-                    <h3 class="text-xs font-black text-gray-400 uppercase tracking-wider">Password</h3>
+                    <h3 class="text-xs font-black text-gray-400 uppercase tracking-wider">{% trans "Password" %}</h3>
                 </div>
                 {% if profile.pk %}
-                <span class="text-xs text-gray-400">Leave blank to keep current password</span>
+                <span class="text-xs text-gray-400">{% trans "Leave blank to keep current password" %}</span>
                 {% endif %}
             </div>
             <div class="p-6">
@@ -294,8 +295,8 @@
                     <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300"><i class="bi bi-lock text-sm"></i></span>
                     <input type="password" name="password" id="password-input"
                            {% if not profile.pk %}required{% endif %}
-                           placeholder="Minimum 6 characters"
-                           class="w-full border-2 {% if errors.password %}border-red-400 bg-red-50{% else %}border-gray-200 bg-gray-50 focus:border-indigo-500 focus:bg-white{% endif %} rounded-xl pl-11 pr-12 py-3 text-sm outline-none transition">
+                           placeholder="{% trans 'Minimum 6 characters' %}"
+                           class="w-full border-2 {% if errors.password %}border-red-400 bg-red-50{% else %}border-gray-200 bg-gray-50 focus:border-amber-500 focus:bg-white{% endif %} rounded-xl pl-11 pr-12 py-3 text-sm outline-none transition">
                     <button type="button" id="toggle-password"
                             class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
                         <i class="bi bi-eye text-sm"></i>
@@ -318,7 +319,7 @@
         <!-- Actions -->
         <div class="flex gap-3">
             <button type="submit"
-                    class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-black py-3.5 rounded-xl shadow-sm shadow-indigo-100 transition-all active:scale-[.98] flex items-center justify-center gap-2">
+                    class="flex-1 bg-amber-600 hover:bg-amber-700 text-white font-black py-3.5 rounded-xl shadow-sm shadow-amber-100 transition-all active:scale-[.98] flex items-center justify-center gap-2">
                 <i class="bi bi-{% if profile.pk %}check-lg{% else %}person-plus-fill{% endif %}"></i>
                 {% if profile.pk %}Save Changes{% else %}Create User{% endif %}
             </button>
@@ -326,7 +327,7 @@
                     hx-get="{% if profile.pk %}{% url 'user_detail' profile.pk %}{% else %}{% url 'user_list' %}{% endif %}"
                     hx-target="#main-content"
                     class="px-8 py-3.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-xl transition-all">
-                Cancel
+                {% trans "Cancel" %}
             </button>
         </div>
     </form>
@@ -343,12 +344,7 @@
     const previewName = document.getElementById('user-preview-name');
 
     const avatarColors = [
-        ['bg-indigo-100', 'text-indigo-600'],
-        ['bg-violet-100', 'text-violet-600'],
-        ['bg-rose-100',   'text-rose-500'],
-        ['bg-amber-100',  'text-amber-600'],
-        ['bg-emerald-100','text-emerald-600'],
-        ['bg-sky-100',    'text-sky-600'],
+        ['bg-amber-100', 'text-amber-700'],
     ];
 
     function updateAvatar() {
@@ -378,10 +374,10 @@
     const roleStyles = {
         staff:      { border: 'border-gray-400',    bg: 'bg-gray-50',     dot: 'bg-gray-500',     check: 'border-gray-500'    },
         sales:      { border: 'border-blue-400',    bg: 'bg-blue-50',     dot: 'bg-blue-500',     check: 'border-blue-500'    },
-        accountant: { border: 'border-emerald-400', bg: 'bg-emerald-50',  dot: 'bg-emerald-500',  check: 'border-emerald-500' },
+        accountant: { border: 'border-green-400', bg: 'bg-green-50',  dot: 'bg-green-500',  check: 'border-green-500' },
         picker:     { border: 'border-amber-400',   bg: 'bg-amber-50',    dot: 'bg-amber-500',    check: 'border-amber-500'   },
-        manager:    { border: 'border-indigo-400',  bg: 'bg-indigo-50',   dot: 'bg-indigo-500',   check: 'border-indigo-500'  },
-        admin:      { border: 'border-purple-400',  bg: 'bg-purple-50',   dot: 'bg-purple-500',   check: 'border-purple-500'  },
+        manager:    { border: 'border-amber-400',  bg: 'bg-amber-50',   dot: 'bg-amber-500',   check: 'border-amber-500'  },
+        admin:      { border: 'border-gray-800',  bg: 'bg-gray-50',   dot: 'bg-gray-800',   check: 'border-gray-800'  },
     };
 
     function applyRoleSections(roleKey) {
@@ -439,19 +435,19 @@
         const check = label.querySelector('.section-check');
         const checkMark = check.querySelector('i');
         if (cb.checked) {
-            label.classList.add('border-indigo-300', 'bg-indigo-50');
+            label.classList.add('border-amber-300', 'bg-amber-50');
             label.classList.remove('border-gray-100');
-            icon.classList.add('bg-indigo-100', 'text-indigo-600');
+            icon.classList.add('bg-amber-100', 'text-amber-600');
             icon.classList.remove('bg-gray-100', 'text-gray-400');
-            check.classList.add('bg-indigo-600', 'border-indigo-600');
+            check.classList.add('bg-amber-600', 'border-amber-600');
             check.classList.remove('border-gray-300');
             checkMark.classList.remove('opacity-0');
         } else {
-            label.classList.remove('border-indigo-300', 'bg-indigo-50');
+            label.classList.remove('border-amber-300', 'bg-amber-50');
             label.classList.add('border-gray-100');
-            icon.classList.remove('bg-indigo-100', 'text-indigo-600');
+            icon.classList.remove('bg-amber-100', 'text-amber-600');
             icon.classList.add('bg-gray-100', 'text-gray-400');
-            check.classList.remove('bg-indigo-600', 'border-indigo-600');
+            check.classList.remove('bg-amber-600', 'border-amber-600');
             check.classList.add('border-gray-300');
             checkMark.classList.add('opacity-0');
         }
@@ -464,9 +460,9 @@
 
     // ── Gender pills ────────────────────────────────
     const genderStyles = {
-        M: { border: 'border-indigo-400', bg: 'bg-indigo-50', text: 'text-indigo-700' },
-        F: { border: 'border-pink-400',   bg: 'bg-pink-50',   text: 'text-pink-700'   },
-        N: { border: 'border-purple-400', bg: 'bg-purple-50', text: 'text-purple-700' },
+        M: { border: 'border-amber-400', bg: 'bg-amber-50', text: 'text-amber-700' },
+        F: { border: 'border-amber-400', bg: 'bg-amber-50', text: 'text-amber-700' },
+        N: { border: 'border-amber-400', bg: 'bg-amber-50', text: 'text-amber-700' },
     };
     function refreshGender() {
         document.querySelectorAll('.gender-opt').forEach(label => {
@@ -511,10 +507,10 @@
         if (/[^A-Za-z0-9]/.test(val)) score++;
         const levels = [
             { w: 'w-1/5', color: 'bg-red-500',    label: 'Very weak' },
-            { w: 'w-2/5', color: 'bg-orange-400',  label: 'Weak' },
-            { w: 'w-3/5', color: 'bg-yellow-400',  label: 'Fair' },
-            { w: 'w-4/5', color: 'bg-indigo-400',  label: 'Strong' },
-            { w: 'w-full',color: 'bg-emerald-500',  label: 'Very strong' },
+            { w: 'w-2/5', color: 'bg-amber-400',  label: 'Weak' },
+            { w: 'w-3/5', color: 'bg-amber-400',  label: 'Fair' },
+            { w: 'w-4/5', color: 'bg-amber-400',  label: 'Strong' },
+            { w: 'w-full',color: 'bg-green-500',  label: 'Very strong' },
         ];
         const lvl = levels[Math.min(score, 4)];
         strengthBar.className = `h-full rounded-full transition-all duration-300 ${lvl.w} ${lvl.color}`;

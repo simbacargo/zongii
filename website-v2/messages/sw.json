@@ -21,17 +21,14 @@
     "viewAll": "Ona zote"
   },
   "Hero": {
-    "badge": "Mshirika wa Kuaminika wa Usambazaji Tanzania",
-    "titleLead": "Chanzo chako kamili cha vifaa vya",
-    "highlightA": "madini",
-    "and": "na",
-    "highlightB": "ujenzi",
-    "titleTail": "",
-    "subtitle": "Tunasambaza bidhaa bora kwa wakandarasi, wajenzi na wamiliki wa nyumba kote Tanzania kwa zaidi ya miaka 22.",
-    "ctaPrimary": "Tazama bidhaa",
+    "badge": "Wauzaji wa vifaa — Mwanza, Tanzania",
+    "title": "Tunaweka maji ya Tanzania *yakitiririka.*",
+    "subtitle": "Vifaa vya mabomba, ujenzi na madini — tunaviagiza moja kwa moja na kuvihifadhi kwa wingi dukani kwetu Mwanza. Wakandarasi, wajenzi na wamiliki wa nyumba wamenunua kwetu kwa zaidi ya miaka ishirini.",
+    "ctaPrimary": "Vinjari katalogi",
     "ctaSecondary": "Wasiliana nasi",
     "scroll": "Sogeza",
-    "trustLine": "Tunaaminika Mwanza, Dar es Salaam na mikoa yote ya Tanzania"
+    "specLine": "PVC · HDPE · Chuma — DN15 hadi DN300 — vipo Mwanza",
+    "photoCaption": "Mabomba na vifaa — tunasambaza tangu 2002"
   },
   "Stats": {
     "eyebrow": "Kwa takwimu",
@@ -128,10 +125,22 @@
     "heading": "Kutoka swali hadi eneo la kazi, kwa urahisi",
     "subheading": "Njia rahisi kutoka simu yako ya kwanza hadi vifaa kufika eneo lako — ikisaidiwa na ushauri wa kitaalamu kila hatua.",
     "steps": {
-      "enquire": { "title": "Uliza", "desc": "Tueleze mradi wako, kiasi na muda — kwa simu, barua pepe au fomu." },
-      "quote": { "title": "Bei", "desc": "Pata nukuu ya bei iliyo wazi na ya ushindani kulingana na mradi." },
-      "supply": { "title": "Usambazaji", "desc": "Utoaji wa haraka na wa kutegemewa kote Mwanza, Dar es Salaam na mikoa ya Tanzania." },
-      "support": { "title": "Msaada", "desc": "Ushauri wa kiufundi na msaada baada ya mauzo — tunasimamia kila tunachouza." }
+      "enquire": {
+        "title": "Uliza",
+        "desc": "Tueleze mradi wako, kiasi na muda — kwa simu, barua pepe au fomu."
+      },
+      "quote": {
+        "title": "Bei",
+        "desc": "Pata nukuu ya bei iliyo wazi na ya ushindani kulingana na mradi."
+      },
+      "supply": {
+        "title": "Usambazaji",
+        "desc": "Utoaji wa haraka na wa kutegemewa kote Mwanza, Dar es Salaam na mikoa ya Tanzania."
+      },
+      "support": {
+        "title": "Msaada",
+        "desc": "Ushauri wa kiufundi na msaada baada ya mauzo — tunasimamia kila tunachouza."
+      }
     }
   },
   "Faq": {
@@ -139,12 +148,30 @@
     "heading": "Majibu, kabla hujauliza",
     "subheading": "Mambo ambayo wakandarasi, wajenzi na wamiliki wa nyumba hutuuliza zaidi.",
     "items": {
-      "range": { "q": "Mnauza bidhaa gani?", "a": "Aina tisa za bidhaa zinazohusisha kila hatua ya ujenzi — mabomba na viunganishi vya PVC, matangi ya polyethilini, pampu za maji, bidhaa za kauri za bafuni, mifumo ya maji ya moto, mabomba na vifaa vya madini, na zaidi." },
-      "delivery": { "q": "Mnasambaza wapi?", "a": "Tunasambaza kote Mwanza, Dar es Salaam na mikoa ya Tanzania, tukiwa na bidhaa za kutosha kuhudumia miradi ya miezi mingi bila kukosa." },
-      "quality": { "q": "Je, bidhaa zenu zimethibitishwa?", "a": "Ndiyo. Tunanunua kwa viwango vya kimataifa (BS EN ISO 1452, ASTM D1785, TZS 476) zikiwa na vyeti vya majaribio, na tunabadilisha bidhaa yoyote isiyokidhi viwango bila gharama." },
-      "bulk": { "q": "Mna bei ya jumla kwa wajenzi na wakandarasi?", "a": "Ndiyo — tunatoa nukuu za bei za ushindani na viwango vya jumla kwa ununuzi mkubwa na wa awamu nyingi." },
-      "quote": { "q": "Nipataje bei?", "a": "Tutumie mahitaji yako kupitia fomu, barua pepe sales@zongii.co.tz, au piga +255 769 005 007 — tunajibu ndani ya siku moja ya kazi." },
-      "hours": { "q": "Saa zenu za kazi ni zipi?", "a": "Tawi letu la Pamba Road mjini Mwanza limefunguliwa Jumatatu hadi Ijumaa, saa 2:00 asubuhi hadi saa 11:00 jioni." }
+      "range": {
+        "q": "Mnauza bidhaa gani?",
+        "a": "Aina tisa za bidhaa zinazohusisha kila hatua ya ujenzi — mabomba na viunganishi vya PVC, matangi ya polyethilini, pampu za maji, bidhaa za kauri za bafuni, mifumo ya maji ya moto, mabomba na vifaa vya madini, na zaidi."
+      },
+      "delivery": {
+        "q": "Mnasambaza wapi?",
+        "a": "Tunasambaza kote Mwanza, Dar es Salaam na mikoa ya Tanzania, tukiwa na bidhaa za kutosha kuhudumia miradi ya miezi mingi bila kukosa."
+      },
+      "quality": {
+        "q": "Je, bidhaa zenu zimethibitishwa?",
+        "a": "Ndiyo. Tunanunua kwa viwango vya kimataifa (BS EN ISO 1452, ASTM D1785, TZS 476) zikiwa na vyeti vya majaribio, na tunabadilisha bidhaa yoyote isiyokidhi viwango bila gharama."
+      },
+      "bulk": {
+        "q": "Mna bei ya jumla kwa wajenzi na wakandarasi?",
+        "a": "Ndiyo — tunatoa nukuu za bei za ushindani na viwango vya jumla kwa ununuzi mkubwa na wa awamu nyingi."
+      },
+      "quote": {
+        "q": "Nipataje bei?",
+        "a": "Tutumie mahitaji yako kupitia fomu, barua pepe sales@zongii.co.tz, au piga +255 769 005 007 — tunajibu ndani ya siku moja ya kazi."
+      },
+      "hours": {
+        "q": "Saa zenu za kazi ni zipi?",
+        "a": "Tawi letu la Pamba Road mjini Mwanza limefunguliwa Jumatatu hadi Ijumaa, saa 2:00 asubuhi hadi saa 11:00 jioni."
+      }
     }
   },
   "About": {
@@ -159,13 +186,19 @@
     "missionBody": "Hatuuzii bei pekee. Kila bidhaa tunayohifadhi inatoka kwa watengenezaji wanaoweza kuthibitisha ubora, ufuatiliaji na uzingatiaji wa viwango — ili uchague kwa kujiamini.",
     "credentialsHeading": "Tumesajiliwa na tunazingatia sheria",
     "credentials": "Tumesajiliwa kikamilifu na Mamlaka ya Mapato Tanzania (TIN: 108-998-350) na tunazingatia Sheria ya Usimamizi wa Kodi ya 2015.",
-    "valuesHeading": "Tunachosimamia"
+    "valuesHeading": "Tunachosimamia",
+    "established": "Duka la Mwanza — lilianzishwa 2002"
   },
   "ProductsPage": {
     "metaTitle": "Bidhaa",
     "eyebrow": "Katalogi",
     "heading": "Kila unachohitaji, kutoka msambazaji mmoja",
     "subheading": "Vinjari aina yetu kamili ya bidhaa za madini, ujenzi na mabomba. Chuja kwa kategoria kupata kinachohitajika kwa mradi wako."
+  },
+  "ProductDetail": {
+    "backToProducts": "Rudi kwenye katalogi",
+    "categories": "Kategoria",
+    "related": "Huenda ukahitaji pia"
   },
   "ContactPage": {
     "metaTitle": "Wasiliana"

@@ -24,7 +24,7 @@ export function LangToggle() {
   return (
     <div
       className={cn(
-        "inline-flex items-center rounded-full border border-border/60 p-0.5 text-xs font-semibold",
+        "inline-flex items-center rounded-[3px] border border-border p-0.5 font-mono text-[11px] font-medium tracking-wider",
         isPending && "opacity-60",
       )}
     >
@@ -37,9 +37,9 @@ export function LangToggle() {
             onClick={() => switchTo(loc)}
             aria-pressed={active}
             className={cn(
-              "rounded-full px-2.5 py-1 transition-colors",
+              "rounded-[2px] px-2.5 py-1 transition-colors",
               active
-                ? "bg-gold text-on-accent"
+                ? "bg-primary text-primary-foreground"
                 : "text-foreground/60 hover:text-foreground",
             )}
           >

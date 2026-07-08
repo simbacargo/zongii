@@ -1,18 +1,19 @@
+{% load i18n %}
 {% block content %}
 <div class="max-w-3xl mx-auto">
 
     <div class="flex items-center justify-between mb-6">
         <div>
-            <h1 class="text-2xl font-black text-gray-900">Categories</h1>
-            <p class="text-sm text-gray-500">Organise your plumbing product catalogue.</p>
+            <h1 class="text-2xl font-black text-gray-900">{% trans "Categories" %}</h1>
+            <p class="text-sm text-gray-500">{% trans "Organise your plumbing product catalogue." %}</p>
         </div>
         <div class="flex items-center gap-3">
             <span class="text-sm text-gray-400 font-medium">{{ categories.count }} total</span>
             <button hx-get="{% url 'category_create' %}"
                     hx-target="#modal-content"
                     hx-swap="innerHTML"
-                    class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl shadow-sm shadow-indigo-100 transition-all flex items-center gap-2">
-                <i class="bi bi-plus-lg"></i> New Category
+                    class="px-5 py-2.5 bg-amber-600 hover:bg-amber-700 text-white text-sm font-bold rounded-xl shadow-sm shadow-amber-100 transition-all flex items-center gap-2">
+                <i class="bi bi-plus-lg"></i> {% trans "New Category" %}
             </button>
         </div>
     </div>
@@ -22,8 +23,8 @@
         <table class="w-full text-left">
             <thead class="bg-gray-50 border-b border-gray-100">
                 <tr>
-                    <th class="px-5 py-4 text-xs font-black text-gray-400 uppercase tracking-wider">Category Name</th>
-                    <th class="px-5 py-4 text-xs font-black text-gray-400 uppercase tracking-wider text-center">Products</th>
+                    <th class="px-5 py-4 text-xs font-black text-gray-400 uppercase tracking-wider">{% trans "Category Name" %}</th>
+                    <th class="px-5 py-4 text-xs font-black text-gray-400 uppercase tracking-wider text-center">{% trans "Products" %}</th>
                     <th class="px-5 py-4 text-xs font-black text-gray-400 uppercase tracking-wider"></th>
                 </tr>
             </thead>

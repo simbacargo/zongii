@@ -1,13 +1,14 @@
+{% load i18n %}
 
 {% block content %}
 <div class="max-w-6xl mx-auto">
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
-            <h1 class="text-3xl font-bold text-gray-900">Sales History</h1>
-            <p class="text-gray-500">View and manage transactions</p>
+            <h1 class="text-3xl font-bold text-gray-900">{% trans "Sales History" %}</h1>
+            <p class="text-gray-500">{% trans "View and manage transactions" %}</p>
         </div>
-        <a hx-target="#main-content" hx-get="{% url 'sale_create' %}" href="#" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-bold shadow-lg transition-all flex items-center gap-2 w-fit">
-            <i class="bi bi-plus-lg"></i> New Sale
+        <a hx-target="#main-content" hx-get="{% url 'sale_create' %}" href="#" class="bg-amber-600 hover:bg-amber-700 text-white px-6 py-3 rounded-xl font-bold shadow-lg transition-all flex items-center gap-2 w-fit">
+            <i class="bi bi-plus-lg"></i> {% trans "New Sale" %}
         </a>
     </div>
 
@@ -17,16 +18,16 @@
         <!-- Status tabs -->
         <div class="flex gap-2 p-1 bg-gray-200 w-fit rounded-xl shrink-0">
             <button hx-get="{% url 'sale_list' %}?q={{ q|urlencode }}" hx-target="#main-content" hx-push-url="false"
-                    class="px-4 py-2 rounded-lg text-sm font-bold {% if not status_filter %}bg-white text-indigo-600 shadow-sm{% else %}text-gray-600 hover:bg-gray-300{% endif %}">
-                All Sales
+                    class="px-4 py-2 rounded-lg text-sm font-bold {% if not status_filter %}bg-white text-amber-600 shadow-sm{% else %}text-gray-600 hover:bg-gray-300{% endif %}">
+                {% trans "All Sales" %}
             </button>
             <button hx-get="{% url 'sale_list' %}?status=pending&q={{ q|urlencode }}" hx-target="#main-content" hx-push-url="false"
-                    class="px-4 py-2 rounded-lg text-sm font-bold {% if status_filter == 'pending' %}bg-white text-yellow-600 shadow-sm{% else %}text-gray-600 hover:bg-gray-300{% endif %}">
-                Pending
+                    class="px-4 py-2 rounded-lg text-sm font-bold {% if status_filter == 'pending' %}bg-white text-amber-600 shadow-sm{% else %}text-gray-600 hover:bg-gray-300{% endif %}">
+                {% trans "Pending" %}
             </button>
             <button hx-get="{% url 'sale_list' %}?status=approved&q={{ q|urlencode }}" hx-target="#main-content" hx-push-url="false"
                     class="px-4 py-2 rounded-lg text-sm font-bold {% if status_filter == 'approved' %}bg-white text-green-600 shadow-sm{% else %}text-gray-600 hover:bg-gray-300{% endif %}">
-                Approved
+                {% trans "Approved" %}
             </button>
         </div>
 
@@ -36,8 +37,8 @@
             <input type="text"
                    name="q"
                    value="{{ q }}"
-                   placeholder="Search by ID (ZC001), product, customer…"
-                   class="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-400 bg-white"
+                   placeholder="{% trans 'Search by ID (ZC001), product, customer…' %}"
+                   class="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm font-medium outline-none focus:ring-2 focus:ring-amber-400 bg-white"
                    hx-get="{% url 'sale_list' %}?status={{ status_filter }}"
                    hx-target="#main-content"
                    hx-trigger="input delay:350ms, keyup[key=='Enter']"

@@ -13,7 +13,7 @@ from rest_framework.permissions import IsAuthenticated, BasePermission, AllowAny
 from rest_framework.response import Response
 
 from .models import (
-    Category, Product, Customer,
+    Business, Category, Product, Customer,
     Sale, SaleOrder,
     Document, DocumentItem,
     PickingOrder, PickingOrderItem,
@@ -24,6 +24,7 @@ from notifications.models import Notification
 from authentication.models import User
 
 from .serializers import (
+    BusinessSerializer,
     CategorySerializer,
     ProductListSerializer, ProductWriteSerializer,
     CustomerSerializer,
@@ -478,6 +479,11 @@ def sale_list(request):
     """
     if request.method == 'GET':
         qs = Sale.objects.select_related('product', 'customer', 'created_by').filter(deleted=False)
+
+        if request.GET.get('customer'):
+            qs = qs.filter(customer_id=request.GET['customer'])
+        if request.GET.get('product'):
+            qs = qs.filter(product_id=request.GET['product'])
 
         sf = request.GET.get('status', '')
         if sf == 'approved':
@@ -1210,3 +1216,112 @@ def user_set_role(request, pk):
         'allowed_sections',
     ])
     return Response(UserSerializer(user).data)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  BUSINESSES
+# ─────────────────────────────────────────────────────────────────────────────
+
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
+def business_list(request):
+    """
+    GET  /api/businesses/          — businesses you own or belong to (admins see all)
+    POST /api/businesses/          — create; the requester becomes owner
+    """
+    if request.method == 'GET':
+        qs = Business.objects.select_related('owner').prefetch_related('members')
+        if not _is_admin(request.user):
+            qs = qs.filter(Q(owner=request.user) | Q(members=request.user)).distinct()
+        return Response(BusinessSerializer(qs.order_by('name'), many=True).data)
+
+    serializer = BusinessSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save(owner=request.user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
+@permission_classes([IsAuthenticated])
+def business_detail(request, pk):
+    """
+    GET    /api/businesses/{pk}/
+    PATCH  /api/businesses/{pk}/   (owner or admin)
+    DELETE /api/businesses/{pk}/   (owner or admin)
+    """
+    business = get_object_or_404(
+        Business.objects.select_related('owner').prefetch_related('members'), pk=pk
+    )
+
+    if request.method == 'GET':
+        return Response(BusinessSerializer(business).data)
+
+    if business.owner_id != request.user.pk and not _is_admin(request.user):
+        return Response({'error': 'Owner or admin access required.'}, status=status.HTTP_403_FORBIDDEN)
+
+    if request.method == 'DELETE':
+        business.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    serializer = BusinessSerializer(
+        business, data=request.data, partial=(request.method == 'PATCH')
+    )
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  ORDER WORKFLOW STATS (for SPA stage tabs)
+# ─────────────────────────────────────────────────────────────────────────────
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def sale_order_stats(request):
+    """
+    GET /api/orders/stats/ — order counts per workflow stage.
+    Returns: { "total": n, "stages": [{status, label, count}, ...] }
+    """
+    from django.db.models import Count
+    counts = dict(
+        SaleOrder.objects.values_list('workflow_status')
+                         .annotate(c=Count('id'))
+                         .values_list('workflow_status', 'c')
+    )
+    stages = [
+        {'status': value, 'label': label, 'count': counts.get(value, 0)}
+        for value, label in SaleOrder.STATUS_CHOICES
+    ]
+    return Response({'total': sum(counts.values()), 'stages': stages})
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  USER PASSWORD (admin reset)
+# ─────────────────────────────────────────────────────────────────────────────
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def user_set_password(request, pk):
+    """
+    POST /api/users/{pk}/set-password/   (admin)
+    Body: { "password": "min 6 chars" }
+    """
+    if not _is_admin(request.user):
+        return Response({'error': 'Admin access required.'}, status=status.HTTP_403_FORBIDDEN)
+
+    user = get_object_or_404(User, pk=pk)
+    if user.is_superuser and not request.user.is_superuser:
+        return Response(
+            {'error': 'Only a superuser can change another superuser\'s password.'},
+            status=status.HTTP_403_FORBIDDEN,
+        )
+
+    password = request.data.get('password') or ''
+    if len(password) < 6:
+        return Response({'password': 'Must be at least 6 characters.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    user.set_password(password)
+    user.save(update_fields=['password'])
+    return Response({'detail': f'Password updated for {user.username}.'})

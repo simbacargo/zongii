@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 
 from .models import (
-    Category, Product, Customer,
+    Business, Category, Product, Customer,
     Sale, SaleOrder, SaleStatusHistory,
     Document, DocumentItem,
     PickingOrder, PickingOrderItem,
@@ -47,7 +47,7 @@ class ProductListSerializer(serializers.ModelSerializer):
             'material', 'is_lead_free', 'max_pressure_psi',
             'buying_price', 'wholesale_price', 'min_price', 'max_price',
             'average_price', 'tax_rate',
-            'unit_of_measure', 'quantity_at_hand', 'quantity_allocated',
+            'unit_of_measure', 'quantity_at_hand', 'quantity_tons', 'quantity_allocated',
             'available_stock', 'reorder_point', 'stock_value_at_cost',
             'bin_location', 'supplier', 'weight',
             'categories', 'is_active', 'created_at', 'updated_at',
@@ -67,7 +67,7 @@ class ProductWriteSerializer(serializers.ModelSerializer):
             'name', 'brand', 'part_number', 'upc_code', 'description',
             'material', 'is_lead_free', 'max_pressure_psi',
             'buying_price', 'wholesale_price', 'min_price', 'max_price', 'tax_rate',
-            'unit_of_measure', 'quantity_at_hand', 'reorder_point',
+            'unit_of_measure', 'quantity_at_hand', 'quantity_tons', 'reorder_point',
             'bin_location', 'supplier', 'weight', 'is_active',
             'category_ids', 'product_photo',
         ]
@@ -85,6 +85,43 @@ class ProductWriteSerializer(serializers.ModelSerializer):
         instance.save()
         if categories is not None:
             instance.categories.set(categories)
+        return instance
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  BUSINESS
+# ─────────────────────────────────────────────────────────────────────────────
+
+class BusinessSerializer(serializers.ModelSerializer):
+    owner_username = serializers.SerializerMethodField()
+    member_count   = serializers.IntegerField(source='members.count', read_only=True)
+    product_count  = serializers.IntegerField(source='inventory.count', read_only=True)
+    member_ids     = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), many=True,
+        write_only=True, required=False, source='members',
+    )
+
+    class Meta:
+        model  = Business
+        fields = ['id', 'name', 'owner', 'owner_username', 'member_count', 'product_count', 'member_ids']
+        read_only_fields = ['id', 'owner']
+
+    def get_owner_username(self, obj):
+        return obj.owner.username if obj.owner else None
+
+    def create(self, validated_data):
+        members = validated_data.pop('members', [])
+        business = Business.objects.create(**validated_data)
+        business.members.set(members)
+        return business
+
+    def update(self, instance, validated_data):
+        members = validated_data.pop('members', None)
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        if members is not None:
+            instance.members.set(members)
         return instance
 
 
@@ -240,13 +277,13 @@ class DocumentSerializer(serializers.ModelSerializer):
             'customer', 'customer_name',
             'created_by', 'created_by_username',
             'status', 'issue_date', 'due_date',
-            'notes', 'terms', 'discount_percent',
-            'subtotal', 'discount_amount', 'total',
+            'notes', 'terms', 'discount_percent', 'vat_percent', 'customer_tin',
+            'subtotal', 'discount_amount', 'vat_amount', 'total',
             'created_at', 'updated_at',
             'items',
         ]
         read_only_fields = [
-            'id', 'number', 'subtotal', 'discount_amount', 'total',
+            'id', 'number', 'subtotal', 'discount_amount', 'vat_amount', 'total',
             'created_at', 'updated_at',
         ]
 
@@ -259,7 +296,7 @@ class DocumentWriteSerializer(serializers.ModelSerializer):
         fields = [
             'doc_type', 'customer', 'status',
             'issue_date', 'due_date', 'notes', 'terms',
-            'discount_percent', 'items',
+            'discount_percent', 'vat_percent', 'customer_tin', 'items',
         ]
 
     def create(self, validated_data):
@@ -387,11 +424,15 @@ class StockRefillCreateSerializer(serializers.Serializer):
 # ─────────────────────────────────────────────────────────────────────────────
 
 class NotificationSerializer(serializers.ModelSerializer):
+    icon  = serializers.ReadOnlyField()
+    color = serializers.ReadOnlyField()
+
     class Meta:
         model  = Notification
         fields = [
             'id', 'notification_type', 'title', 'message',
             'link', 'entity_id', 'is_read', 'created_at',
+            'icon', 'color',
         ]
         read_only_fields = ['id', 'created_at']
 

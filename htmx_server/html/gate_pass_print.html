@@ -1,3 +1,4 @@
+{% load i18n %}
 {% load currency %}
 <!DOCTYPE html>
 <html lang="en">
@@ -54,15 +55,15 @@
 <body>
 <div class="page">
 
-  <button class="print-btn" onclick="window.print()">🖨 Print Gate Pass</button>
+  <button class="print-btn" onclick="window.print()">{% trans "🖨 Print Gate Pass" %}</button>
 
   <div class="header">
     <div>
-      <div class="company">Zongii Mining Operations</div>
-      <div class="sub">Warehouse Gate Pass — Authorisation to Release Goods</div>
+      <div class="company">{% trans "Zongii Mining Operations" %}</div>
+      <div class="sub">{% trans "Warehouse Gate Pass — Authorisation to Release Goods" %}</div>
     </div>
     <div class="text-right">
-      <div class="gp-label">Gate Pass No.</div>
+      <div class="gp-label">{% trans "Gate Pass No." %}</div>
       <div class="gp-number">{{ gp.gp_code }}</div>
       <span class="status-badge">{% if gp.is_used %}Used{% else %}Active{% endif %}</span>
     </div>
@@ -70,27 +71,27 @@
 
   <div class="meta-grid">
     <div class="meta-item">
-      <div class="meta-label">Sale Order</div>
+      <div class="meta-label">{% trans "Sale Order" %}</div>
       <div class="meta-value" style="font-family:monospace">{{ gp.sale_order.order_code }}</div>
     </div>
     <div class="meta-item">
-      <div class="meta-label">Issue Date &amp; Time</div>
+      <div class="meta-label">{% trans "Issue Date &amp; Time" %}</div>
       <div class="meta-value">{{ gp.issued_at|date:"d M Y, H:i" }}</div>
     </div>
     <div class="meta-item">
-      <div class="meta-label">Customer</div>
+      <div class="meta-label">{% trans "Customer" %}</div>
       <div class="meta-value">{{ gp.sale_order.customer.name|default:"Walk-in Customer" }}</div>
     </div>
     <div class="meta-item">
-      <div class="meta-label">Prepared by (Sales)</div>
+      <div class="meta-label">{% trans "Prepared by (Sales)" %}</div>
       <div class="meta-value">{{ gp.sale_order.created_by.username }}</div>
     </div>
     <div class="meta-item">
-      <div class="meta-label">Picker</div>
+      <div class="meta-label">{% trans "Picker" %}</div>
       <div class="meta-value">{% if gp.picking_order and gp.picking_order.picker %}{{ gp.picking_order.picker.username }}{% else %}—{% endif %}</div>
     </div>
     <div class="meta-item">
-      <div class="meta-label">Verified by</div>
+      <div class="meta-label">{% trans "Verified by" %}</div>
       <div class="meta-value">{% if gp.verified_by %}{{ gp.verified_by.username }}{% else %}—{% endif %}</div>
     </div>
   </div>
@@ -99,10 +100,10 @@
     <thead>
       <tr>
         <th>#</th>
-        <th>Product</th>
-        <th>Part No.</th>
-        <th class="qty">Requested</th>
-        <th class="qty">Released</th>
+        <th>{% trans "Product" %}</th>
+        <th>{% trans "Part No." %}</th>
+        <th class="qty">{% trans "Requested" %}</th>
+        <th class="qty">{% trans "Released" %}</th>
       </tr>
     </thead>
     <tbody>
@@ -124,19 +125,19 @@
     <div>
       <div class="sig-line">
         <div class="sig-name">{{ gp.sale_order.created_by.username }}</div>
-        <div class="sig-role">Sales Person</div>
+        <div class="sig-role">{% trans "Sales Person" %}</div>
       </div>
     </div>
     <div>
       <div class="sig-line">
         <div class="sig-name">{% if gp.picking_order and gp.picking_order.picker %}{{ gp.picking_order.picker.username }}{% else %}___________{% endif %}</div>
-        <div class="sig-role">Picker / Store Staff</div>
+        <div class="sig-role">{% trans "Picker / Store Staff" %}</div>
       </div>
     </div>
     <div>
       <div class="sig-line">
         <div class="sig-name">___________</div>
-        <div class="sig-role">Gate Security · Date: ___________</div>
+        <div class="sig-role">{% trans "Gate Security · Date: ___________" %}</div>
       </div>
     </div>
   </div>

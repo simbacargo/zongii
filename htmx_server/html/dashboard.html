@@ -1,21 +1,22 @@
+{% load i18n %}
 {% load humanize %}<div class="max-w-7xl mx-auto p-4 lg:p-6">
 
     <!-- Header -->
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <div>
-            <h1 class="text-3xl font-black text-slate-900 tracking-tight">Executive Dashboard</h1>
-            <p class="text-slate-500 text-sm font-medium">Business health & operations overview</p>
+            <h1 class="text-3xl font-black text-gray-900 tracking-tight">{% trans "Executive Dashboard" %}</h1>
+            <p class="text-gray-500 text-sm font-medium">{% trans "Business health & operations overview" %}</p>
         </div>
         <div class="flex items-center gap-3">
-            <span class="text-xs text-slate-400 font-medium">Period:</span>
-            <div class="inline-flex p-1 bg-slate-100 rounded-xl">
+            <span class="text-xs text-gray-400 font-medium">{% trans "Period:" %}</span>
+            <div class="inline-flex p-1 bg-gray-100 rounded-xl">
                 <button hx-get="?period=week" hx-target="#dashboard-body" hx-push-url="false"
-                        class="px-5 py-2 rounded-lg text-sm font-bold transition-all {% if period == 'week' %}bg-white shadow text-indigo-600{% else %}text-slate-500 hover:text-slate-800{% endif %}">
-                    Last 7 Days
+                        class="px-5 py-2 rounded-lg text-sm font-bold transition-all {% if period == 'week' %}bg-white shadow text-amber-600{% else %}text-gray-500 hover:text-gray-800{% endif %}">
+                    {% trans "Last 7 Days" %}
                 </button>
                 <button hx-get="?period=month" hx-target="#dashboard-body" hx-push-url="false"
-                        class="px-5 py-2 rounded-lg text-sm font-bold transition-all {% if period == 'month' %}bg-white shadow text-indigo-600{% else %}text-slate-500 hover:text-slate-800{% endif %}">
-                    This Month
+                        class="px-5 py-2 rounded-lg text-sm font-bold transition-all {% if period == 'month' %}bg-white shadow text-amber-600{% else %}text-gray-500 hover:text-gray-800{% endif %}">
+                    {% trans "This Month" %}
                 </button>
             </div>
         </div>
@@ -26,128 +27,128 @@
         <!-- KPI Row 1: Financial -->
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
 
-            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
                 <div class="flex items-center justify-between mb-3">
-                    <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center">
+                    <div class="w-10 h-10 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center">
                         <i class="bi bi-wallet2 text-lg"></i>
                     </div>
-                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Revenue</span>
+                    <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">{% trans "Revenue" %}</span>
                 </div>
-                <p class="text-2xl font-black text-slate-900">TZS {{ revenue|floatformat:0|intcomma }}</p>
-                <p class="text-xs text-slate-400 mt-1">Approved sales in period</p>
+                <p class="text-2xl font-black text-gray-900">TZS {{ revenue|floatformat:0|intcomma }}</p>
+                <p class="text-xs text-gray-400 mt-1">{% trans "Approved sales in period" %}</p>
             </div>
 
-            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
                 <div class="flex items-center justify-between mb-3">
-                    <div class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center">
+                    <div class="w-10 h-10 bg-green-50 text-green-600 rounded-xl flex items-center justify-center">
                         <i class="bi bi-graph-up-arrow text-lg"></i>
                     </div>
-                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Net Profit</span>
+                    <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">{% trans "Net Profit" %}</span>
                 </div>
-                <p class="text-2xl font-black text-emerald-600">TZS {{ profit|floatformat:0|intcomma }}</p>
-                <p class="text-xs text-slate-400 mt-1">
+                <p class="text-2xl font-black text-green-600">TZS {{ profit|floatformat:0|intcomma }}</p>
+                <p class="text-xs text-gray-400 mt-1">
                     Margin: {% widthratio profit revenue 100 %}%
                 </p>
             </div>
 
-            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
                 <div class="flex items-center justify-between mb-3">
                     <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center">
                         <i class="bi bi-receipt text-lg"></i>
                     </div>
-                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Transactions</span>
+                    <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">{% trans "Transactions" %}</span>
                 </div>
-                <p class="text-2xl font-black text-slate-900">{{ total_sales_count }}</p>
-                <p class="text-xs text-slate-400 mt-1">Completed sales</p>
+                <p class="text-2xl font-black text-gray-900">{{ total_sales_count }}</p>
+                <p class="text-xs text-gray-400 mt-1">{% trans "Completed sales" %}</p>
             </div>
 
-            <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
                 <div class="flex items-center justify-between mb-3">
-                    <div class="w-10 h-10 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center">
+                    <div class="w-10 h-10 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center">
                         <i class="bi bi-people text-lg"></i>
                     </div>
-                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Customers</span>
+                    <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">{% trans "Customers" %}</span>
                 </div>
-                <p class="text-2xl font-black text-slate-900">{{ total_customers }}</p>
-                <p class="text-xs text-slate-400 mt-1">Total registered</p>
+                <p class="text-2xl font-black text-gray-900">{{ total_customers }}</p>
+                <p class="text-xs text-gray-400 mt-1">{% trans "Total registered" %}</p>
             </div>
         </div>
 
         <!-- KPI Row 2: Operational Alerts -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
 
-            <div class="{% if pending_count > 0 %}bg-amber-50 border-amber-200{% else %}bg-white border-slate-100{% endif %} p-5 rounded-2xl border shadow-sm">
+            <div class="{% if pending_count > 0 %}bg-amber-50 border-amber-200{% else %}bg-white border-gray-100{% endif %} p-5 rounded-2xl border shadow-sm">
                 <div class="flex items-center justify-between mb-3">
-                    <div class="w-10 h-10 {% if pending_count > 0 %}bg-amber-100 text-amber-600{% else %}bg-slate-50 text-slate-400{% endif %} rounded-xl flex items-center justify-center">
+                    <div class="w-10 h-10 {% if pending_count > 0 %}bg-amber-100 text-amber-600{% else %}bg-gray-50 text-gray-400{% endif %} rounded-xl flex items-center justify-center">
                         <i class="bi bi-hourglass-split text-lg"></i>
                     </div>
                     {% if pending_count > 0 %}
-                    <span class="px-2 py-0.5 bg-amber-500 text-white text-xs font-black rounded-full">Action Needed</span>
+                    <span class="px-2 py-0.5 bg-amber-500 text-white text-xs font-black rounded-full">{% trans "Action Needed" %}</span>
                     {% endif %}
                 </div>
-                <p class="text-2xl font-black {% if pending_count > 0 %}text-amber-700{% else %}text-slate-900{% endif %}">{{ pending_count }}</p>
-                <p class="text-xs {% if pending_count > 0 %}text-amber-600{% else %}text-slate-400{% endif %} font-semibold mt-1">Pending approvals</p>
+                <p class="text-2xl font-black {% if pending_count > 0 %}text-amber-700{% else %}text-gray-900{% endif %}">{{ pending_count }}</p>
+                <p class="text-xs {% if pending_count > 0 %}text-amber-600{% else %}text-gray-400{% endif %} font-semibold mt-1">{% trans "Pending approvals" %}</p>
                 {% if pending_count > 0 %}
                 <button hx-get="{% url 'sale_list' %}?status=pending" hx-target="#main-content"
                         class="mt-3 text-xs font-bold text-amber-700 underline underline-offset-2">
-                    Review Now →
+                    {% trans "Review Now →" %}
                 </button>
                 {% endif %}
             </div>
 
-            <div class="{% if low_stock_count > 0 %}bg-rose-50 border-rose-200{% else %}bg-white border-slate-100{% endif %} p-5 rounded-2xl border shadow-sm">
+            <div class="{% if low_stock_count > 0 %}bg-red-50 border-red-200{% else %}bg-white border-gray-100{% endif %} p-5 rounded-2xl border shadow-sm">
                 <div class="flex items-center justify-between mb-3">
-                    <div class="w-10 h-10 {% if low_stock_count > 0 %}bg-rose-100 text-rose-600{% else %}bg-slate-50 text-slate-400{% endif %} rounded-xl flex items-center justify-center">
+                    <div class="w-10 h-10 {% if low_stock_count > 0 %}bg-red-100 text-red-600{% else %}bg-gray-50 text-gray-400{% endif %} rounded-xl flex items-center justify-center">
                         <i class="bi bi-exclamation-triangle text-lg"></i>
                     </div>
                     {% if low_stock_count > 0 %}
-                    <span class="px-2 py-0.5 bg-rose-500 text-white text-xs font-black rounded-full">Reorder</span>
+                    <span class="px-2 py-0.5 bg-red-500 text-white text-xs font-black rounded-full">{% trans "Reorder" %}</span>
                     {% endif %}
                 </div>
-                <p class="text-2xl font-black {% if low_stock_count > 0 %}text-rose-700{% else %}text-slate-900{% endif %}">{{ low_stock_count }}</p>
-                <p class="text-xs {% if low_stock_count > 0 %}text-rose-600{% else %}text-slate-400{% endif %} font-semibold mt-1">Products below reorder point</p>
+                <p class="text-2xl font-black {% if low_stock_count > 0 %}text-red-700{% else %}text-gray-900{% endif %}">{{ low_stock_count }}</p>
+                <p class="text-xs {% if low_stock_count > 0 %}text-red-600{% else %}text-gray-400{% endif %} font-semibold mt-1">{% trans "Products below reorder point" %}</p>
             </div>
 
-            <div class="{% if total_debt > 0 %}bg-orange-50 border-orange-200{% else %}bg-white border-slate-100{% endif %} p-5 rounded-2xl border shadow-sm">
+            <div class="{% if total_debt > 0 %}bg-amber-50 border-amber-200{% else %}bg-white border-gray-100{% endif %} p-5 rounded-2xl border shadow-sm">
                 <div class="flex items-center justify-between mb-3">
-                    <div class="w-10 h-10 {% if total_debt > 0 %}bg-orange-100 text-orange-600{% else %}bg-slate-50 text-slate-400{% endif %} rounded-xl flex items-center justify-center">
+                    <div class="w-10 h-10 {% if total_debt > 0 %}bg-amber-100 text-amber-600{% else %}bg-gray-50 text-gray-400{% endif %} rounded-xl flex items-center justify-center">
                         <i class="bi bi-cash-coin text-lg"></i>
                     </div>
-                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Receivables</span>
+                    <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">{% trans "Receivables" %}</span>
                 </div>
-                <p class="text-2xl font-black {% if total_debt > 0 %}text-orange-700{% else %}text-slate-900{% endif %}">TZS {{ total_debt|floatformat:0|intcomma }}</p>
-                <p class="text-xs {% if total_debt > 0 %}text-orange-600{% else %}text-slate-400{% endif %} font-semibold mt-1">Outstanding customer debt</p>
+                <p class="text-2xl font-black {% if total_debt > 0 %}text-amber-700{% else %}text-gray-900{% endif %}">TZS {{ total_debt|floatformat:0|intcomma }}</p>
+                <p class="text-xs {% if total_debt > 0 %}text-amber-600{% else %}text-gray-400{% endif %} font-semibold mt-1">{% trans "Outstanding customer debt" %}</p>
             </div>
         </div>
 
         <!-- Charts + Top Products -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
 
-            <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+            <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-base font-black text-slate-900">Revenue Analytics</h3>
-                    <span class="text-xs text-slate-400">{% if period == 'month' %}Last 30 days{% else %}Last 7 days{% endif %}</span>
+                    <h3 class="text-base font-black text-gray-900">{% trans "Revenue Analytics" %}</h3>
+                    <span class="text-xs text-gray-400">{% if period == 'month' %}Last 30 days{% else %}Last 7 days{% endif %}</span>
                 </div>
                 <div class="h-[280px]">
                     <canvas id="revenueChart"></canvas>
                 </div>
             </div>
 
-            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col">
-                <h3 class="text-base font-black text-slate-900 mb-4">Top Products</h3>
+            <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col">
+                <h3 class="text-base font-black text-gray-900 mb-4">{% trans "Top Products" %}</h3>
                 <div class="space-y-4 flex-1">
                     {% for p in top_products %}
                     <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center font-black text-indigo-400 text-xs shrink-0">
+                        <div class="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center font-black text-amber-500 text-xs shrink-0">
                             {{ forloop.counter }}
                         </div>
                         <div class="flex-1 min-w-0">
-                            <p class="text-sm font-bold text-slate-800 truncate">{{ p.name }}</p>
+                            <p class="text-sm font-bold text-gray-800 truncate">{{ p.name }}</p>
                             <div class="flex items-center gap-2 mt-0.5">
-                                <div class="h-1.5 bg-indigo-100 rounded-full flex-1">
-                                    <div class="h-1.5 bg-indigo-500 rounded-full" style="width: {% widthratio p.total_sold top_products.0.total_sold 100 %}%"></div>
+                                <div class="h-1.5 bg-amber-100 rounded-full flex-1">
+                                    <div class="h-1.5 bg-gradient-to-r from-amber-400 to-amber-600 rounded-full" style="width: {% widthratio p.total_sold top_products.0.total_sold 100 %}%"></div>
                                 </div>
-                                <span class="text-[10px] text-slate-400 font-bold shrink-0">{{ p.total_sold }} sold</span>
+                                <span class="text-[10px] text-gray-400 font-bold shrink-0">{{ p.total_sold }} sold</span>
                             </div>
                         </div>
                     </div>
@@ -155,7 +156,7 @@
                     <div class="flex-1 flex items-center justify-center opacity-30">
                         <div class="text-center">
                             <i class="bi bi-bar-chart text-4xl"></i>
-                            <p class="text-sm font-bold mt-2">No sales data yet</p>
+                            <p class="text-sm font-bold mt-2">{% trans "No sales data yet" %}</p>
                         </div>
                     </div>
                     {% endfor %}
@@ -167,52 +168,52 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
             <!-- Recent Transactions -->
-            <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-                <div class="flex items-center justify-between p-5 border-b border-slate-50">
-                    <h3 class="text-base font-black text-slate-900">Recent Transactions</h3>
+            <div class="lg:col-span-2 bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                <div class="flex items-center justify-between p-5 border-b border-gray-50">
+                    <h3 class="text-base font-black text-gray-900">{% trans "Recent Transactions" %}</h3>
                     <button hx-get="{% url 'sale_list' %}" hx-target="#main-content"
-                            class="text-xs font-bold text-indigo-600 hover:text-indigo-800">
-                        View All →
+                            class="text-xs font-bold text-amber-600 hover:text-amber-700">
+                        {% trans "View All →" %}
                     </button>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left">
-                        <thead class="bg-slate-50">
+                        <thead class="bg-gray-50">
                             <tr>
-                                <th class="px-5 py-3 text-[10px] font-black text-slate-400 uppercase tracking-wider">Product</th>
-                                <th class="px-5 py-3 text-[10px] font-black text-slate-400 uppercase tracking-wider">Customer</th>
-                                <th class="px-5 py-3 text-[10px] font-black text-slate-400 uppercase tracking-wider text-right">Amount</th>
-                                <th class="px-5 py-3 text-[10px] font-black text-slate-400 uppercase tracking-wider text-center">Status</th>
+                                <th class="px-5 py-3 text-[10px] font-black text-gray-400 uppercase tracking-wider">{% trans "Product" %}</th>
+                                <th class="px-5 py-3 text-[10px] font-black text-gray-400 uppercase tracking-wider">{% trans "Customer" %}</th>
+                                <th class="px-5 py-3 text-[10px] font-black text-gray-400 uppercase tracking-wider text-right">{% trans "Amount" %}</th>
+                                <th class="px-5 py-3 text-[10px] font-black text-gray-400 uppercase tracking-wider text-center">{% trans "Status" %}</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-50">
+                        <tbody class="divide-y divide-gray-50">
                             {% for sale in recent_sales %}
-                            <tr class="hover:bg-slate-50/60 transition-colors">
+                            <tr class="hover:bg-gray-50/60 transition-colors">
                                 <td class="px-5 py-3">
-                                    <p class="text-sm font-bold text-slate-800 truncate max-w-[160px]">{{ sale.product.name }}</p>
-                                    <p class="text-[10px] text-slate-400">{{ sale.date_sold|date:"d M, H:i" }} · {{ sale.quantity_sold }} units</p>
+                                    <p class="text-sm font-bold text-gray-800 truncate max-w-[160px]">{{ sale.product.name }}</p>
+                                    <p class="text-[10px] text-gray-400">{{ sale.date_sold|date:"d M, H:i" }} · {{ sale.quantity_sold }} units</p>
                                 </td>
-                                <td class="px-5 py-3 text-sm text-slate-600">
-                                    {% if sale.customer %}{{ sale.customer.name }}{% else %}<span class="text-slate-400 italic">Walk-in</span>{% endif %}
+                                <td class="px-5 py-3 text-sm text-gray-600">
+                                    {% if sale.customer %}{{ sale.customer.name }}{% else %}<span class="text-gray-400 italic">{% trans "Walk-in" %}</span>{% endif %}
                                 </td>
                                 <td class="px-5 py-3 text-right">
-                                    <span class="text-sm font-black text-slate-900">TZS {{ sale.total_amount|floatformat:0|intcomma }}</span>
+                                    <span class="text-sm font-black text-gray-900">TZS {{ sale.total_amount|floatformat:0|intcomma }}</span>
                                 </td>
                                 <td class="px-5 py-3 text-center">
                                     {% if sale.rejected %}
-                                        <span class="px-2 py-0.5 text-[10px] font-bold uppercase bg-red-100 text-red-600 rounded">Rejected</span>
+                                        <span class="px-2 py-0.5 text-[10px] font-bold uppercase bg-red-100 text-red-600 rounded">{% trans "Rejected" %}</span>
                                     {% elif sale.aproved %}
-                                        <span class="px-2 py-0.5 text-[10px] font-bold uppercase bg-green-100 text-green-600 rounded">Approved</span>
+                                        <span class="px-2 py-0.5 text-[10px] font-bold uppercase bg-green-100 text-green-600 rounded">{% trans "Approved" %}</span>
                                     {% else %}
-                                        <span class="px-2 py-0.5 text-[10px] font-bold uppercase bg-amber-100 text-amber-600 rounded">Pending</span>
+                                        <span class="px-2 py-0.5 text-[10px] font-bold uppercase bg-amber-100 text-amber-600 rounded">{% trans "Pending" %}</span>
                                     {% endif %}
                                 </td>
                             </tr>
                             {% empty %}
                             <tr>
-                                <td colspan="4" class="px-5 py-12 text-center text-slate-400">
+                                <td colspan="4" class="px-5 py-12 text-center text-gray-400">
                                     <i class="bi bi-receipt text-4xl opacity-30 block mb-2"></i>
-                                    <p class="text-sm font-bold">No transactions yet</p>
+                                    <p class="text-sm font-bold">{% trans "No transactions yet" %}</p>
                                 </td>
                             </tr>
                             {% endfor %}
@@ -222,42 +223,42 @@
             </div>
 
             <!-- Stock Alerts -->
-            <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden flex flex-col">
-                <div class="flex items-center justify-between p-5 border-b border-slate-50">
-                    <h3 class="text-base font-black text-slate-900">Stock Alerts</h3>
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col">
+                <div class="flex items-center justify-between p-5 border-b border-gray-50">
+                    <h3 class="text-base font-black text-gray-900">{% trans "Stock Alerts" %}</h3>
                     {% if low_stock_count > 0 %}
-                    <span class="px-2 py-0.5 bg-rose-100 text-rose-600 text-xs font-black rounded-full">{{ low_stock_count }} items</span>
+                    <span class="px-2 py-0.5 bg-red-100 text-red-600 text-xs font-black rounded-full">{{ low_stock_count }} items</span>
                     {% endif %}
                 </div>
                 <div class="flex-1 p-5 space-y-3">
                     {% for item in low_stock_items %}
-                    <div class="flex items-center justify-between p-3 bg-rose-50 rounded-xl border border-rose-100">
+                    <div class="flex items-center justify-between p-3 bg-red-50 rounded-xl border border-red-100">
                         <div class="flex-1 min-w-0">
-                            <p class="text-sm font-bold text-rose-900 truncate">{{ item.name }}</p>
-                            <p class="text-[10px] text-rose-500 font-medium">{{ item.brand }} · Reorder at {{ item.reorder_point }}</p>
+                            <p class="text-sm font-bold text-red-900 truncate">{{ item.name }}</p>
+                            <p class="text-[10px] text-red-500 font-medium">{{ item.brand }} · Reorder at {{ item.reorder_point }}</p>
                         </div>
                         <div class="text-right ml-3 shrink-0">
-                            <span class="text-lg font-black text-rose-700">{{ item.quantity_at_hand }}</span>
-                            <p class="text-[10px] text-rose-400">left</p>
+                            <span class="text-lg font-black text-red-700">{{ item.quantity_at_hand }}</span>
+                            <p class="text-[10px] text-red-400">{% trans "left" %}</p>
                         </div>
                     </div>
                     {% empty %}
                     <div class="flex-1 flex items-center justify-center py-8 opacity-30">
                         <div class="text-center">
                             <i class="bi bi-check-circle text-4xl text-green-500"></i>
-                            <p class="text-sm font-bold mt-2 text-slate-500">All stock levels OK</p>
+                            <p class="text-sm font-bold mt-2 text-gray-500">{% trans "All stock levels OK" %}</p>
                         </div>
                     </div>
                     {% endfor %}
                 </div>
 
                 {% if total_debt > 0 %}
-                <div class="p-5 border-t border-slate-50 bg-orange-50">
-                    <p class="text-[10px] font-black text-orange-500 uppercase tracking-widest mb-1">Outstanding Debt</p>
-                    <p class="text-xl font-black text-orange-800">TZS {{ total_debt|floatformat:0|intcomma }}</p>
+                <div class="p-5 border-t border-gray-50 bg-amber-50">
+                    <p class="text-[10px] font-black text-amber-500 uppercase tracking-widest mb-1">{% trans "Outstanding Debt" %}</p>
+                    <p class="text-xl font-black text-amber-800">TZS {{ total_debt|floatformat:0|intcomma }}</p>
                     <button hx-get="{% url 'customer_list' %}" hx-target="#main-content"
-                            class="mt-2 text-xs font-bold text-orange-700 underline underline-offset-2">
-                        View debtors →
+                            class="mt-2 text-xs font-bold text-amber-700 underline underline-offset-2">
+                        {% trans "View debtors →" %}
                     </button>
                 </div>
                 {% endif %}
@@ -275,8 +276,12 @@ function initChart() {
     const ctx = document.getElementById('revenueChart');
     if (!ctx) return;
 
+    const isDark = document.documentElement.classList.contains('dark');
+    const gridColor = isDark ? 'rgba(148,163,184,0.15)' : '#f1f5f9';
+    const tickColor = isDark ? '#94a3b8' : '#64748b';
+
     const gradient = ctx.getContext('2d').createLinearGradient(0, 0, 0, 300);
-    gradient.addColorStop(0, 'rgba(79, 70, 229, 0.15)');
+    gradient.addColorStop(0, 'rgba(245, 158, 11, 0.22)');
     gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
 
     new Chart(ctx, {
@@ -286,10 +291,10 @@ function initChart() {
             datasets: [{
                 label: 'Revenue (TZS)',
                 data: {{ chart_revenue|safe }},
-                borderColor: '#4f46e5',
+                borderColor: '#f59e0b',
                 borderWidth: 3,
                 pointBackgroundColor: '#fff',
-                pointBorderColor: '#4f46e5',
+                pointBorderColor: '#f59e0b',
                 pointBorderWidth: 2,
                 pointRadius: 4,
                 pointHoverRadius: 7,
@@ -312,11 +317,11 @@ function initChart() {
             scales: {
                 y: {
                     beginAtZero: true,
-                    grid: { color: '#f1f5f9' },
+                    grid: { color: gridColor },
                     border: { display: false },
-                    ticks: { callback: v => 'TZS ' + (v >= 1000 ? (v/1000).toFixed(0)+'K' : v) }
+                    ticks: { color: tickColor, callback: v => 'TZS ' + (v >= 1000 ? (v/1000).toFixed(0)+'K' : v) }
                 },
-                x: { grid: { display: false }, border: { display: false } }
+                x: { grid: { display: false }, border: { display: false }, ticks: { color: tickColor } }
             }
         }
     });
@@ -329,4 +334,7 @@ document.body.addEventListener('htmx:afterSwap', function(evt) {
         initChart();
     }
 });
+
+// Re-render the chart when the theme is toggled so grid/ticks match.
+document.addEventListener('themechange', initChart);
 </script>

@@ -38,8 +38,13 @@ urlpatterns = [
     path('sales/<int:pk>/approve/', views.sale_approve, name='api-sale-approve'),
     path('sales/<int:pk>/reject/',  views.sale_reject,  name='api-sale-reject'),
 
+    # Businesses
+    path('businesses/',          views.business_list,   name='api-business-list'),
+    path('businesses/<int:pk>/', views.business_detail, name='api-business-detail'),
+
     # Sale Orders
     path('orders/',                    views.sale_order_list,     name='api-order-list'),
+    path('orders/stats/',              views.sale_order_stats,    name='api-order-stats'),
     path('orders/<int:pk>/',           views.sale_order_detail,   name='api-order-detail'),
     path('orders/<int:pk>/accountant-review/', views.sale_order_accountant_review, name='api-order-accountant-review'),
     path('orders/<int:pk>/verify/',    views.sale_order_verify,   name='api-order-verify'),
@@ -70,4 +75,5 @@ urlpatterns = [
     path('users/<str:pk>/',               views.user_detail,        name='api-user-detail'),
     path('users/<str:pk>/toggle-active/', views.user_toggle_active, name='api-user-toggle'),
     path('users/<str:pk>/set-role/',      views.user_set_role,      name='api-user-set-role'),
+    path('users/<str:pk>/set-password/',  views.user_set_password,  name='api-user-set-password'),
 ]

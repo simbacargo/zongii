@@ -10,18 +10,18 @@ type Variant = "gold" | "outline" | "foam";
 type Size = "md" | "lg";
 
 const base =
-  "group inline-flex items-center justify-center gap-2 rounded-full font-semibold tracking-tight transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+  "group inline-flex items-center justify-center gap-2 rounded-[3px] font-mono font-medium uppercase transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background";
 
 const variants: Record<Variant, string> = {
-  gold: "bg-gold text-on-accent hover:bg-gold-soft shadow-[0_10px_40px_-12px_var(--glow-gold)]",
+  gold: "bg-primary text-primary-foreground hover:bg-brand-deep hover:text-paper",
   outline:
-    "border border-border/70 text-foreground hover:border-gold/60 hover:text-gold",
-  foam: "bg-foreground text-background hover:bg-foreground/90",
+    "border border-ink/25 text-foreground hover:border-brand hover:text-brand-deep",
+  foam: "bg-mist text-foreground hover:bg-brand/15",
 };
 
 const sizes: Record<Size, string> = {
-  md: "px-5 py-2.5 text-sm",
-  lg: "px-7 py-3.5 text-[0.95rem]",
+  md: "px-5 py-2.5 text-[11px] tracking-[0.14em]",
+  lg: "px-7 py-3.5 text-xs tracking-[0.16em]",
 };
 
 type CommonProps = {

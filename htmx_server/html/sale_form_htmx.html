@@ -1,8 +1,9 @@
+{% load i18n %}
 {% block content %}
 <div class="max-w-4xl mx-auto">
     <div class="flex items-center justify-between mb-6">
         <h1 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
-            <i class="bi bi-cart-check text-indigo-600"></i> New Sale
+            <i class="bi bi-cart-check text-amber-600"></i> {% trans "New Sale" %}
         </h1>
     </div>
 
@@ -15,13 +16,13 @@
                     {% csrf_token %}
 
                     <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Select Product</label>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-2">{% trans "Select Product" %}</label>
                         <select name="product" required
                                 hx-get="{% url 'sale_create_htmx' %}"
                                 hx-target="#calculation-area"
                                 hx-trigger="change"
-                                class="w-full border-gray-300 border rounded-xl p-3 focus:ring-2 focus:ring-indigo-500 outline-none transition bg-gray-50">
-                            <option value="">Search for a product...</option>
+                                class="w-full border-gray-300 border rounded-xl p-3 focus:ring-2 focus:ring-amber-500 outline-none transition bg-gray-50">
+                            <option value="">{% trans "Search for a product..." %}</option>
                             {% for p in products %}
                             <option value="{{ p.id }}">{{ p.name }} ({{ p.quantity_at_hand }} left)</option>
                             {% endfor %}
@@ -30,18 +31,18 @@
 
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Quantity</label>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">{% trans "Quantity" %}</label>
                             <input type="number" name="quantity_sold" value="1" min="1" required
                                    hx-get="{% url 'sale_create_htmx' %}"
                                    hx-target="#calculation-area"
                                    hx-trigger="keyup changed delay:200ms"
-                                   class="w-full border-gray-300 border rounded-xl p-3 focus:ring-2 focus:ring-indigo-500 outline-none transition">
+                                   class="w-full border-gray-300 border rounded-xl p-3 focus:ring-2 focus:ring-amber-500 outline-none transition">
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Customer (Optional)</label>
-                            <select name="customer" class="w-full border-gray-300 border rounded-xl p-3 focus:ring-2 focus:ring-indigo-500 outline-none transition bg-gray-50">
-                                <option value="">Walk-in Customer</option>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">{% trans "Customer (Optional)" %}</label>
+                            <select name="customer" class="w-full border-gray-300 border rounded-xl p-3 focus:ring-2 focus:ring-amber-500 outline-none transition bg-gray-50">
+                                <option value="">{% trans "Walk-in Customer" %}</option>
                                 {% for c in customers %}
                                 <option value="{{ c.id }}">{{ c.name }}</option>
                                 {% endfor %}
@@ -50,27 +51,27 @@
                     </div>
 
                     <div id="calculation-area" class="p-6 bg-gray-50 rounded-xl border border-dashed border-gray-300">
-                        <p class="text-gray-400 text-center text-sm italic">Select a product to see pricing details</p>
+                        <p class="text-gray-400 text-center text-sm italic">{% trans "Select a product to see pricing details" %}</p>
                     </div>
 
-                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-indigo-100 transition-all flex items-center justify-center gap-2">
-                        <i class="bi bi-cash-stack"></i> Complete Sale
+                    <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-amber-100 transition-all flex items-center justify-center gap-2">
+                        <i class="bi bi-cash-stack"></i> {% trans "Complete Sale" %}
                     </button>
                 </form>
             </div>
         </div>
 
         <div class="lg:col-span-1">
-            <div class="bg-indigo-900 rounded-2xl p-6 text-white shadow-xl">
-                <h3 class="font-bold text-indigo-200 uppercase text-xs tracking-widest mb-4">Quick Tips</h3>
+            <div class="bg-amber-900 rounded-2xl p-6 text-white shadow-xl">
+                <h3 class="font-bold text-amber-200 uppercase text-xs tracking-widest mb-4">{% trans "Quick Tips" %}</h3>
                 <ul class="space-y-4 text-sm">
                     <li class="flex gap-3">
-                        <i class="bi bi-info-circle text-indigo-400"></i>
-                        <span>Stock is automatically deducted upon completion.</span>
+                        <i class="bi bi-info-circle text-amber-400"></i>
+                        <span>{% trans "Stock is automatically deducted upon completion." %}</span>
                     </li>
                     <li class="flex gap-3">
-                        <i class="bi bi-person-plus text-indigo-400"></i>
-                        <span>Assign a customer to track purchase history and balances.</span>
+                        <i class="bi bi-person-plus text-amber-400"></i>
+                        <span>{% trans "Assign a customer to track purchase history and balances." %}</span>
                     </li>
                 </ul>
             </div>

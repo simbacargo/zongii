@@ -2,6 +2,7 @@ import json
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.utils.translation import gettext as _
 from django.http import JsonResponse, HttpResponseForbidden, HttpResponse
 from django.views.decorators.http import require_http_methods, require_POST, require_GET
 from django.core.paginator import Paginator
@@ -79,7 +80,7 @@ def category_create(request):
     if request.method == "POST":
         name = request.POST.get("name", "").strip()
         if not name:
-            messages.error(request, "Category name is required.")
+            messages.error(request, _("Category name is required."))
             return render(request, "category_list.html", {"categories": Category.objects.all().order_by("name")})
 
         Category.objects.create(name=name)
@@ -153,12 +154,12 @@ def business_create(request):
     if request.method == "POST":
         name = request.POST.get("name", "").strip()
         if not name:
-            messages.error(request, "Business name is required.")
+            messages.error(request, _("Business name is required."))
             return render(request, "business_form.html")
 
         business = Business.objects.create(name=name, owner=request.user)
         business.members.add(request.user)
-        messages.success(request, f'Business "{business.name}" created.')
+        messages.success(request, _('Business "%(name)s" created.') % {'name': business.name})
         return redirect("business_detail", pk=business.pk)
 
     return render(request, "business_form.html")
@@ -175,12 +176,12 @@ def business_update(request, pk):
     if request.method == "POST":
         name = request.POST.get("name", "").strip()
         if not name:
-            messages.error(request, "Business name is required.")
+            messages.error(request, _("Business name is required."))
             return render(request, "business_form.html", {"business": business})
 
         business.name = name
         business.save()
-        messages.success(request, "Business updated.")
+        messages.success(request, _("Business updated."))
         return redirect("business_detail", pk=business.pk)
 
     return render(request, "business_form.html", {"business": business})
@@ -194,13 +195,68 @@ def business_delete(request, pk):
     if business.owner != request.user:
         return HttpResponseForbidden("Only the owner can delete this business.")
     business.delete()
-    messages.success(request, "Business deleted.")
+    messages.success(request, _("Business deleted."))
     return redirect("business_list")
 
 
 # ═════════════════════════════════════════════
 #  PRODUCT
 # ═════════════════════════════════════════════
+
+# bm25 column weights, in the order columns are declared in the product_fts
+# table: name, brand, part_number, upc_code, description, material, supplier,
+# bin_location, categories. Higher weight = more influence on the ranking.
+_FTS_WEIGHTS = (10.0, 8.0, 8.0, 7.0, 2.0, 3.0, 6.0, 2.0, 4.0)
+
+
+def _apply_product_search(products, query):
+    """
+    Full-text search over the product_fts (SQLite FTS5) index, ranked by bm25.
+
+    Tokens are AND-combined and prefix-matched, so a single query mixing e.g. a
+    supplier name and a product name returns only products matching both. Falls
+    back to a substring search if the FTS table is unavailable.
+    """
+    import re
+    from django.db import connection
+    from django.db.utils import OperationalError
+    from django.db.models import Case, When, IntegerField
+
+    tokens = re.findall(r"\w+", query)
+    if not tokens:
+        return products.none()
+
+    match_expr = " ".join(f'"{t}"*' for t in tokens)
+    try:
+        with connection.cursor() as cur:
+            cur.execute(
+                "SELECT rowid FROM product_fts WHERE product_fts MATCH %s "
+                "ORDER BY bm25(product_fts, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                [match_expr, *_FTS_WEIGHTS],
+            )
+            ranked_ids = [row[0] for row in cur.fetchall()]
+    except OperationalError:
+        # FTS index not built yet — degrade to substring matching.
+        return products.filter(
+            Q(name__icontains=query)
+            | Q(brand__icontains=query)
+            | Q(part_number__icontains=query)
+            | Q(upc_code__icontains=query)
+            | Q(description__icontains=query)
+            | Q(material__icontains=query)
+            | Q(supplier__icontains=query)
+            | Q(categories__name__icontains=query)
+        ).distinct()
+
+    if not ranked_ids:
+        return products.none()
+
+    order = Case(
+        *[When(pk=pk, then=pos) for pos, pk in enumerate(ranked_ids)],
+        output_field=IntegerField(),
+    )
+    return products.filter(id__in=ranked_ids).order_by(order)
+
 
 @login_required
 @require_GET
@@ -220,15 +276,18 @@ def product_list(request):
         products = products.filter(business_id=business_id)
 
     if query:
-        products = products.filter(
-            Q(name__icontains=query)
-            | Q(brand__icontains=query)
-            | Q(part_number__icontains=query)
-            | Q(upc_code__icontains=query)
-        )
+        products = _apply_product_search(products, query)
 
     paginator = Paginator(products, 2500)
     page = paginator.get_page(request.GET.get("page"))
+
+    # In-place search / "load more" swap only the table body, so the search
+    # input is never re-rendered (keeps focus and lets fast typers keep typing).
+    if request.headers.get("HX-Target") in ("product-table-body", "load-more-row"):
+        return render(request, "partials/product_table.html", {
+            "page_obj": page,
+            "query": query,
+        })
 
     return render(request, "product_list.html", {
         "page_obj": page,
@@ -292,6 +351,7 @@ def product_create(request):
                 tax_rate=data.get("tax_rate", 0),
                 unit_of_measure=data.get("unit_of_measure", "UNIT"),
                 quantity_at_hand=data.get("quantity_at_hand", 0),
+                quantity_tons=data.get("quantity_tons") or None,
                 quantity_allocated=data.get("quantity_allocated", 0),
                 reorder_point=data.get("reorder_point", 10),
                 weight=data.get("weight") or None,
@@ -311,7 +371,7 @@ def product_create(request):
             if category_ids:
                 product.categories.set(category_ids)
 
-            messages.success(request, f'Product "{product.name}" created.')
+            messages.success(request, _('Product "%(name)s" created.') % {'name': product.name})
             return redirect("product_list")
 
 
@@ -350,6 +410,7 @@ def product_update(request, pk):
             product.tax_rate = data.get("tax_rate", product.tax_rate)
             product.unit_of_measure = data.get("unit_of_measure", product.unit_of_measure)
             product.quantity_at_hand = data.get("quantity_at_hand", product.quantity_at_hand)
+            product.quantity_tons = data.get("quantity_tons") or None
             product.quantity_allocated = data.get("quantity_allocated", product.quantity_allocated)
             product.reorder_point = data.get("reorder_point", product.reorder_point)
             product.weight = data.get("weight") or None
@@ -365,11 +426,11 @@ def product_update(request, pk):
             category_ids = request.POST.getlist("categories")
             product.categories.set(category_ids)
 
-            messages.success(request, "Product updated.")
+            messages.success(request, _("Product updated."))
             return redirect("product_detail", pk=product.pk)
 
         except Exception as exc:
-            messages.error(request, f"Error updating product: {exc}")
+            messages.error(request, _("Error updating product: %(exc)s") % {'exc': exc})
 
     context = {
         "product": product,
@@ -391,7 +452,7 @@ def product_delete(request, pk):
     product = get_object_or_404(Product, pk=pk)
     product.is_active = False
     product.save(update_fields=["is_active"])
-    messages.success(request, f'Product "{product.name}" deactivated.')
+    messages.success(request, _('Product "%(name)s" deactivated.') % {'name': product.name})
     if request.headers.get("HX-Request"):
         return HttpResponse("")
     return redirect("product_list")
@@ -479,7 +540,7 @@ def customer_create(request):
         data = request.POST
         name = data.get("name", "").strip()
         if not name:
-            messages.error(request, "Customer name is required.")
+            messages.error(request, _("Customer name is required."))
             return render(request, "customer_form.html")
 
         customer = Customer.objects.create(
@@ -489,7 +550,7 @@ def customer_create(request):
             remaining_balance=data.get("remaining_balance", 0),
             debt_due_date=data.get("debt_due_date") or None,
         )
-        messages.success(request, f'Customer "{customer.name}" created.')
+        messages.success(request, _('Customer "%(name)s" created.') % {'name': customer.name})
         return redirect("customer_detail", pk=customer.pk)
 
     return render(request, "customer_form.html", {"customer": Customer()})
@@ -504,7 +565,7 @@ def customer_update(request, pk):
         data = request.POST
         name = data.get("name", "").strip()
         if not name:
-            messages.error(request, "Customer name is required.")
+            messages.error(request, _("Customer name is required."))
             return render(request, "customer_form.html", {"customer": customer})
 
         customer.name = name
@@ -513,7 +574,7 @@ def customer_update(request, pk):
         customer.remaining_balance = data.get("remaining_balance", customer.remaining_balance)
         customer.debt_due_date = data.get("debt_due_date") or None
         customer.save()
-        messages.success(request, "Customer updated.")
+        messages.success(request, _("Customer updated."))
         return redirect("customer_detail", pk=customer.pk)
 
     return render(request, "customer_form.html", {"customer": customer})
@@ -524,7 +585,7 @@ def customer_update(request, pk):
 def customer_delete(request, pk):
     customer = get_object_or_404(Customer, pk=pk)
     customer.delete()
-    messages.success(request, "Customer deleted.")
+    messages.success(request, _("Customer deleted."))
     return redirect("customer_list")
 
 
@@ -538,9 +599,9 @@ def customer_pay_balance(request, pk):
         if amount <= 0:
             raise ValueError("Amount must be positive.")
         customer.pay_balance(amount)
-        messages.success(request, f"Payment of {amount} applied. Remaining: {customer.remaining_balance}.")
+        messages.success(request, _("Payment of %(amount)s applied. Remaining: %(remaining_balance)s.") % {'amount': amount, 'remaining_balance': customer.remaining_balance})
     except (ValueError, TypeError) as exc:
-        messages.error(request, f"Invalid payment amount: {exc}")
+        messages.error(request, _("Invalid payment amount: %(exc)s") % {'exc': exc})
     return redirect("customer_detail", pk=pk)
 
 
@@ -643,7 +704,7 @@ def sale_create(request):
                     customer_id=customer_id,
                 )
 
-            messages.success(request, f"Sale #{sale.pk} recorded.")
+            messages.success(request, _("Sale #%(pk)s recorded.") % {'pk': sale.pk})
             return redirect("sale_detail", pk=sale.pk)
 
         except (ValueError, KeyError) as exc:
@@ -666,7 +727,7 @@ def sale_update(request, pk):
     sale = get_object_or_404(Sale, pk=pk, deleted=False)
 
     if sale.aproved:
-        messages.error(request, "Approved sales cannot be edited. Reject first.")
+        messages.error(request, _("Approved sales cannot be edited. Reject first."))
         return redirect("sale_detail", pk=pk)
 
     if request.method == "POST":
@@ -684,7 +745,7 @@ def sale_update(request, pk):
             sale.customer_id = customer_id
             sale.save()
 
-            messages.success(request, "Sale updated.")
+            messages.success(request, _("Sale updated."))
             return redirect("sale_detail", pk=sale.pk)
 
         except (ValueError, TypeError) as exc:
@@ -704,7 +765,7 @@ def sale_delete(request, pk):
     sale = get_object_or_404(Sale, pk=pk)
     sale.deleted = True
     sale.save(update_fields=["deleted"])
-    messages.success(request, f"Sale #{pk} removed.")
+    messages.success(request, _("Sale #%(pk)s removed.") % {'pk': pk})
     return redirect("sale_list")
 
 
@@ -714,7 +775,7 @@ def sale_approve(request, pk):
     """POST /sales/<pk>/approve/"""
     sale = get_object_or_404(Sale, pk=pk, deleted=False, rejected=False)
     if sale.aproved:
-        messages.info(request, "Sale is already approved.")
+        messages.info(request, _("Sale is already approved."))
         return redirect("sale_detail", pk=pk)
 
     with transaction.atomic():
@@ -722,7 +783,7 @@ def sale_approve(request, pk):
         sale.save(update_fields=["aproved"])
         sale.product.update_stock_on_sale(sale.quantity_sold, sale.total_amount)
 
-    messages.success(request, f"Sale #{pk} approved and stock updated.")
+    messages.success(request, _("Sale #%(pk)s approved and stock updated.") % {'pk': pk})
     return redirect("sale_detail", pk=pk)
 
 
@@ -734,7 +795,7 @@ def sale_reject(request, pk):
     sale.rejected = True
     sale.aproved = False
     sale.save(update_fields=["rejected", "aproved"])
-    messages.success(request, f"Sale #{pk} rejected.")
+    messages.success(request, _("Sale #%(pk)s rejected.") % {'pk': pk})
     return redirect("sale_detail", pk=pk)
 
 
@@ -1096,7 +1157,7 @@ def checkout_submit(request):
     from django.utils import timezone as tz
     cart = request.session.get('cart', {})
     if not cart:
-        messages.error(request, "Cart is empty.")
+        messages.error(request, _("Cart is empty."))
         return redirect('sale_create')
 
     data = request.POST
@@ -1180,7 +1241,7 @@ def checkout_submit(request):
 
         request.session['cart'] = {}
         request.session.modified = True
-        messages.success(request, f"Order {sale_order.order_code} submitted for accountant approval.")
+        messages.success(request, _("Order %(order_code)s submitted for accountant approval.") % {'order_code': sale_order.order_code})
 
     except (ValueError, KeyError) as exc:
         messages.error(request, str(exc))
@@ -1422,7 +1483,7 @@ def user_create(request):
         _apply_role(user, role, sections)
         user.set_password(password)
         user.save()
-        messages.success(request, f'User "{user.username}" created.')
+        messages.success(request, _('User "%(name)s" created.') % {'name': user.username})
         return redirect("user_list")
 
     return render(request, "user_form.html", {
@@ -1453,7 +1514,7 @@ def user_update(request, pk):
     profile = get_object_or_404(User, pk=pk)
 
     if profile.pk == request.user.pk and not request.user.is_superuser:
-        messages.error(request, "Use your profile settings to edit your own account.")
+        messages.error(request, _("Use your profile settings to edit your own account."))
         return redirect("user_detail", pk=pk)
 
     if request.method == "POST":
@@ -1493,7 +1554,7 @@ def user_update(request, pk):
             profile.set_password(new_password)
 
         profile.save()
-        messages.success(request, f'User "{profile.username}" updated.')
+        messages.success(request, _('User "%(name)s" updated.') % {'name': profile.username})
         return redirect("user_detail", pk=pk)
 
     return render(request, "user_form.html", {
@@ -1511,12 +1572,12 @@ def user_update(request, pk):
 def user_toggle_active(request, pk):
     profile = get_object_or_404(User, pk=pk)
     if profile.pk == request.user.pk:
-        messages.error(request, "You cannot deactivate your own account.")
+        messages.error(request, _("You cannot deactivate your own account."))
         return redirect("user_detail", pk=pk)
     profile.is_active = not profile.is_active
     profile.save(update_fields=["is_active"])
     status = "activated" if profile.is_active else "deactivated"
-    messages.success(request, f'User "{profile.username}" {status}.')
+    messages.success(request, _('User "%(name)s" %(status)s.') % {'name': profile.username, 'status': _(status)})
     if request.headers.get("HX-Request"):
         return render(request, "partials/user_status_badge.html", {"profile": profile})
     return redirect("user_detail", pk=pk)
@@ -1527,13 +1588,13 @@ def user_toggle_active(request, pk):
 def user_delete(request, pk):
     profile = get_object_or_404(User, pk=pk)
     if profile.pk == request.user.pk:
-        messages.error(request, "You cannot delete your own account.")
+        messages.error(request, _("You cannot delete your own account."))
         return redirect("user_detail", pk=pk)
     if profile.is_superuser and not request.user.is_superuser:
         raise PermissionDenied
     username = profile.username
     profile.delete()
-    messages.success(request, f'User "{username}" deleted.')
+    messages.success(request, _('User "%(name)s" deleted.') % {'name': username})
     return redirect("user_list")
 
 
@@ -1572,7 +1633,7 @@ def document_create(request):
         customer_id = data.get('customer')
 
         if not customer_id:
-            messages.error(request, 'Please select a customer.')
+            messages.error(request, _('Please select a customer.'))
             return render(request, 'invoice_form.html', {
                 'customers': Customer.objects.order_by('name'),
                 'today': date.today(),
@@ -1619,13 +1680,24 @@ def document_create(request):
             )
 
         doc.recompute_totals()
-        messages.success(request, f'{doc.get_doc_type_display()} {doc.number} created.')
+        messages.success(request, _('%(get_doc_type_display)s %(number)s created.') % {'get_doc_type_display': doc.get_doc_type_display(), 'number': doc.number})
         return redirect('document_detail', pk=doc.pk)
 
     return render(request, 'invoice_form.html', {
         'customers': Customer.objects.order_by('name'),
         'today': date.today(),
     })
+
+
+def _associate_brand_files():
+    """Sorted list of associate-brand image filenames in assets/associate_brands/."""
+    import os as _os
+    from django.conf import settings as _settings
+    brands_dir = _os.path.join(_settings.BASE_DIR, 'assets', 'associate_brands')
+    if not _os.path.isdir(brands_dir):
+        return []
+    return [f for f in sorted(_os.listdir(brands_dir))
+            if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
 
 
 @login_required
@@ -1636,6 +1708,7 @@ def document_detail(request, pk):
                         .prefetch_related('items__product'),
         pk=pk,
     )
+    brand_logos = ['/assets/associate_brands/' + f for f in _associate_brand_files()]
     next_statuses = {
         'draft':    ['sent', 'cancelled'],
         'sent':     ['paid', 'accepted', 'rejected', 'cancelled'],
@@ -1647,6 +1720,7 @@ def document_detail(request, pk):
     return render(request, 'invoice_detail.html', {
         'doc': doc,
         'next_statuses': next_statuses.get(doc.status, []),
+        'brand_logos': brand_logos,
     })
 
 
@@ -1659,7 +1733,7 @@ def document_status(request, pk):
     if new_status in valid:
         doc.status = new_status
         doc.save(update_fields=['status'])
-        messages.success(request, f'Status updated to {new_status}.')
+        messages.success(request, _('Status updated to %(new_status)s.') % {'new_status': new_status})
     return redirect('document_detail', pk=pk)
 
 
@@ -1668,7 +1742,7 @@ def document_status(request, pk):
 def document_delete(request, pk):
     doc = get_object_or_404(Document, pk=pk)
     doc.delete()
-    messages.success(request, 'Document deleted.')
+    messages.success(request, _('Document deleted.'))
     return redirect('document_list')
 
 
@@ -1707,7 +1781,20 @@ def document_pdf(request, pk):
     if _os.path.exists(stamp_path):
         with open(stamp_path, 'rb') as f:
             stamp_data_uri = 'data:image/png;base64,' + base64.b64encode(f.read()).decode()
-    html = render_to_string('invoice_pdf.html', {'doc': doc, 'stamp_data_uri': stamp_data_uri}, request=request)
+    # Embed associate brand logos as base64 (same reason as the stamp)
+    brand_logos = []
+    brands_dir = _os.path.join(_settings.BASE_DIR, 'assets', 'associate_brands')
+    for fname in _associate_brand_files():
+        with open(_os.path.join(brands_dir, fname), 'rb') as f:
+            ext = 'jpeg' if fname.lower().endswith(('.jpg', '.jpeg')) else 'png'
+            brand_logos.append(
+                f'data:image/{ext};base64,' + base64.b64encode(f.read()).decode()
+            )
+    html = render_to_string(
+        'invoice_pdf.html',
+        {'doc': doc, 'stamp_data_uri': stamp_data_uri, 'brand_logos': brand_logos},
+        request=request,
+    )
     pdf  = HTML(string=html, base_url=request.build_absolute_uri('/')).write_pdf()
     filename = f"{doc.number}.pdf"
     response = HttpResponse(pdf, content_type='application/pdf')
@@ -1852,7 +1939,7 @@ def sale_order_verify(request, pk):
     action = request.POST.get('action')
 
     if order.workflow_status not in (SaleOrder.PICKED, SaleOrder.PARTIALLY_PICKED, SaleOrder.RE_PICK_REQUIRED):
-        messages.error(request, "This order is not ready for verification.")
+        messages.error(request, _("This order is not ready for verification."))
         return redirect('sale_order_detail', pk=pk)
 
     # Find the most recent picking order (completed or partially picked)
@@ -1863,7 +1950,7 @@ def sale_order_verify(request, pk):
     # Self-verification guard — admins/superusers may override
     if (last_picking and last_picking.picker == request.user
             and not (request.user.is_admin or request.user.is_superuser)):
-        messages.error(request, "You cannot verify picking you performed yourself.")
+        messages.error(request, _("You cannot verify picking you performed yourself."))
         return redirect('sale_order_detail', pk=pk)
 
     note = request.POST.get('note', '')
@@ -1889,11 +1976,11 @@ def sale_order_verify(request, pk):
                         requested_qty=poi.requested_qty,
                         picked_qty=poi.picked_qty,
                     )
-                messages.success(request, f"Order {order.order_code} verified. Gate Pass {gp.gp_code} generated.")
+                messages.success(request, _("Order %(order_code)s verified. Gate Pass %(gp_code)s generated.") % {'order_code': order.order_code, 'gp_code': gp.gp_code})
 
             elif action == 'reject':
                 order.transition(SaleOrder.REJECTED, request.user, note or 'Rejected by sales person')
-                messages.warning(request, f"Order {order.order_code} has been rejected.")
+                messages.warning(request, _("Order %(order_code)s has been rejected.") % {'order_code': order.order_code})
 
             elif action == 're_pick':
                 order.transition(SaleOrder.RE_PICK_REQUIRED, request.user, note or 'Re-pick requested')
@@ -1912,13 +1999,13 @@ def sale_order_verify(request, pk):
                     link=f"/orders/{order.pk}/",
                     entity_id=order.pk,
                 )
-                messages.info(request, f"Re-pick requested for {order.order_code}.")
+                messages.info(request, _("Re-pick requested for %(order_code)s.") % {'order_code': order.order_code})
 
             else:
-                messages.error(request, "Unknown action.")
+                messages.error(request, _("Unknown action."))
 
     except Exception as exc:
-        messages.error(request, f"Action failed: {exc}")
+        messages.error(request, _("Action failed: %(exc)s") % {'exc': exc})
 
     return redirect('sale_order_detail', pk=pk)
 
@@ -1930,11 +2017,11 @@ def sale_order_accountant_review(request, pk):
     order = get_object_or_404(SaleOrder, pk=pk)
 
     if not (request.user.is_accountant or request.user.is_admin or request.user.is_superuser):
-        messages.error(request, "Only accountants can review orders.")
+        messages.error(request, _("Only accountants can review orders."))
         return redirect('sale_order_detail', pk=pk)
 
     if order.workflow_status != SaleOrder.PENDING_APPROVAL:
-        messages.error(request, "This order is not awaiting approval.")
+        messages.error(request, _("This order is not awaiting approval."))
         return redirect('sale_order_detail', pk=pk)
 
     action = request.POST.get('action')
@@ -1974,7 +2061,7 @@ def sale_order_accountant_review(request, pk):
                         link=f"/orders/{order.pk}/",
                         entity_id=order.pk,
                     )
-                messages.success(request, f"Order {order.order_code} approved and sent to warehouse.")
+                messages.success(request, _("Order %(order_code)s approved and sent to warehouse.") % {'order_code': order.order_code})
 
             elif action == 'reject':
                 order.transition(
@@ -1990,13 +2077,13 @@ def sale_order_accountant_review(request, pk):
                         link=f"/orders/{order.pk}/",
                         entity_id=order.pk,
                     )
-                messages.warning(request, f"Order {order.order_code} has been rejected.")
+                messages.warning(request, _("Order %(order_code)s has been rejected.") % {'order_code': order.order_code})
 
             else:
-                messages.error(request, "Unknown action.")
+                messages.error(request, _("Unknown action."))
 
     except Exception as exc:
-        messages.error(request, f"Action failed: {exc}")
+        messages.error(request, _("Action failed: %(exc)s") % {'exc': exc})
 
     return redirect('sale_order_detail', pk=pk)
 
@@ -2008,13 +2095,13 @@ def dispatch_order(request, pk):
     order = get_object_or_404(SaleOrder, pk=pk)
 
     if order.workflow_status != SaleOrder.VERIFIED:
-        messages.error(request, "Only verified orders can be dispatched.")
+        messages.error(request, _("Only verified orders can be dispatched."))
         return redirect('sale_order_detail', pk=pk)
 
     try:
         gate_pass = order.gate_pass
     except GatePass.DoesNotExist:
-        messages.error(request, "Cannot dispatch: gate pass not found.")
+        messages.error(request, _("Cannot dispatch: gate pass not found."))
         return redirect('sale_order_detail', pk=pk)
 
     with transaction.atomic():
@@ -2039,7 +2126,7 @@ def dispatch_order(request, pk):
             entity_id=order.pk,
         )
 
-    messages.success(request, f"Order {order.order_code} dispatched. Stock updated.")
+    messages.success(request, _("Order %(order_code)s dispatched. Stock updated.") % {'order_code': order.order_code})
     return redirect('sale_order_detail', pk=pk)
 
 
@@ -2078,7 +2165,7 @@ def picking_accept(request, pk):
         SaleOrder.PICKING, request.user,
         f'Picking accepted by {request.user.username}'
     )
-    messages.success(request, f"You accepted picking order {picking.picking_code}.")
+    messages.success(request, _("You accepted picking order %(picking_code)s.") % {'picking_code': picking.picking_code})
     return redirect('picking_detail', pk=pk)
 
 
@@ -2104,7 +2191,7 @@ def picking_save(request, pk):
 
     # Enforce: only the assigned picker (or admin) can submit picks
     if not (request.user == picking.picker or request.user.is_admin or request.user.is_superuser):
-        messages.error(request, "Only the assigned picker can submit picks.")
+        messages.error(request, _("Only the assigned picker can submit picks."))
         return redirect('picking_detail', pk=pk)
 
     with transaction.atomic():
@@ -2151,7 +2238,7 @@ def picking_save(request, pk):
                     entity_id=picking.sale_order.pk,
                 )
 
-    messages.success(request, "Picking saved.")
+    messages.success(request, _("Picking saved."))
     return redirect('picking_detail', pk=pk)
 
 
@@ -2194,7 +2281,7 @@ def stock_refill_view(request, pk):
     except (ValueError, TypeError):
         qty = 0
     if qty <= 0:
-        messages.error(request, "Quantity must be a positive number.")
+        messages.error(request, _("Quantity must be a positive number."))
         return redirect('product_detail', pk=pk)
 
     notes = request.POST.get('notes', '')
@@ -2217,7 +2304,7 @@ def stock_refill_view(request, pk):
             is_read=False,
         ).update(is_read=True)
 
-    messages.success(request, f"Added {qty} units to {product.name}. New stock: {quantity_after}.")
+    messages.success(request, _("Added %(qty)s units to %(name)s. New stock: %(quantity_after)s.") % {'qty': qty, 'name': product.name, 'quantity_after': quantity_after})
     return redirect('product_detail', pk=pk)
 
 

@@ -1,5 +1,4 @@
 import { getTranslations } from "next-intl/server";
-import { BadgeCheck } from "lucide-react";
 import { Marquee } from "@/components/motion/marquee";
 
 export async function StandardsMarquee() {
@@ -18,18 +17,14 @@ export async function StandardsMarquee() {
   ];
 
   return (
-    <section className="border-y border-border/60 bg-card/30 py-6">
-      <p className="mb-5 text-center text-xs font-semibold uppercase tracking-[0.25em] text-muted-foreground">
-        {t("eyebrow")}
-      </p>
-      <Marquee durationSec={36}>
+    <section className="border-y border-border bg-mist/60 py-5">
+      <Marquee durationSec={40}>
         {items.map((item, i) => (
           <div key={i} className="flex items-center">
-            <span className="mx-7 flex items-center gap-2.5 whitespace-nowrap font-display text-lg font-medium text-foreground/80">
-              <BadgeCheck className="size-4 text-gold" />
+            <span className="stamp mx-8 whitespace-nowrap text-[11px]">
               {item}
             </span>
-            <span className="size-1 rounded-full bg-gold/50" />
+            <span className="size-1.5 rotate-45 bg-amber/80" aria-hidden />
           </div>
         ))}
       </Marquee>

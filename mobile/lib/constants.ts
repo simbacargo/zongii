@@ -1,5 +1,5 @@
-export const API_BASE = 'https://www.zongii.tz/api';
-export const SERVER_BASE = 'https://www.zongii.tz';
+export const API_BASE = 'https://admin.zongii.tz/api';
+export const SERVER_BASE = 'https://admin.zongii.tz';
 
 export const lightColors = {
   primary:      '#4f46e5',

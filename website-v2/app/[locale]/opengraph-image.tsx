@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "Zongii — Mining, Building & Construction Supplies";
+export const alt = "Zongii — Plumbing, Building & Mining Supplies";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -12,8 +12,8 @@ export default async function OgImage({
   const { locale } = await params;
   const tagline =
     locale === "sw"
-      ? "Vifaa vya Madini, Ujenzi na Ukandarasi"
-      : "Mining, Building & Construction Supplies";
+      ? "Vifaa vya Mabomba, Ujenzi na Madini"
+      : "Plumbing, Building & Mining Supplies";
 
   return new ImageResponse(
     (
@@ -25,51 +25,53 @@ export default async function OgImage({
           flexDirection: "column",
           justifyContent: "space-between",
           padding: "80px",
-          background:
-            "radial-gradient(900px 600px at 10% -10%, #14324a, transparent), radial-gradient(700px 500px at 110% 20%, #3a2c12, transparent), #06121a",
-          color: "#edf4f7",
+          background: "#0d2b49",
+          color: "#f6f8fa",
           fontFamily: "sans-serif",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+          <div style={{ fontSize: 40, letterSpacing: 8 }}>ZONGII</div>
           <div
             style={{
-              width: 84,
-              height: 84,
-              borderRadius: 20,
-              background: "#d4af6a",
-              color: "#07131b",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: 52,
-              fontWeight: 800,
+              width: 10,
+              height: 10,
+              background: "#d9a441",
+              transform: "rotate(45deg)",
             }}
-          >
-            Z
-          </div>
-          <div
-            style={{
-              fontSize: 40,
-              fontWeight: 700,
-              letterSpacing: 8,
-            }}
-          >
-            ZONGII
+          />
+          <div style={{ fontSize: 20, letterSpacing: 4, color: "#6fa8d6" }}>
+            MWANZA · EST. 2002
           </div>
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          <div style={{ fontSize: 72, fontWeight: 800, lineHeight: 1.05, maxWidth: 900 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+          <div
+            style={{
+              width: 96,
+              height: 2,
+              background: "#d9a441",
+            }}
+          />
+          <div style={{ fontSize: 72, lineHeight: 1.08, maxWidth: 950 }}>
             {tagline}
           </div>
-          <div style={{ fontSize: 30, color: "#d4af6a" }}>
-            Tanzania · Since 2002
+          <div style={{ fontSize: 28, color: "#6fa8d6", letterSpacing: 3 }}>
+            TANZANIA · SINCE 2002
           </div>
         </div>
 
-        <div style={{ fontSize: 26, color: "#7e94a0" }}>
-          Pamba Road · Mwanza · Tanzania
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            fontSize: 22,
+            color: "#87a0b8",
+            letterSpacing: 2,
+          }}
+        >
+          <div>PAMBA ROAD · MWANZA · TANZANIA</div>
+          <div>2°31′S 32°54′E</div>
         </div>
       </div>
     ),

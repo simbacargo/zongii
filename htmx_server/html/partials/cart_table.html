@@ -1,13 +1,14 @@
+{% load i18n %}
 {% load currency %}
 <div id="cart-container" class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
     {% if cart_items %}
     <table class="w-full text-left">
         <thead class="bg-gray-50 border-b border-gray-100">
             <tr>
-                <th class="p-4 text-xs font-bold text-gray-400 uppercase">Product</th>
-                <th class="p-4 text-xs font-bold text-gray-400 uppercase text-center">Qty</th>
-                <th class="p-4 text-xs font-bold text-gray-400 uppercase text-right">Price / Unit</th>
-                <th class="p-4 text-xs font-bold text-gray-400 uppercase text-right">Total</th>
+                <th class="p-4 text-xs font-bold text-gray-400 uppercase">{% trans "Product" %}</th>
+                <th class="p-4 text-xs font-bold text-gray-400 uppercase text-center">{% trans "Qty" %}</th>
+                <th class="p-4 text-xs font-bold text-gray-400 uppercase text-right">{% trans "Price / Unit" %}</th>
+                <th class="p-4 text-xs font-bold text-gray-400 uppercase text-right">{% trans "Total" %}</th>
                 <th class="p-4"></th>
             </tr>
         </thead>
@@ -34,7 +35,7 @@
                            value="{{ item.quantity }}"
                            min="1"
                            max="{{ item.product.quantity_at_hand }}"
-                           class="w-16 text-center border border-gray-200 rounded-lg py-1.5 text-sm font-bold focus:ring-2 focus:ring-indigo-400 outline-none"
+                           class="w-16 text-center border border-gray-200 rounded-lg py-1.5 text-sm font-bold focus:ring-2 focus:ring-amber-400 outline-none"
                            data-cart-item="{{ item.product.id }}"
                            hx-post="{% url 'manage_cart' %}"
                            hx-vals='{"update_id": "{{ item.product.id }}"}'
@@ -52,7 +53,7 @@
                                value="{{ item.price|floatformat:0 }}"
                                min="0"
                                step="100"
-                               class="w-36 text-right border-2 border-indigo-200 focus:border-indigo-500 rounded-xl py-2 px-3 text-sm font-bold outline-none text-indigo-700 bg-indigo-50 focus:bg-white transition-colors"
+                               class="w-36 text-right border-2 border-amber-200 focus:border-amber-500 rounded-xl py-2 px-3 text-sm font-bold outline-none text-amber-700 bg-amber-50 focus:bg-white transition-colors"
                                data-cart-item="{{ item.product.id }}"
                                hx-post="{% url 'manage_cart' %}"
                                hx-vals='{"update_id": "{{ item.product.id }}"}'
@@ -95,11 +96,11 @@
                 hx-target="#cart-container"
                 hx-swap="outerHTML"
                 class="text-xs text-gray-400 hover:text-red-500 font-semibold transition-colors flex items-center gap-1">
-            <i class="bi bi-x-circle"></i> Clear cart
+            <i class="bi bi-x-circle"></i> {% trans "Clear cart" %}
         </button>
         <div class="text-right">
-            <div class="text-[10px] text-gray-400 uppercase font-bold tracking-wide mb-0.5">Order Total</div>
-            <div class="text-2xl font-black text-indigo-600">{{ grand_total|tzs }}</div>
+            <div class="text-[10px] text-gray-400 uppercase font-bold tracking-wide mb-0.5">{% trans "Order Total" %}</div>
+            <div class="text-2xl font-black text-amber-600">{{ grand_total|tzs }}</div>
         </div>
     </div>
 
@@ -109,8 +110,8 @@
         <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <i class="bi bi-cart3 text-gray-300 text-2xl"></i>
         </div>
-        <p class="text-sm font-semibold text-gray-400">Cart is empty</p>
-        <p class="text-xs text-gray-300 mt-1">Search for products above and click <i class="bi bi-plus-circle-fill text-indigo-300"></i> to add them.</p>
+        <p class="text-sm font-semibold text-gray-400">{% trans "Cart is empty" %}</p>
+        <p class="text-xs text-gray-300 mt-1">{% trans "Search for products above and click" %} <i class="bi bi-plus-circle-fill text-amber-300"></i> {% trans "to add them." %}</p>
     </div>
 
     {% endif %}

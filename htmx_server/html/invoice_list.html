@@ -1,15 +1,16 @@
+{% load i18n %}
 {% load humanize %}{% block content %}
 <div class="max-w-5xl mx-auto">
 
     <!-- Header -->
     <div class="flex items-center justify-between mb-7">
         <div>
-            <h1 class="text-3xl font-black text-gray-900">Documents</h1>
-            <p class="text-sm text-gray-400 mt-1">Invoices and quotations for your customers.</p>
+            <h1 class="text-3xl font-black text-gray-900">{% trans "Documents" %}</h1>
+            <p class="text-sm text-gray-400 mt-1">{% trans "Invoices and quotations for your customers." %}</p>
         </div>
         <button hx-get="{% url 'document_create' %}" hx-target="#main-content"
-                class="flex items-center gap-2 px-5 py-3 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-black rounded-xl shadow-sm shadow-indigo-200 transition-all active:scale-[.98]">
-            <i class="bi bi-plus-lg"></i> New Document
+                class="flex items-center gap-2 px-5 py-3 bg-amber-600 hover:bg-amber-700 text-white text-sm font-black rounded-xl shadow-sm shadow-amber-200 transition-all active:scale-[.98]">
+            <i class="bi bi-plus-lg"></i> {% trans "New Document" %}
         </button>
     </div>
 
@@ -17,29 +18,29 @@
     <div class="grid grid-cols-2 gap-4 mb-6">
         <button hx-get="{% url 'document_list' %}?type=invoice" hx-target="#main-content"
                 class="bg-white rounded-2xl border shadow-sm p-5 text-left transition-all group
-                    {% if doc_type == 'invoice' %}border-indigo-300 ring-1 ring-indigo-200{% else %}border-gray-100 hover:border-indigo-200{% endif %}">
+                    {% if doc_type == 'invoice' %}border-amber-300 ring-1 ring-amber-200{% else %}border-gray-100 hover:border-amber-200{% endif %}">
             <div class="flex items-center gap-4">
                 <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0
-                    {% if doc_type == 'invoice' %}bg-indigo-600 text-white{% else %}bg-indigo-50 text-indigo-500 group-hover:bg-indigo-100{% endif %} transition-colors">
+                    {% if doc_type == 'invoice' %}bg-amber-600 text-white{% else %}bg-amber-50 text-amber-500 group-hover:bg-amber-100{% endif %} transition-colors">
                     <i class="bi bi-receipt text-xl"></i>
                 </div>
                 <div>
                     <p class="text-3xl font-black text-gray-900">{{ invoice_count }}</p>
-                    <p class="text-xs text-gray-400 font-semibold mt-0.5">Invoices</p>
+                    <p class="text-xs text-gray-400 font-semibold mt-0.5">{% trans "Invoices" %}</p>
                 </div>
             </div>
         </button>
         <button hx-get="{% url 'document_list' %}?type=quotation" hx-target="#main-content"
                 class="bg-white rounded-2xl border shadow-sm p-5 text-left transition-all group
-                    {% if doc_type == 'quotation' %}border-emerald-300 ring-1 ring-emerald-200{% else %}border-gray-100 hover:border-emerald-200{% endif %}">
+                    {% if doc_type == 'quotation' %}border-green-300 ring-1 ring-green-200{% else %}border-gray-100 hover:border-green-200{% endif %}">
             <div class="flex items-center gap-4">
                 <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0
-                    {% if doc_type == 'quotation' %}bg-emerald-600 text-white{% else %}bg-emerald-50 text-emerald-500 group-hover:bg-emerald-100{% endif %} transition-colors">
+                    {% if doc_type == 'quotation' %}bg-green-600 text-white{% else %}bg-green-50 text-green-500 group-hover:bg-green-100{% endif %} transition-colors">
                     <i class="bi bi-file-earmark-text text-xl"></i>
                 </div>
                 <div>
                     <p class="text-3xl font-black text-gray-900">{{ quotation_count }}</p>
-                    <p class="text-xs text-gray-400 font-semibold mt-0.5">Quotations</p>
+                    <p class="text-xs text-gray-400 font-semibold mt-0.5">{% trans "Quotations" %}</p>
                 </div>
             </div>
         </button>
@@ -50,17 +51,17 @@
         <button hx-get="{% url 'document_list' %}" hx-target="#main-content"
                 class="px-3.5 py-1.5 text-xs font-bold rounded-lg transition-colors
                     {% if not doc_type and not status_filter %}bg-gray-900 text-white{% else %}bg-white border border-gray-200 text-gray-500 hover:border-gray-300{% endif %}">
-            All
+            {% trans "All" %}
         </button>
         <button hx-get="{% url 'document_list' %}?type=invoice" hx-target="#main-content"
                 class="px-3.5 py-1.5 text-xs font-bold rounded-lg transition-colors
-                    {% if doc_type == 'invoice' and not status_filter %}bg-indigo-600 text-white{% else %}bg-white border border-gray-200 text-gray-500 hover:border-indigo-200{% endif %}">
-            Invoices
+                    {% if doc_type == 'invoice' and not status_filter %}bg-amber-600 text-white{% else %}bg-white border border-gray-200 text-gray-500 hover:border-amber-200{% endif %}">
+            {% trans "Invoices" %}
         </button>
         <button hx-get="{% url 'document_list' %}?type=quotation" hx-target="#main-content"
                 class="px-3.5 py-1.5 text-xs font-bold rounded-lg transition-colors
-                    {% if doc_type == 'quotation' and not status_filter %}bg-emerald-600 text-white{% else %}bg-white border border-gray-200 text-gray-500 hover:border-emerald-200{% endif %}">
-            Quotations
+                    {% if doc_type == 'quotation' and not status_filter %}bg-green-600 text-white{% else %}bg-white border border-gray-200 text-gray-500 hover:border-green-200{% endif %}">
+            {% trans "Quotations" %}
         </button>
         <div class="h-6 w-px bg-gray-200 self-center mx-1"></div>
         {% for s in statuses %}
@@ -83,7 +84,7 @@
 
                     <!-- Icon -->
                     <div class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0
-                        {% if doc.doc_type == 'invoice' %}bg-indigo-50 text-indigo-500{% else %}bg-emerald-50 text-emerald-500{% endif %}
+                        {% if doc.doc_type == 'invoice' %}bg-amber-50 text-amber-500{% else %}bg-green-50 text-green-500{% endif %}
                         group-hover:scale-105 transition-transform">
                         <i class="bi bi-{% if doc.doc_type == 'invoice' %}receipt{% else %}file-earmark-text{% endif %}"></i>
                     </div>
@@ -127,7 +128,7 @@
                     </div>
 
                     <!-- Arrow -->
-                    <div class="shrink-0 w-6 text-gray-300 group-hover:text-indigo-400 transition-colors">
+                    <div class="shrink-0 w-6 text-gray-300 group-hover:text-amber-400 transition-colors">
                         <i class="bi bi-chevron-right text-sm"></i>
                     </div>
 
@@ -139,8 +140,8 @@
             <div class="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <i class="bi bi-receipt text-3xl text-gray-200"></i>
             </div>
-            <p class="text-sm font-bold text-gray-400">No documents found.</p>
-            <p class="text-xs text-gray-300 mt-1">Try a different filter or create a new document.</p>
+            <p class="text-sm font-bold text-gray-400">{% trans "No documents found." %}</p>
+            <p class="text-xs text-gray-300 mt-1">{% trans "Try a different filter or create a new document." %}</p>
         </div>
         {% endfor %}
     </div>
@@ -154,14 +155,14 @@
             <button hx-get="?page={{ page_obj.previous_page_number }}{% if doc_type %}&type={{ doc_type }}{% endif %}"
                     hx-target="#main-content"
                     class="px-4 py-2 bg-white border border-gray-200 rounded-xl text-xs font-bold hover:bg-gray-50 transition-colors shadow-sm">
-                <i class="bi bi-arrow-left mr-1"></i>Prev
+                <i class="bi bi-arrow-left mr-1"></i>{% trans "Prev" %}
             </button>
             {% endif %}
             {% if page_obj.has_next %}
             <button hx-get="?page={{ page_obj.next_page_number }}{% if doc_type %}&type={{ doc_type }}{% endif %}"
                     hx-target="#main-content"
                     class="px-4 py-2 bg-white border border-gray-200 rounded-xl text-xs font-bold hover:bg-gray-50 transition-colors shadow-sm">
-                Next<i class="bi bi-arrow-right ml-1"></i>
+                {% trans "Next" %}<i class="bi bi-arrow-right ml-1"></i>
             </button>
             {% endif %}
         </div>

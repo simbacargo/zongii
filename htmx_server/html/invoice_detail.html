@@ -1,3 +1,4 @@
+{% load i18n %}
 {% load humanize %}{% block content %}
 <div class="max-w-4xl mx-auto" id="doc-detail">
 
@@ -41,7 +42,7 @@
 
         <a href="{% url 'document_pdf' doc.pk %}"
            class="h-9 px-4 flex items-center gap-2 rounded-xl bg-white border border-gray-200 hover:bg-gray-50 text-gray-600 text-xs font-bold transition-colors shadow-sm no-underline">
-            <i class="bi bi-file-earmark-pdf"></i> Download PDF
+            <i class="bi bi-file-earmark-pdf"></i> {% trans "Download PDF" %}
         </a>
         <form hx-post="{% url 'document_delete' doc.pk %}" hx-target="#main-content"
               hx-confirm="Delete {{ doc.number }}? This cannot be undone.">
@@ -60,7 +61,7 @@
         <div style="display:flex; align-items:center; gap:16px; padding:18px 24px 10px; border-bottom:2px solid #333;">
             <!-- Logo mark -->
             <div style="width:56px; height:56px; border-radius:8px; overflow:hidden; flex-shrink:0;">
-                <img src="/assets/Logo.png" alt="Zongii Logo" style="width:100%; height:100%; object-fit:cover; display:block;">
+                <img src="/assets/Logo.png" alt="{% trans 'Zongii Logo' %}" style="width:100%; height:100%; object-fit:cover; display:block;">
             </div>
             <div style="flex:1; text-align:center;">
                 <div style="font-size:20px; font-weight:900; letter-spacing:0.5px; text-transform:uppercase;">ZONGII MINING COMPANY LTD</div>
@@ -74,20 +75,20 @@
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:0; padding:12px 24px; border-bottom:1px solid #aaa;">
             <div style="border-right:1px solid #ddd; padding-right:20px;">
                 <table style="width:100%; border-collapse:collapse; font-size:11.5px;">
-                    <tr><td style="padding:2px 6px 2px 0; color:#555; white-space:nowrap; font-weight:600;">To:</td><td style="padding:2px 0; font-weight:700;">{{ doc.customer.name }}</td></tr>
-                    {% if doc.customer.phone %}<tr><td style="padding:2px 6px 2px 0; color:#555; white-space:nowrap; font-weight:600;">Tel:</td><td style="padding:2px 0;">{{ doc.customer.phone }}</td></tr>{% endif %}
-                    {% if doc.customer.email %}<tr><td style="padding:2px 6px 2px 0; color:#555; white-space:nowrap; font-weight:600;">Email:</td><td style="padding:2px 0;">{{ doc.customer.email }}</td></tr>{% endif %}
+                    <tr><td style="padding:2px 6px 2px 0; color:#555; white-space:nowrap; font-weight:600;">{% trans "To:" %}</td><td style="padding:2px 0; font-weight:700;">{{ doc.customer.name }}</td></tr>
+                    {% if doc.customer.phone %}<tr><td style="padding:2px 6px 2px 0; color:#555; white-space:nowrap; font-weight:600;">{% trans "Tel:" %}</td><td style="padding:2px 0;">{{ doc.customer.phone }}</td></tr>{% endif %}
+                    {% if doc.customer.email %}<tr><td style="padding:2px 6px 2px 0; color:#555; white-space:nowrap; font-weight:600;">{% trans "Email:" %}</td><td style="padding:2px 0;">{{ doc.customer.email }}</td></tr>{% endif %}
                     {% if doc.customer_tin %}<tr><td style="padding:2px 6px 2px 0; color:#555; white-space:nowrap; font-weight:600;">TIN:</td><td style="padding:2px 0; font-weight:700;">{{ doc.customer_tin }}</td></tr>{% endif %}
-                    <tr><td style="padding:2px 6px 2px 0; color:#555; white-space:nowrap; font-weight:600;">Address:</td><td style="padding:2px 0;">Mwanza / Dar es Salaam, Tanzania</td></tr>
+                    <tr><td style="padding:2px 6px 2px 0; color:#555; white-space:nowrap; font-weight:600;">{% trans "Address:" %}</td><td style="padding:2px 0;">{% trans "Mwanza / Dar es Salaam, Tanzania" %}</td></tr>
                 </table>
             </div>
             <div style="padding-left:20px;">
                 <table style="width:100%; border-collapse:collapse; font-size:11.5px;">
                     <tr><td style="padding:2px 6px 2px 0; color:#555; white-space:nowrap; font-weight:600;">INV NO.:</td><td style="padding:2px 0; font-weight:700;">{{ doc.number }}</td></tr>
-                    <tr><td style="padding:2px 6px 2px 0; color:#555; white-space:nowrap; font-weight:600;">Date:</td><td style="padding:2px 0;">{{ doc.issue_date|date:"M jS, Y" }}</td></tr>
+                    <tr><td style="padding:2px 6px 2px 0; color:#555; white-space:nowrap; font-weight:600;">{% trans "Date:" %}</td><td style="padding:2px 0;">{{ doc.issue_date|date:"M jS, Y" }}</td></tr>
                     {% if doc.due_date %}<tr><td style="padding:2px 6px 2px 0; color:#555; white-space:nowrap; font-weight:600;">{% if doc.doc_type == 'invoice' %}Due Date:{% else %}Valid Until:{% endif %}</td><td style="padding:2px 0;">{{ doc.due_date|date:"M jS, Y" }}</td></tr>{% endif %}
-                    <tr><td style="padding:2px 6px 2px 0; color:#555; white-space:nowrap; font-weight:600;">Prepared by:</td><td style="padding:2px 0;">{% if doc.created_by %}{{ doc.created_by.username }}{% endif %}</td></tr>
-                    <tr><td style="padding:2px 6px 2px 0; color:#555; white-space:nowrap; font-weight:600;">Status:</td>
+                    <tr><td style="padding:2px 6px 2px 0; color:#555; white-space:nowrap; font-weight:600;">{% trans "Prepared by:" %}</td><td style="padding:2px 0;">{% if doc.created_by %}{{ doc.created_by.username }}{% endif %}</td></tr>
+                    <tr><td style="padding:2px 6px 2px 0; color:#555; white-space:nowrap; font-weight:600;">{% trans "Status:" %}</td>
                         <td style="padding:2px 0; font-weight:700;
                             {% if doc.status == 'paid' or doc.status == 'accepted' %}color:#16a34a;
                             {% elif doc.status == 'sent' %}color:#2563eb;
@@ -100,18 +101,30 @@
             </div>
         </div>
 
+        <!-- Associate brands -->
+        {% if brand_logos %}
+        <div style="padding:10px 24px; border-bottom:1px solid #aaa; text-align:center;">
+            <div style="font-size:9px; font-weight:700; letter-spacing:0.6px; text-transform:uppercase; color:#6b7280; margin-bottom:6px;">{% trans "Authorized Dealer &amp; Associate Brands" %}</div>
+            <div style="display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:18px;">
+                {% for logo in brand_logos %}
+                <img src="{{ logo }}" alt="{% trans 'Associate brand' %}" style="height:72px; width:auto; object-fit:contain;">
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
         <!-- Items table -->
         <div style="padding:0 24px;">
             <table style="width:100%; border-collapse:collapse; margin-top:0;">
                 <thead>
                     <tr style="background:#f59e0b; color:#1c1917;">
-                        <th style="border:1px solid #92400e; padding:8px 6px; text-align:center; font-weight:800; font-size:11px; width:36px;">No.</th>
-                        <th style="border:1px solid #92400e; padding:8px 6px; text-align:left; font-weight:800; font-size:11px;">Description of Goods</th>
-                        <th style="border:1px solid #92400e; padding:8px 6px; text-align:center; font-weight:800; font-size:11px; width:70px;">Picture</th>
-                        <th style="border:1px solid #92400e; padding:8px 6px; text-align:center; font-weight:800; font-size:11px; width:40px;">Qty</th>
-                        <th style="border:1px solid #92400e; padding:8px 6px; text-align:center; font-weight:800; font-size:11px; width:48px;">Unit</th>
-                        <th style="border:1px solid #92400e; padding:8px 6px; text-align:right; font-weight:800; font-size:11px; width:90px;">Unit Price<br>(TZS)</th>
-                        <th style="border:1px solid #92400e; padding:8px 6px; text-align:right; font-weight:800; font-size:11px; width:90px;">Total<br>(TZS)</th>
+                        <th style="border:1px solid #92400e; padding:8px 6px; text-align:center; font-weight:800; font-size:11px; width:36px;">{% trans "No." %}</th>
+                        <th style="border:1px solid #92400e; padding:8px 6px; text-align:left; font-weight:800; font-size:11px;">{% trans "Description of Goods" %}</th>
+                        <th style="border:1px solid #92400e; padding:8px 6px; text-align:center; font-weight:800; font-size:11px; width:70px;">{% trans "Picture" %}</th>
+                        <th style="border:1px solid #92400e; padding:8px 6px; text-align:center; font-weight:800; font-size:11px; width:40px;">{% trans "Qty" %}</th>
+                        <th style="border:1px solid #92400e; padding:8px 6px; text-align:center; font-weight:800; font-size:11px; width:48px;">{% trans "Unit" %}</th>
+                        <th style="border:1px solid #92400e; padding:8px 6px; text-align:right; font-weight:800; font-size:11px; width:90px;">{% trans "Unit Price" %}<br>(TZS)</th>
+                        <th style="border:1px solid #92400e; padding:8px 6px; text-align:right; font-weight:800; font-size:11px; width:90px;">{% trans "Total" %}<br>(TZS)</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -144,7 +157,7 @@
             <table style="width:100%; border-collapse:collapse;">
                 {% if doc.discount_percent %}
                 <tr style="background:#f9fafb;">
-                    <td colspan="5" style="border:1px solid #d1d5db; padding:7px 12px; font-size:11.5px; text-align:right; color:#555;">Subtotal</td>
+                    <td colspan="5" style="border:1px solid #d1d5db; padding:7px 12px; font-size:11.5px; text-align:right; color:#555;">{% trans "Subtotal" %}</td>
                     <td colspan="2" style="border:1px solid #d1d5db; padding:7px 8px; font-size:11.5px; text-align:right; font-weight:700;">TZS {{ doc.subtotal|floatformat:0|intcomma }}</td>
                 </tr>
                 <tr style="background:#f9fafb;">
@@ -160,7 +173,7 @@
                 {% endif %}
                 {% if not doc.discount_percent and not doc.vat_percent %}
                 <tr style="background:#f3f4f6;">
-                    <td colspan="5" style="border:1px solid #d1d5db; padding:10px 12px; font-weight:800; font-size:13px; text-align:center; letter-spacing:0.5px;">Factory / Shop Price</td>
+                    <td colspan="5" style="border:1px solid #d1d5db; padding:10px 12px; font-weight:800; font-size:13px; text-align:center; letter-spacing:0.5px;">{% trans "Factory / Shop Price" %}</td>
                 {% else %}
                 <tr>
                     <td colspan="5" style="border:none;"></td>
@@ -187,7 +200,7 @@
             {% endif %}
             {% if doc.terms %}
             <div>
-                <div style="font-weight:800; color:#b45309; margin-bottom:4px;">TERMS &amp; CONDITIONS:</div>
+                <div style="font-weight:800; color:#b45309; margin-bottom:4px;">{% trans "TERMS &amp; CONDITIONS:" %}</div>
                 <div style="white-space:pre-line; color:#374151; font-size:11px;">{{ doc.terms }}</div>
             </div>
             {% endif %}
@@ -199,8 +212,8 @@
             <div style="font-weight:800; color:#b45309; margin-bottom:4px; font-size:11px;">PAYMENT DETAILS</div>
             <table style="width:100%; border-collapse:collapse; font-size:11px;">
                 <tr><td style="border:1px solid #d1d5db; padding:5px 10px;">BENEFICIARY: ZONGII MINING COMPANY LTD</td></tr>
-                <tr><td style="border:1px solid #d1d5db; padding:5px 10px;">BANK: CRDB Bank / NMB Bank – Tanzania</td></tr>
-                <tr><td style="border:1px solid #d1d5db; padding:5px 10px;">MOBILE MONEY: M-Pesa / Airtel Money – +255 786 421 150</td></tr>
+                <tr><td style="border:1px solid #d1d5db; padding:5px 10px;">{% trans "BANK: CRDB Bank / NMB Bank – Tanzania" %}</td></tr>
+                <tr><td style="border:1px solid #d1d5db; padding:5px 10px;">{% trans "MOBILE MONEY: M-Pesa / Airtel Money – +255 786 421 150" %}</td></tr>
             </table>
         </div>
 
@@ -208,23 +221,23 @@
         <div style="display:grid; grid-template-columns:1fr auto 1fr; gap:20px; padding:20px 24px 10px; align-items:start;">
             <div>
                 <div style="font-size:11px; font-weight:700; margin-bottom:6px;">Buyer: {{ doc.customer.name }}</div>
-                <div style="font-size:11px; color:#6b7280; margin-bottom:30px;">Signature &amp; Stamp:</div>
+                <div style="font-size:11px; color:#6b7280; margin-bottom:30px;">{% trans "Signature &amp; Stamp:" %}</div>
                 <div style="border-top:1px solid #333; padding-top:4px; font-size:11px; color:#6b7280;">Signing Date: {{ doc.issue_date|date:"Y-m-d" }}</div>
             </div>
             <!-- Company stamp -->
             <div style="text-align:center; padding:0 10px;">
-                <img src="/assets/stamp.png" alt="Company Stamp" style="width:100px; height:100px; object-fit:contain; display:block; margin:0 auto; mix-blend-mode:multiply;">
+                <img src="/assets/stamp.png" alt="{% trans 'Company Stamp' %}" style="width:100px; height:100px; object-fit:contain; display:block; margin:0 auto; mix-blend-mode:multiply;">
             </div>
             <div style="text-align:right;">
-                <div style="font-size:11px; font-weight:700; margin-bottom:6px;">Seller: ZONGII MINING COMPANY Ltd</div>
-                <div style="font-size:11px; color:#6b7280; margin-bottom:30px;">Signature &amp; Stamp:</div>
+                <div style="font-size:11px; font-weight:700; margin-bottom:6px;">{% trans "Seller: ZONGII MINING COMPANY Ltd" %}</div>
+                <div style="font-size:11px; color:#6b7280; margin-bottom:30px;">{% trans "Signature &amp; Stamp:" %}</div>
                 <div style="border-top:1px solid #333; padding-top:4px; font-size:11px; color:#6b7280;">Signing Date: {{ doc.issue_date|date:"Y-m-d" }}</div>
             </div>
         </div>
 
         <!-- Footer address -->
         <div style="text-align:center; padding:8px 24px 14px; border-top:1px solid #d1d5db; margin:0 24px; font-size:10px; font-weight:700; color:#374151; margin-top:10px;">
-            Mwanza / Dar es Salaam, Tanzania &nbsp;|&nbsp; info@zongii.co.tz &nbsp;|&nbsp; +255 786 421 150
+            {% trans "Mwanza / Dar es Salaam, Tanzania &nbsp;|&nbsp; info@zongii.co.tz &nbsp;|&nbsp; +255 786 421 150" %}
         </div>
 
     </div><!-- end printable document -->

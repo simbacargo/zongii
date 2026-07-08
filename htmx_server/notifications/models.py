@@ -39,13 +39,13 @@ class Notification(models.Model):
     }
     _COLOR = {
         LOW_STOCK:         'amber',
-        ORDER_APPROVAL:    'violet',
-        ORDER_CREATED:     'indigo',
-        ORDER_PICKED:      'cyan',
+        ORDER_APPROVAL:    'amber',
+        ORDER_CREATED:     'blue',
+        ORDER_PICKED:      'blue',
         ORDER_VERIFIED:    'green',
-        ORDER_DISPATCHED:  'emerald',
+        ORDER_DISPATCHED:  'green',
         ORDER_REJECTED:    'red',
-        RE_PICK_REQUESTED: 'purple',
+        RE_PICK_REQUESTED: 'amber',
     }
 
     # ── Fields ─────────────────────────────────────────────────────────────────

@@ -1,8 +1,9 @@
+{% load i18n %}
 <div class="max-w-xl mx-auto w-full">
 <div class="bg-white rounded-2xl shadow-2xl overflow-hidden w-full">
 
     <!-- Header -->
-    <div class="relative bg-gradient-to-br from-violet-600 to-purple-700 px-7 pt-8 pb-14">
+    <div class="relative bg-gradient-to-br from-amber-600 to-amber-700 px-7 pt-8 pb-14">
         <button onclick="closeModal()"
                 class="absolute top-4 right-4 h-8 w-8 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 text-white transition-colors">
             <i class="bi bi-x-lg text-sm"></i>
@@ -13,7 +14,7 @@
         <h2 class="text-2xl font-black text-white">
             {% if customer.pk %}Edit Customer{% else %}New Customer{% endif %}
         </h2>
-        <p class="text-purple-200 text-sm mt-1">
+        <p class="text-amber-200 text-sm mt-1">
             {% if customer.pk %}Update customer details{% else %}Add a customer to your records{% endif %}
         </p>
     </div>
@@ -21,16 +22,16 @@
     <!-- Avatar preview card -->
     <div class="mx-6 -mt-6 bg-white rounded-2xl shadow-lg border border-gray-100 px-5 py-4 flex items-center gap-4">
         <div id="cust-avatar"
-             class="w-12 h-12 rounded-2xl bg-purple-100 text-purple-600 font-black text-xl flex items-center justify-center shrink-0 transition-all select-none">
-            <i class="bi bi-person text-purple-300 text-lg"></i>
+             class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 font-black text-xl flex items-center justify-center shrink-0 transition-all select-none">
+            <i class="bi bi-person text-amber-300 text-lg"></i>
         </div>
         <div class="min-w-0 flex-1">
-            <p id="cust-preview-name" class="text-sm font-bold text-gray-400 italic truncate">Enter customer name…</p>
-            <p id="cust-preview-contact" class="text-xs text-gray-400 mt-0.5 truncate">No contact yet</p>
+            <p id="cust-preview-name" class="text-sm font-bold text-gray-400 italic truncate">{% trans "Enter customer name…" %}</p>
+            <p id="cust-preview-contact" class="text-xs text-gray-400 mt-0.5 truncate">{% trans "No contact yet" %}</p>
         </div>
         <div id="cust-preview-balance" class="shrink-0 hidden">
-            <span class="px-2.5 py-1 text-[10px] font-black rounded-lg bg-rose-100 text-rose-600 uppercase tracking-wide">
-                Owes <span id="cust-balance-val"></span>
+            <span class="px-2.5 py-1 text-[10px] font-black rounded-lg bg-red-100 text-red-600 uppercase tracking-wide">
+                {% trans "Owes" %} <span id="cust-balance-val"></span>
             </span>
         </div>
     </div>
@@ -45,7 +46,7 @@
         <!-- Name -->
         <div>
             <label class="block text-xs font-black text-gray-500 uppercase tracking-wider mb-2">
-                Full Name <span class="text-red-400">*</span>
+                {% trans "Full Name" %} <span class="text-red-400">*</span>
             </label>
             <div class="relative">
                 <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300">
@@ -59,15 +60,15 @@
                        autofocus
                        maxlength="100"
                        autocomplete="off"
-                       placeholder="e.g. Juma Hassan"
-                       class="w-full border-2 border-gray-200 focus:border-violet-500 rounded-xl pl-11 py-3.5 text-sm font-medium outline-none transition-all bg-gray-50 focus:bg-white">
+                       placeholder="{% trans 'e.g. Juma Hassan' %}"
+                       class="w-full border-2 border-gray-200 focus:border-amber-500 rounded-xl pl-11 py-3.5 text-sm font-medium outline-none transition-all bg-gray-50 focus:bg-white">
             </div>
         </div>
 
         <!-- Phone + Email side by side -->
         <div class="grid grid-cols-2 gap-3">
             <div>
-                <label class="block text-xs font-black text-gray-500 uppercase tracking-wider mb-2">Phone</label>
+                <label class="block text-xs font-black text-gray-500 uppercase tracking-wider mb-2">{% trans "Phone" %}</label>
                 <div class="relative">
                     <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300">
                         <i class="bi bi-telephone text-sm"></i>
@@ -79,11 +80,11 @@
                            maxlength="15"
                            autocomplete="off"
                            placeholder="+255 7XX XXX XXX"
-                           class="w-full border-2 border-gray-200 focus:border-violet-500 rounded-xl pl-11 py-3.5 text-sm font-medium outline-none transition-all bg-gray-50 focus:bg-white">
+                           class="w-full border-2 border-gray-200 focus:border-amber-500 rounded-xl pl-11 py-3.5 text-sm font-medium outline-none transition-all bg-gray-50 focus:bg-white">
                 </div>
             </div>
             <div>
-                <label class="block text-xs font-black text-gray-500 uppercase tracking-wider mb-2">Email</label>
+                <label class="block text-xs font-black text-gray-500 uppercase tracking-wider mb-2">{% trans "Email" %}</label>
                 <div class="relative">
                     <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300">
                         <i class="bi bi-envelope text-sm"></i>
@@ -93,8 +94,8 @@
                            id="cust-email-input"
                            value="{{ customer.email|default:'' }}"
                            autocomplete="off"
-                           placeholder="email@example.com"
-                           class="w-full border-2 border-gray-200 focus:border-violet-500 rounded-xl pl-11 py-3.5 text-sm font-medium outline-none transition-all bg-gray-50 focus:bg-white">
+                           placeholder="{% trans 'email@example.com' %}"
+                           class="w-full border-2 border-gray-200 focus:border-amber-500 rounded-xl pl-11 py-3.5 text-sm font-medium outline-none transition-all bg-gray-50 focus:bg-white">
                 </div>
             </div>
         </div>
@@ -102,8 +103,8 @@
         <!-- Opening balance -->
         <div>
             <label class="block text-xs font-black text-gray-500 uppercase tracking-wider mb-2">
-                Opening Balance
-                <span class="font-normal normal-case text-gray-400 ml-1">(leave 0 if none)</span>
+                {% trans "Opening Balance" %}
+                <span class="font-normal normal-case text-gray-400 ml-1">{% trans "(leave 0 if none)" %}</span>
             </label>
             <div class="relative">
                 <span class="absolute left-4 top-1/2 -translate-y-1/2 text-xs font-black text-gray-400">TZS</span>
@@ -113,19 +114,19 @@
                        value="{{ customer.remaining_balance|default:0 }}"
                        min="0"
                        step="1"
-                       class="w-full border-2 border-gray-200 focus:border-violet-500 rounded-xl pl-14 py-3.5 text-sm font-medium outline-none transition-all bg-gray-50 focus:bg-white">
+                       class="w-full border-2 border-gray-200 focus:border-amber-500 rounded-xl pl-14 py-3.5 text-sm font-medium outline-none transition-all bg-gray-50 focus:bg-white">
             </div>
             <p class="text-[10px] text-gray-400 mt-1.5">
                 <i class="bi bi-info-circle mr-1"></i>
-                Any amount this customer already owes from before today.
+                {% trans "Any amount this customer already owes from before today." %}
             </p>
         </div>
 
         <!-- Payment due date -->
         <div>
             <label class="block text-xs font-black text-gray-500 uppercase tracking-wider mb-2">
-                Payment Due Date
-                <span class="font-normal normal-case text-gray-400 ml-1">(optional)</span>
+                {% trans "Payment Due Date" %}
+                <span class="font-normal normal-case text-gray-400 ml-1">{% trans "(optional)" %}</span>
             </label>
             <div class="relative">
                 <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300">
@@ -134,11 +135,11 @@
                 <input type="date"
                        name="debt_due_date"
                        value="{{ customer.debt_due_date|default:'' }}"
-                       class="w-full border-2 border-gray-200 focus:border-violet-500 rounded-xl pl-11 py-3.5 text-sm font-medium outline-none transition-all bg-gray-50 focus:bg-white">
+                       class="w-full border-2 border-gray-200 focus:border-amber-500 rounded-xl pl-11 py-3.5 text-sm font-medium outline-none transition-all bg-gray-50 focus:bg-white">
             </div>
             <p class="text-[10px] text-gray-400 mt-1.5">
                 <i class="bi bi-info-circle mr-1"></i>
-                Deadline for the customer to clear their outstanding balance.
+                {% trans "Deadline for the customer to clear their outstanding balance." %}
             </p>
         </div>
 
@@ -146,10 +147,10 @@
         <div class="flex gap-3 pt-2">
             <button type="button" onclick="closeModal()"
                     class="flex-1 py-3 text-sm font-bold text-gray-500 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors">
-                Cancel
+                {% trans "Cancel" %}
             </button>
             <button type="submit"
-                    class="flex-1 py-3 text-sm font-black text-white bg-gradient-to-r from-violet-600 to-purple-700 hover:from-violet-700 hover:to-purple-800 rounded-xl shadow-lg shadow-purple-200 transition-all active:scale-[.98] flex items-center justify-center gap-2">
+                    class="flex-1 py-3 text-sm font-black text-white bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 rounded-xl shadow-lg shadow-amber-200 transition-all active:scale-[.98] flex items-center justify-center gap-2">
                 <i class="bi bi-person-check-fill"></i>
                 {% if customer.pk %}Save Changes{% else %}Add Customer{% endif %}
             </button>
@@ -172,12 +173,7 @@
     const balanceVal   = document.getElementById('cust-balance-val');
 
     const avatarColors = [
-        ['bg-violet-100', 'text-violet-600'],
-        ['bg-purple-100', 'text-purple-600'],
-        ['bg-indigo-100', 'text-indigo-600'],
-        ['bg-fuchsia-100','text-fuchsia-600'],
-        ['bg-pink-100',   'text-pink-600'],
-        ['bg-blue-100',   'text-blue-600'],
+        ['bg-amber-100', 'text-amber-700'],
     ];
 
     function colorFor(name) {
@@ -199,8 +195,8 @@
             previewName.classList.remove('text-gray-400', 'italic');
             previewName.classList.add('text-gray-800');
         } else {
-            avatar.className = 'w-12 h-12 rounded-2xl bg-purple-100 text-purple-600 font-black text-xl flex items-center justify-center shrink-0 transition-all select-none';
-            avatar.innerHTML = '<i class="bi bi-person text-purple-300 text-lg"></i>';
+            avatar.className = 'w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 font-black text-xl flex items-center justify-center shrink-0 transition-all select-none';
+            avatar.innerHTML = '<i class="bi bi-person text-amber-300 text-lg"></i>';
             previewName.textContent = 'Enter customer name…';
             previewName.classList.add('text-gray-400', 'italic');
             previewName.classList.remove('text-gray-800');

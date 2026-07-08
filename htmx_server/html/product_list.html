@@ -1,13 +1,14 @@
+{% load i18n %}
 {% block content %}
 <div class="max-w-7xl mx-auto" id="inventory">
     <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
         <div>
-            <h1 class="text-3xl font-black text-gray-900 tracking-tight">Inventory</h1>
-            <p class="text-gray-500">Manage your stock and technical specifications.</p>
+            <h1 class="text-3xl font-black text-gray-900 tracking-tight">{% trans "Inventory" %}</h1>
+            <p class="text-gray-500">{% trans "Manage your stock and technical specifications." %}</p>
         </div>
         {% if user.is_admin or user.is_superuser %}
-        <a href="#" hx-get="{% url 'product_create' %}" hx-target="#main-content" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-bold shadow-lg transition-all flex items-center gap-2">
-            <i class="bi bi-plus-lg"></i> Add Product
+        <a href="#" hx-get="{% url 'product_create' %}" hx-target="#main-content" class="bg-amber-600 hover:bg-amber-700 text-white px-6 py-3 rounded-xl font-bold shadow-lg transition-all flex items-center gap-2">
+            <i class="bi bi-plus-lg"></i> {% trans "Add Product" %}
         </a>
         {% endif %}
     </div>
@@ -20,14 +21,16 @@
             <input type="text" 
                    name="q" 
                    value="{{ query }}"
-                   placeholder="Search name, brand, or part number..."
-                   class="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition"
+                   placeholder="{% trans 'Search name, brand, supplier, category, description…' %}"
+                   class="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-amber-500 outline-none transition"
                    hx-get="{% url 'product_list' %}"
-                   hx-trigger="keyup changed delay:300ms"
-                   hx-target="#main-content"
+                   hx-trigger="keyup changed, search"
+                   hx-target="#product-table-body"
+                   hx-swap="innerHTML"
+                   hx-sync="this:replace"
                    hx-indicator="#search-indicator">
             <div id="search-indicator" class="htmx-indicator absolute right-4 top-4">
-                <div class="animate-spin h-4 w-4 border-2 border-indigo-500 border-t-transparent rounded-full"></div>
+                <div class="animate-spin h-4 w-4 border-2 border-amber-500 border-t-transparent rounded-full"></div>
             </div>
         </div>
     </div>
@@ -36,10 +39,10 @@
         <table class="w-full text-left">
             <thead class="bg-gray-50 border-b border-gray-100">
                 <tr>
-                    <th class="p-4 text-xs font-bold text-gray-400 uppercase">Product Details</th>
-                    <th class="p-4 text-xs font-bold text-gray-400 uppercase">Brand/MPN</th>
-                    <th class="p-4 text-xs font-bold text-gray-400 uppercase">Price</th>
-                    <th class="p-4 text-xs font-bold text-gray-400 uppercase text-center">In Stock</th>
+                    <th class="p-4 text-xs font-bold text-gray-400 uppercase">{% trans "Product Details" %}</th>
+                    <th class="p-4 text-xs font-bold text-gray-400 uppercase">{% trans "Brand/MPN" %}</th>
+                    <th class="p-4 text-xs font-bold text-gray-400 uppercase">{% trans "Price" %}</th>
+                    <th class="p-4 text-xs font-bold text-gray-400 uppercase text-center">{% trans "In Stock" %}</th>
                     <th class="p-4 text-xs font-bold text-gray-400 uppercase"></th>
                 </tr>
             </thead>

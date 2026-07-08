@@ -1,3 +1,4 @@
+{% load i18n %}
 {% load currency %}
 <tr id="product-{{ product.id }}" 
     class="hover:bg-blue-50/30 transition-colors cursor-pointer group border-b border-gray-100"
@@ -44,15 +45,15 @@
                 hx-target="#product-{{ product.id }}"
                 hx-swap="outerHTML"
                 hx-indicator="#loading-{{ product.id }}"
-                class="px-5 py-2 bg-indigo-600 text-white rounded-xl text-xs font-black hover:bg-indigo-700 transition active:scale-95 disabled:opacity-50"
+                class="px-5 py-2 bg-amber-600 text-white rounded-xl text-xs font-black hover:bg-amber-700 transition active:scale-95 disabled:opacity-50"
                 {% if product.quantity_at_hand <= 0 %}disabled{% endif %}
             >
-                Sell
+                {% trans "Sell" %}
             </button>
 
             <a href="#" hx-get="{% url 'product_update' product.id %}" hx-target="#main-content" hx-swap="innerHTML"
                class="p-2 text-gray-400 hover:text-blue-600 transition-colors"
-               title="Edit Product">
+               title="{% trans 'Edit Product' %}">
                ✎
             </a>
 
@@ -62,13 +63,13 @@
                 hx-swap="innerHTML"
                 hx-confirm="Are you sure you want to deactivate {{ product.name }}?"
                 class="p-2 text-gray-400 hover:text-red-600 transition-colors"
-                title="Deactivate Product"
+                title="{% trans 'Deactivate Product' %}"
             >
                 🗑
             </button>
         </div>
-        <div id="loading-{{ product.id }}" class="htmx-indicator text-[10px] text-center text-indigo-500 font-bold">
-            Processing...
+        <div id="loading-{{ product.id }}" class="htmx-indicator text-[10px] text-center text-amber-500 font-bold">
+            {% trans "Processing..." %}
         </div>
     </td>
 </tr>

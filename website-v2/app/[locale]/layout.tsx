@@ -3,16 +3,14 @@ import { notFound } from "next/navigation";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
-import { clashDisplay, inter, playfair } from "@/lib/fonts";
+import { clashDisplay, hanken, plexMono } from "@/lib/fonts";
 import { Providers } from "@/components/providers";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { ScrollProgress } from "@/components/motion/scroll-progress";
-import { ThemeSwitcher } from "@/components/layout/theme-switcher";
 import { Toaster } from "@/components/ui/sonner";
 import { OrganizationJsonLd } from "@/components/json-ld";
 import { Analytics } from "@/components/analytics";
-import { themeFamilyScript } from "@/hooks/use-theme-family";
 import "../globals.css";
 
 export function generateStaticParams() {
@@ -58,17 +56,12 @@ export default async function LocaleLayout({
   return (
     <html
       lang={locale}
-      suppressHydrationWarning
-      className={`${clashDisplay.variable} ${inter.variable} ${playfair.variable} h-full`}
+      className={`${clashDisplay.variable} ${hanken.variable} ${plexMono.variable} h-full`}
     >
       <body className="flex min-h-full flex-col bg-mesh">
-        <script
-          dangerouslySetInnerHTML={{ __html: themeFamilyScript }}
-        />
         <Providers>
           <NextIntlClientProvider>
             <ScrollProgress />
-            <ThemeSwitcher />
             <Navbar />
             <main className="flex-1">{children}</main>
             <Footer />

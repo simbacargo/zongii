@@ -1,0 +1,3031 @@
+[
+ {
+  "id": "general",
+  "label": "General Site Supply",
+  "items": [
+   {
+    "id": "pipe-bender",
+    "name": "PIPE BENDER",
+    "image": "/images/products/pipe-bender.jpg",
+    "variants": [
+     "1/2\"-2\"",
+     "21/2\"",
+     "3\"-4\""
+    ]
+   },
+   {
+    "id": "pressure-washer-fly-way",
+    "name": "PRESSURE WASHER FLY-WAY",
+    "image": "/images/products/pressure-washer-fly-way.jpg",
+    "variants": [
+     "7.5KW 380V"
+    ]
+   },
+   {
+    "id": "pneumatic-water-butterfly",
+    "name": "PNEUMATIC WATER BUTTERFLY",
+    "image": "/images/products/pneumatic-water-butterfly.jpg",
+    "variants": [
+     "2\" PN16"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "pumps",
+  "label": "Pumps",
+  "items": [
+   {
+    "id": "oil-pump",
+    "name": "OIL PUMP",
+    "image": "/images/products/oil-pump.jpg",
+    "variants": [
+     "1.5KW"
+    ]
+   },
+   {
+    "id": "electric-centrifigal-pump",
+    "name": "ELECTRIC CENTRIFIGAL PUMP",
+    "image": "/images/products/electric-centrifigal-pump.jpg",
+    "variants": [
+     "11KW"
+    ]
+   },
+   {
+    "id": "oil-pump-electrical",
+    "name": "OIL PUMP ELECTRICAL",
+    "image": "/images/products/oil-pump-electrical.jpg",
+    "variants": []
+   },
+   {
+    "id": "ns-pump",
+    "name": "NS PUMP",
+    "image": "/images/products/ns-pump.jpg",
+    "variants": [
+     "NS50",
+     "NS80",
+     "NS100",
+     "NS150"
+    ]
+   },
+   {
+    "id": "pedrollo-pump-ndefu",
+    "name": "PEDROLLO PUMP NDEFU",
+    "image": "/images/products/pedrollo-pump-ndefu.jpg",
+    "variants": [
+     "15HP",
+     "20HP"
+    ]
+   },
+   {
+    "id": "dongyin-pump-ndefu",
+    "name": "DONGYIN PUMP NDEFU",
+    "image": "/images/products/dongyin-pump-ndefu.jpg",
+    "variants": [
+     "7.5HP",
+     "10HP",
+     "30HP"
+    ]
+   },
+   {
+    "id": "grund-force-pump",
+    "name": "GRUND FORCE PUMP",
+    "image": "/images/products/grund-force-pump.jpg",
+    "variants": [
+     "CR 5-8",
+     "CR 5-5",
+     "CR 5-4"
+    ]
+   },
+   {
+    "id": "mechanical-seal-grund-force-pump-seal",
+    "name": "MECHANICAL SEAL GRUND FORCE PUMP SEAL",
+    "image": "/images/products/mechanical-seal-grund-force-pump-seal.jpg",
+    "variants": []
+   },
+   {
+    "id": "lulin-water-pump",
+    "name": "LULIN WATER PUMP",
+    "image": "/images/products/lulin-water-pump.jpg",
+    "variants": [
+     "50WQG10-102 7.5KW 10HP",
+     "50WQG10-135/4-11KW 15HP",
+     "50WQG10-165/5-15KW 20HP",
+     "50WQG10-200/6-18.5KW 25HP"
+    ]
+   },
+   {
+    "id": "lulin-water-pump-sample",
+    "name": "LULIN WATER PUMP SAMPLE",
+    "image": "/images/products/lulin-water-pump-sample.jpg",
+    "variants": [
+     "50WQG10-204/6-18.5"
+    ]
+   },
+   {
+    "id": "maat-pump-ndefu",
+    "name": "MAAT PUMP NDEFU",
+    "image": "/images/products/maat-pump-ndefu.jpg",
+    "variants": [
+     "25HP"
+    ]
+   },
+   {
+    "id": "gasoline-water-pump-g-boss",
+    "name": "GASOLINE WATER PUMP G-BOSS",
+    "image": "/images/products/gasoline-water-pump-g-boss.jpg",
+    "variants": [
+     "2\"",
+     "3\""
+    ]
+   },
+   {
+    "id": "yopa-pump-semosi-green",
+    "name": "YOPA PUMP SEMOSI GREEN",
+    "image": "/images/products/yopa-pump-semosi-green.jpg",
+    "variants": [
+     "7.5HP",
+     "10HP",
+     "13HP",
+     "15HP",
+     "18HP",
+     "20HP",
+     "30HP",
+     "50HP"
+    ]
+   },
+   {
+    "id": "flyway-water-pump-semosi",
+    "name": "FLYWAY WATER PUMP SEMOSI",
+    "image": "/images/products/flyway-water-pump-semosi.jpg",
+    "variants": [
+     "QXN10-90/5-5.5kw 7.5HP 70m",
+     "QXN12.5-100-7.5kw 10HP 85m",
+     "QXN12.5-120-9.2kw 13HP 130m",
+     "QXN12.5-160-13kw 18HP 175m",
+     "QXN12.5-180-15kw 20HP 180m",
+     "QXN12.5-210-18.5kw 25HP 210m",
+     "30HP",
+     "50HP"
+    ]
+   },
+   {
+    "id": "pneumatic-grease-pump",
+    "name": "PNEUMATIC GREASE PUMP",
+    "image": "/images/products/pneumatic-grease-pump.jpg",
+    "variants": [
+     "10LTR",
+     "20LTR",
+     "30LTR",
+     "40LTR",
+     "50LTR"
+    ]
+   },
+   {
+    "id": "shimge-water-pump-yellow",
+    "name": "SHIMGE WATER PUMP YELLOW",
+    "image": "/images/products/shimge-water-pump-yellow.jpg",
+    "variants": [
+     "WQX15-70/2-5.5kw 7.5HP 90M",
+     "WQX15-85/2-7.5kw 10HP 100M",
+     "WQX15-130/3-11kw 15HP 120M",
+     "WQX10-175-15kw 20HP 160M",
+     "WQX10-210-18.5kw 25HP 210M"
+    ]
+   },
+   {
+    "id": "air-grease-pump",
+    "name": "AIR GREASE PUMP",
+    "image": "/images/products/air-grease-pump.jpg",
+    "variants": [
+     "6LT",
+     "10LTR",
+     "16LTR"
+    ]
+   },
+   {
+    "id": "slury-pump-ceramic-blue",
+    "name": "SLURY PUMP CERAMIC BLUE",
+    "image": "/images/products/slury-pump-ceramic-blue.jpg",
+    "variants": [
+     "6\"/4\"",
+     "4\"/3",
+     "3\"/2\""
+    ]
+   },
+   {
+    "id": "slury-pump-sawage",
+    "name": "SLURY PUMP SAWAGE",
+    "image": "/images/products/slury-pump-sawage.jpg",
+    "variants": [
+     "7.5KW",
+     "11KW",
+     "15KW"
+    ]
+   },
+   {
+    "id": "slury-pump-green-yopa",
+    "name": "SLURY PUMP GREEN YOPA",
+    "image": "/images/products/slury-pump-green-yopa.jpg",
+    "variants": [
+     "6/4D PUMP",
+     "3/2 PUMP",
+     "2/1.5 PUMP",
+     "1.5/1 PUMP",
+     "4/3D PUMP"
+    ]
+   },
+   {
+    "id": "impeller-for-slury-pump",
+    "name": "IMPELLER FOR SLURY PUMP",
+    "image": "/images/products/impeller-for-slury-pump.jpg",
+    "variants": [
+     "2\"/1.5\"",
+     "3/2\"",
+     "4/3\"",
+     "6/4\"",
+     "2\"/11/2\""
+    ]
+   },
+   {
+    "id": "slury-liner",
+    "name": "SLURY LINER",
+    "image": "/images/products/slury-liner.jpg",
+    "variants": [
+     "3/2\"",
+     "4/3\"",
+     "6/4\""
+    ]
+   },
+   {
+    "id": "fuel-pump",
+    "name": "FUEL PUMP",
+    "image": "/images/products/fuel-pump.jpg",
+    "variants": [
+     "3KW 220V"
+    ]
+   },
+   {
+    "id": "built-in-pump",
+    "name": "BUILT IN PUMP",
+    "image": "/images/products/built-in-pump.jpg",
+    "variants": [
+     "7.5KW"
+    ]
+   },
+   {
+    "id": "external-pump",
+    "name": "EXTERNAL PUMP",
+    "image": "/images/products/external-pump.jpg",
+    "variants": [
+     "7.5KW"
+    ]
+   },
+   {
+    "id": "shimge-water-pump-green-katikati",
+    "name": "SHIMGE WATER PUMP GREEN KATIKATI",
+    "image": "/images/products/shimge-water-pump-green-katikati.jpg",
+    "variants": [
+     "4HP",
+     "5.5HP",
+     "7.5HP",
+     "10HP",
+     "15HP"
+    ]
+   },
+   {
+    "id": "armiture-utumbo-wa-shimge-pump",
+    "name": "ARMITURE (UTUMBO WA SHIMGE PUMP)",
+    "image": "/images/products/armiture-utumbo-wa-shimge-pump.jpg",
+    "variants": [
+     "7.5HP"
+    ]
+   },
+   {
+    "id": "ss-non-return-valve",
+    "name": "SS NON RETURN VALVE",
+    "image": null,
+    "variants": []
+   }
+  ]
+ },
+ {
+  "id": "blowers",
+  "label": "Blowers & Fans",
+  "items": [
+   {
+    "id": "ring-blower-220v",
+    "name": "Ring blower (220V)",
+    "image": "/images/products/ring-blower-220v.jpg",
+    "variants": [
+     "750W",
+     "1100W",
+     "1500W",
+     "2200W",
+     "3000W"
+    ]
+   },
+   {
+    "id": "blower",
+    "name": "BLOWER",
+    "image": "/images/products/blower.jpg",
+    "variants": [
+     "2\"",
+     "2 1/2\"",
+     "3\"",
+     "4\""
+    ]
+   },
+   {
+    "id": "ring-blower-380v",
+    "name": "Ring blower (380V)",
+    "image": "/images/products/ring-blower-380v.jpg",
+    "variants": [
+     "4KW",
+     "5.5KW",
+     "7.5KW",
+     "9KW"
+    ]
+   },
+   {
+    "id": "ms-blower",
+    "name": "MS BLOWER",
+    "image": "/images/products/ms-blower.jpg",
+    "variants": [
+     "80MM",
+     "85MM",
+     "100MM",
+     "105MM"
+    ]
+   },
+   {
+    "id": "storm-electric-blower",
+    "name": "STORM ELECTRIC BLOWER",
+    "image": "/images/products/storm-electric-blower.jpg",
+    "variants": []
+   },
+   {
+    "id": "root-blower",
+    "name": "ROOT BLOWER",
+    "image": "/images/products/root-blower.jpg",
+    "variants": [
+     "11KW",
+     "15KW",
+     "DN 100 (KW 18)",
+     "DN 125 ( KW 35)",
+     "DN 150 JYSR (KW 55 )"
+    ]
+   },
+   {
+    "id": "ss-ring-blower-yopa",
+    "name": "SS RING BLOWER YOPA",
+    "image": "/images/products/ss-ring-blower-yopa.jpg",
+    "variants": [
+     "220V 1.5KW",
+     "220V 2.2KW",
+     "220V 3KW",
+     "220V 4KW",
+     "220V 5.5KW",
+     "220V 7.5 KW",
+     "380V 1.5KW",
+     "380V 2.2KW",
+     "3800V 3KW",
+     "3800V 4KW",
+     "380V 5.5KW",
+     "380V 7.5 KW",
+     "380V 9KW"
+    ]
+   },
+   {
+    "id": "blower-blue",
+    "name": "BLOWER BLUE",
+    "image": "/images/products/blower-blue.jpg",
+    "variants": [
+     "750W 220V",
+     "1500W 220V"
+    ]
+   },
+   {
+    "id": "electric-blower",
+    "name": "ELECTRIC BLOWER",
+    "image": "/images/products/electric-blower.jpg",
+    "variants": [
+     "GOZ-00A10031 21V"
+    ]
+   },
+   {
+    "id": "weight-bridge-mizan",
+    "name": "WEIGHT BRIDGE MIZAN",
+    "image": "/images/products/weight-bridge-mizan.jpg",
+    "variants": [
+     "1000KG"
+    ]
+   },
+   {
+    "id": "impeller-motor-reducer-mixer",
+    "name": "IMPELLER MOTOR (REDUCER MIXER)",
+    "image": "/images/products/impeller-motor-reducer-mixer.jpg",
+    "variants": [
+     "7.5HP 5.5KW",
+     "10HP 7.5KW",
+     "15HP"
+    ]
+   },
+   {
+    "id": "powder-mawe-unga-wa-mawe",
+    "name": "POWDER MAWE/UNGA WA MAWE",
+    "image": "/images/products/powder-mawe-unga-wa-mawe.jpg",
+    "variants": []
+   },
+   {
+    "id": "safety-belt-cargo-belt",
+    "name": "SAFETY BELT/CARGO BELT",
+    "image": "/images/products/safety-belt-cargo-belt.jpg",
+    "variants": [
+     "2TON",
+     "4TON",
+     "6TON"
+    ]
+   },
+   {
+    "id": "coffee-been-machine",
+    "name": "COFFEE BEEN MACHINE",
+    "image": "/images/products/coffee-been-machine.jpg",
+    "variants": [
+     "22KW"
+    ]
+   },
+   {
+    "id": "coffee-been-machine-double-screw",
+    "name": "COFFEE BEEN MACHINE DOUBLE SCREW",
+    "image": "/images/products/coffee-been-machine-double-screw.jpg",
+    "variants": []
+   },
+   {
+    "id": "hydrocyclone-2",
+    "name": "HYDROCYCLONE",
+    "image": "/images/products/hydrocyclone-2.jpg",
+    "variants": [
+     "TYPE 100",
+     "TYPE 125",
+     "TYPE 150",
+     "TYPE 200",
+     "DN 250"
+    ]
+   },
+   {
+    "id": "king-max",
+    "name": "KING MAX",
+    "image": "/images/products/king-max.jpg",
+    "variants": [
+     "2.0HP 1.5KW"
+    ]
+   },
+   {
+    "id": "diesel-generator-yopa",
+    "name": "DIESEL GENERATOR YOPA",
+    "image": "/images/products/diesel-generator-yopa.jpg",
+    "variants": [
+     "125KV"
+    ]
+   },
+   {
+    "id": "ball-mill-machine",
+    "name": "BALL MILL MACHINE",
+    "image": "/images/products/ball-mill-machine.jpg",
+    "variants": [
+     "1500 /4500 Ton 3 -8T",
+     "1200 /3000 Ton 1.6-5T",
+     "900 / 3000 Ton 1.1-3.5T",
+     "900/1800 Ton 0.6-2T"
+    ]
+   },
+   {
+    "id": "jaw-crusher-complete-grey",
+    "name": "JAW CRUSHER COMPLETE GREY",
+    "image": "/images/products/jaw-crusher-complete-grey.jpg",
+    "variants": [
+     "150*250",
+     "200*300",
+     "250*400",
+     "150X750",
+     "100x600",
+     "250x1200"
+    ]
+   },
+   {
+    "id": "hammer-crusher-blue-yopa",
+    "name": "HAMMER CRUSHER BLUE YOPA",
+    "image": "/images/products/hammer-crusher-blue-yopa.jpg",
+    "variants": [
+     "150x250",
+     "200x300",
+     "300x400",
+     "250x400",
+     "250x450",
+     "200x600"
+    ]
+   },
+   {
+    "id": "jaw-crusher-liner-teeth",
+    "name": "JAW CRUSHER LINER(TEETH)",
+    "image": "/images/products/jaw-crusher-liner-teeth.jpg",
+    "variants": [
+     "150*200",
+     "200*300",
+     "200#600",
+     "250X400"
+    ]
+   },
+   {
+    "id": "jaw-crusher-liner-plate-heavy",
+    "name": "JAW CRUSHER LINER PLATE HEAVY",
+    "image": null,
+    "variants": [
+     "250X750",
+     "200X300",
+     "250X400",
+     "150X250",
+     "150#750"
+    ]
+   },
+   {
+    "id": "ball-mill-machine-liner",
+    "name": "BALL MILL MACHINE LINER",
+    "image": "/images/products/ball-mill-machine-liner.jpg",
+    "variants": [
+     "900X3000",
+     "1200X3000"
+    ]
+   },
+   {
+    "id": "tsf-liner-140m-4m",
+    "name": "TSF LINER(140M*4M*)",
+    "image": "/images/products/tsf-liner-140m-4m.jpg",
+    "variants": []
+   },
+   {
+    "id": "sand-washing-machine",
+    "name": "SAND WASHING MACHINE",
+    "image": "/images/products/sand-washing-machine.jpg",
+    "variants": [
+     "MODEL MGT-50"
+    ]
+   },
+   {
+    "id": "shaking-table",
+    "name": "SHAKING TABLE",
+    "image": "/images/products/shaking-table.jpg",
+    "variants": [
+     "MODEL LY(S)4500"
+    ]
+   },
+   {
+    "id": "laboratory-jaw-crusher-100-60",
+    "name": "LABORATORY JAW CRUSHER (100*60)",
+    "image": "/images/products/laboratory-jaw-crusher-100-60.jpg",
+    "variants": [
+     "100x60"
+    ]
+   },
+   {
+    "id": "hammer-crusher",
+    "name": "HAMMER CRUSHER",
+    "image": "/images/products/hammer-crusher.jpg",
+    "variants": [
+     "400X600",
+     "300X500",
+     "300X400"
+    ]
+   },
+   {
+    "id": "jaw-crusher-shaft",
+    "name": "JAW CRUSHER SHAFT",
+    "image": "/images/products/jaw-crusher-shaft.jpg",
+    "variants": [
+     "150 /250",
+     "200 /300",
+     "250 /400"
+    ]
+   },
+   {
+    "id": "diesel-roller-compactor",
+    "name": "DIESEL ROLLER COMPACTOR",
+    "image": "/images/products/diesel-roller-compactor.jpg",
+    "variants": []
+   },
+   {
+    "id": "diaphram-valve",
+    "name": "DIAPHRAM VALVE",
+    "image": "/images/products/diaphram-valve.jpg",
+    "variants": [
+     "DN80 3\"",
+     "DN100 4\"",
+     "DN150 6\""
+    ]
+   },
+   {
+    "id": "ss-sluce-valve",
+    "name": "SS SLUCE VALVE",
+    "image": "/images/products/ss-sluce-valve.jpg",
+    "variants": [
+     "DN50 2\"",
+     "DN63 21/2\"",
+     "DN80 3\"",
+     "DN100 4\"",
+     "DN150 6\"",
+     "DN200 8\""
+    ]
+   },
+   {
+    "id": "hydroulic-shop-press-machine",
+    "name": "HYDROULIC SHOP PRESS MACHINE",
+    "image": "/images/products/hydroulic-shop-press-machine.jpg",
+    "variants": [
+     "30TON",
+     "20TONE"
+    ]
+   },
+   {
+    "id": "mestro-minerals-crusher-backing-set",
+    "name": "MESTRO MINERALS{CRUSHER BACKING SET}",
+    "image": "/images/products/mestro-minerals-crusher-backing-set.jpg",
+    "variants": [
+     "PART A,PART B"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "gear-motors",
+  "label": "Motors & Flow Control",
+  "items": [
+   {
+    "id": "reducer-gear-motor-yopa",
+    "name": "REDUCER GEAR MOTOR YOPA",
+    "image": "/images/products/reducer-gear-motor-yopa.jpg",
+    "variants": [
+     "80, 1:20",
+     "80, 1:40",
+     "100, 1:20",
+     "100, 1:40",
+     "135, 1:20",
+     "135, 1:40",
+     "155, 1:20",
+     "155, 1:40",
+     "175,1:20",
+     "175, 1:40",
+     "200,1:20",
+     "200,1:40"
+    ]
+   },
+   {
+    "id": "reducer-motor-yopa",
+    "name": "REDUCER MOTOR YOPA",
+    "image": "/images/products/reducer-motor-yopa.jpg",
+    "variants": [
+     "5.5KW 1:51",
+     "7.5KW 1:51",
+     "11KW 19:01"
+    ]
+   },
+   {
+    "id": "gear-motor-yopa",
+    "name": "GEAR MOTOR YOPA",
+    "image": null,
+    "variants": [
+     "ZQ-250",
+     "ZQ-350",
+     "ZQ-400",
+     "ZQ-500",
+     "ZD-40"
+    ]
+   },
+   {
+    "id": "vibrator-motor",
+    "name": "VIBRATOR MOTOR",
+    "image": "/images/products/vibrator-motor.jpg",
+    "variants": [
+     "0.1KW",
+     "0.2KW",
+     "0.37KW",
+     "0.75KW",
+     "1.25KW",
+     "1.5KW",
+     "2.0K W",
+     "2.2KW",
+     "3.0KW",
+     "3.5KW"
+    ]
+   },
+   {
+    "id": "knife-valve-blue",
+    "name": "KNIFE VALVE BLUE",
+    "image": "/images/products/knife-valve-blue.jpg",
+    "variants": [
+     "DN300 12\" PN16",
+     "DN150 6\" PN16",
+     "DN100 4\" PN16"
+    ]
+   },
+   {
+    "id": "ss-knife-valve",
+    "name": "SS KNIFE VALVE",
+    "image": "/images/products/ss-knife-valve.jpg",
+    "variants": [
+     "DN150 6\" PN16",
+     "DN100 4\" PN16",
+     "DN80 3\" PN16",
+     "DN50 2\" PN16"
+    ]
+   },
+   {
+    "id": "high-pressure-washer-edon",
+    "name": "HIGH PRESSURE WASHER EDON",
+    "image": "/images/products/high-pressure-washer-edon.jpg",
+    "variants": [
+     "1.8kw",
+     "2.0kw(diesel)",
+     "2.4kw",
+     "7.5kw"
+    ]
+   },
+   {
+    "id": "impeller-complete",
+    "name": "IMPELLER COMPLETE",
+    "image": "/images/products/impeller-complete.jpg",
+    "variants": [
+     "11KW",
+     "7.5KW"
+    ]
+   },
+   {
+    "id": "mitalimbo",
+    "name": "MITALIMBO",
+    "image": "/images/products/mitalimbo.jpg",
+    "variants": [
+     "1M",
+     "1.5M",
+     "2MTR",
+     "2.5MTR",
+     "3MTR",
+     "3MTR"
+    ]
+   },
+   {
+    "id": "demolition-hammer-edon",
+    "name": "DEMOLITION HAMMER EDON",
+    "image": "/images/products/demolition-hammer-edon.jpg",
+    "variants": [
+     "DH-GL-125A",
+     "110A"
+    ]
+   },
+   {
+    "id": "demolition-hammer-meineng",
+    "name": "DEMOLITION HAMMER(MEINENG)",
+    "image": "/images/products/demolition-hammer-meineng.jpg",
+    "variants": []
+   },
+   {
+    "id": "demolition-hammer-total",
+    "name": "DEMOLITION HAMMER(TOTAL)",
+    "image": "/images/products/demolition-hammer-total.jpg",
+    "variants": [
+     "1700W"
+    ]
+   },
+   {
+    "id": "demolition-hammer-yopa",
+    "name": "DEMOLITION HAMMER(YOPA)",
+    "image": "/images/products/demolition-hammer-yopa.jpg",
+    "variants": [
+     "1700W",
+     "2000W",
+     "2500W"
+    ]
+   },
+   {
+    "id": "demolition-hammer-worksite",
+    "name": "DEMOLITION HAMMER WORKSITE",
+    "image": "/images/products/demolition-hammer-worksite.jpg",
+    "variants": [
+     "1900W - ERH244"
+    ]
+   },
+   {
+    "id": "demolition-bit-point",
+    "name": "DEMOLITION BIT POINT",
+    "image": "/images/products/demolition-bit-point.jpg",
+    "variants": [
+     "11/2FT"
+    ]
+   },
+   {
+    "id": "demolition-bit-flat",
+    "name": "DEMOLITION BIT FLAT",
+    "image": "/images/products/demolition-bit-flat.jpg",
+    "variants": [
+     "1FT"
+    ]
+   },
+   {
+    "id": "digger-yopa",
+    "name": "DIGGER YOPA",
+    "image": "/images/products/digger-yopa.jpg",
+    "variants": [
+     "Y28A",
+     "YT28",
+     "Y24",
+     "Y20",
+     "Y018"
+    ]
+   },
+   {
+    "id": "jackleg-drills-complete",
+    "name": "JACKLEG DRILLS COMPLETE",
+    "image": "/images/products/jackleg-drills-complete.jpg",
+    "variants": [
+     "S250 ZC-2719"
+    ]
+   },
+   {
+    "id": "rock-drill-leg",
+    "name": "ROCK DRILL LEG",
+    "image": "/images/products/rock-drill-leg.jpg",
+    "variants": [
+     "YT28"
+    ]
+   },
+   {
+    "id": "butterfly-blue",
+    "name": "BUTTERFLY BLUE",
+    "image": "/images/products/butterfly-blue.jpg",
+    "variants": [
+     "2\"",
+     "21/2\"",
+     "3\"",
+     "4\"",
+     "\"5",
+     "6\"",
+     "8\""
+    ]
+   },
+   {
+    "id": "pvc-butterfly",
+    "name": "PVC BUTTERFLY",
+    "image": "/images/products/pvc-butterfly.jpg",
+    "variants": [
+     "50MM 2\""
+    ]
+   }
+  ]
+ },
+ {
+  "id": "machines",
+  "label": "Machines & Spare Parts",
+  "items": [
+   {
+    "id": "drum-puller",
+    "name": "DRUM PULLER",
+    "image": "/images/products/drum-puller.jpg",
+    "variants": [
+     "60CM 150KG",
+     "75CM 175KG",
+     "95CM 205KG",
+     "114CM 126KG"
+    ]
+   },
+   {
+    "id": "bend-puller",
+    "name": "BEND PULLER",
+    "image": "/images/products/bend-puller.jpg",
+    "variants": [
+     "60CM 100KG",
+     "95CM 120KG",
+     "114CM 140KG"
+    ]
+   },
+   {
+    "id": "motorized-pulley",
+    "name": "MOTORIZED PULLEY",
+    "image": "/images/products/motorized-pulley.jpg",
+    "variants": [
+     "60CM",
+     "75CM",
+     "95CM",
+     "114CM"
+    ]
+   },
+   {
+    "id": "conveyor-stand-frame",
+    "name": "CONVEYOR STAND FRAME",
+    "image": "/images/products/conveyor-stand-frame.jpg",
+    "variants": [
+     "50CM",
+     "80CM",
+     "75CM",
+     "100CM"
+    ]
+   },
+   {
+    "id": "conveyor-flame-impact-roller-idler",
+    "name": "CONVEYOR FLAME (IMPACT ROLLER IDLER)",
+    "image": "/images/products/conveyor-flame-impact-roller-idler.jpg",
+    "variants": [
+     "2FT",
+     "2.5FT",
+     "3FT",
+     "4FT"
+    ]
+   },
+   {
+    "id": "conveyor-roller-carring-roller",
+    "name": "CONVEYOR ROLLER( CARRING ROLLER)",
+    "image": "/images/products/conveyor-roller-carring-roller.jpg",
+    "variants": [
+     "30CM",
+     "50CM",
+     "80CM",
+     "200CM",
+     "250CM"
+    ]
+   },
+   {
+    "id": "conveyor-roller-returning-roller",
+    "name": "CONVEYOR ROLLER( RETURNING ROLLER)",
+    "image": "/images/products/conveyor-roller-returning-roller.jpg",
+    "variants": [
+     "60CM",
+     "65CM",
+     "80CM",
+     "100CM",
+     "115CM"
+    ]
+   },
+   {
+    "id": "pulley-for-conveyor",
+    "name": "PULLEY FOR CONVEYOR",
+    "image": "/images/products/pulley-for-conveyor.jpg",
+    "variants": []
+   },
+   {
+    "id": "chain-for-conveyor",
+    "name": "CHAIN FOR CONVEYOR",
+    "image": "/images/products/chain-for-conveyor.jpg",
+    "variants": []
+   },
+   {
+    "id": "gold-selection-machine-centrifigal",
+    "name": "GOLD SELECTION MACHINE CENTRIFIGAL",
+    "image": "/images/products/gold-selection-machine-centrifigal.jpg",
+    "variants": [
+     "XMS-800 1.1KW MOTOR"
+    ]
+   },
+   {
+    "id": "gold-melting-furnance",
+    "name": "GOLD MELTING FURNANCE",
+    "image": "/images/products/gold-melting-furnance.jpg",
+    "variants": [
+     "15KG",
+     "25KG"
+    ]
+   },
+   {
+    "id": "automatic-filter-press-machine",
+    "name": "AUTOMATIC FILTER PRESS MACHINE",
+    "image": "/images/products/automatic-filter-press-machine.jpg",
+    "variants": []
+   },
+   {
+    "id": "press-plate-cloth",
+    "name": "PRESS PLATE & CLOTH",
+    "image": "/images/products/press-plate-cloth.jpg",
+    "variants": []
+   },
+   {
+    "id": "supply-fan-yellow",
+    "name": "SUPPLY FAN YELLOW",
+    "image": "/images/products/supply-fan-yellow.jpg",
+    "variants": [
+     "37KW"
+    ]
+   },
+   {
+    "id": "startater-cabinet-for-supply-fan",
+    "name": "STARTATER CABINET FOR SUPPLY FAN",
+    "image": "/images/products/startater-cabinet-for-supply-fan.jpg",
+    "variants": [
+     "37KW"
+    ]
+   },
+   {
+    "id": "hydrocyclone-cluster",
+    "name": "HYDROCYCLONE CLUSTER",
+    "image": "/images/products/hydrocyclone-cluster.jpg",
+    "variants": [
+     "FX-125*6"
+    ]
+   },
+   {
+    "id": "hydrocyclone",
+    "name": "HYDROCYCLONE",
+    "image": "/images/products/hydrocyclone.jpg",
+    "variants": [
+     "TYPE 100",
+     "TYPE 125",
+     "TYPE 150",
+     "TYPE 200",
+     "DN 250"
+    ]
+   },
+   {
+    "id": "thread-bar-thread-rod",
+    "name": "THREAD BAR/THREAD ROD",
+    "image": null,
+    "variants": []
+   }
+  ]
+ },
+ {
+  "id": "compressors",
+  "label": "Compressors, Air & Fittings",
+  "items": [
+   {
+    "id": "battery-charger-seniva",
+    "name": "BATTERY CHARGER SENIVA",
+    "image": "/images/products/battery-charger-seniva.jpg",
+    "variants": [
+     "CD 550",
+     "CD650"
+    ]
+   },
+   {
+    "id": "air-compressor-mitungi-2",
+    "name": "AIR COMPRESSOR MITUNGI 2",
+    "image": "/images/products/air-compressor-mitungi-2.jpg",
+    "variants": [
+     "3 PISTON",
+     "4 PISTON"
+    ]
+   },
+   {
+    "id": "compressor-piston-head",
+    "name": "COMPRESSOR PISTON HEAD",
+    "image": "/images/products/compressor-piston-head.jpg",
+    "variants": [
+     "3 piston",
+     "4 piston"
+    ]
+   },
+   {
+    "id": "air-compressor-edon",
+    "name": "AIR COMPRESSOR EDON",
+    "image": "/images/products/air-compressor-edon.jpg",
+    "variants": [
+     "25LT",
+     "50LTR",
+     "100LTR",
+     "200LTR",
+     "300LTR"
+    ]
+   },
+   {
+    "id": "air-compressor-zhigao",
+    "name": "AIR COMPRESSOR ZHIGAO",
+    "image": "/images/products/air-compressor-zhigao.jpg",
+    "variants": [
+     "405CY 37KW"
+    ]
+   },
+   {
+    "id": "compressor-zhigao",
+    "name": "COMPRESSOR ZHIGAO",
+    "image": "/images/products/compressor-zhigao.jpg",
+    "variants": [
+     "88KW 95SCY-7"
+    ]
+   },
+   {
+    "id": "electric-compressor",
+    "name": "ELECTRIC COMPRESSOR",
+    "image": "/images/products/electric-compressor.jpg",
+    "variants": []
+   },
+   {
+    "id": "air-tank",
+    "name": "AIR TANK",
+    "image": "/images/products/air-tank.jpg",
+    "variants": [
+     "03/0.8 70KG",
+     "03/0.8 104KG"
+    ]
+   },
+   {
+    "id": "flexible-joint",
+    "name": "FLEXIBLE JOINT",
+    "image": "/images/products/flexible-joint.jpg",
+    "variants": [
+     "DN50 2\"",
+     "DN63 21/2\"",
+     "DN80 3\"",
+     "DN100 4\"",
+     "DN15O 6\"",
+     "DN200 8\""
+    ]
+   },
+   {
+    "id": "ss-flange-threaded",
+    "name": "SS FLANGE THREADED",
+    "image": "/images/products/ss-flange-threaded.jpg",
+    "variants": [
+     "DN25 1\"",
+     "DN32 11/4\"",
+     "DN40 11/2\"",
+     "DN50 2\"",
+     "DN65 21/2\"",
+     "DN80 3\"",
+     "DN100 4\"",
+     "DN150 6\""
+    ]
+   },
+   {
+    "id": "ss-flange-plain",
+    "name": "SS FLANGE PLAIN",
+    "image": "/images/products/ss-flange-plain.jpg",
+    "variants": [
+     "DN25 1\"",
+     "DN32 11/4\"",
+     "DN40 11/2\"",
+     "DN50 2\"",
+     "DN65 21/2\"",
+     "DN80 3\"",
+     "DN100 4\"",
+     "DN150 6\""
+    ]
+   },
+   {
+    "id": "air-horse-black-red",
+    "name": "AIR HORSE BLACK & RED",
+    "image": "/images/products/air-horse-black-red.jpg",
+    "variants": [
+     "DN13",
+     "DN19"
+    ]
+   },
+   {
+    "id": "flat-horse-g-boss-white",
+    "name": "FLAT HORSE G-BOSS WHITE",
+    "image": "/images/products/flat-horse-g-boss-white.jpg",
+    "variants": [
+     "2\"",
+     "3\""
+    ]
+   },
+   {
+    "id": "mining-horse",
+    "name": "MINING HORSE",
+    "image": "/images/products/mining-horse.jpg",
+    "variants": [
+     "1\" 60M"
+    ]
+   },
+   {
+    "id": "air-horse-rubber-yellow",
+    "name": "AIR HORSE RUBBER YELLOW",
+    "image": "/images/products/air-horse-rubber-yellow.jpg",
+    "variants": [
+     "3/4\" (50MTR)",
+     "1\"(50MTR)"
+    ]
+   },
+   {
+    "id": "mining-grass",
+    "name": "MINING GRASS",
+    "image": "/images/products/mining-grass.jpg",
+    "variants": [
+     "15M (PRICE @ METRE)"
+    ]
+   },
+   {
+    "id": "electric-motor",
+    "name": "ELECTRIC MOTOR",
+    "image": "/images/products/electric-motor.jpg",
+    "variants": [
+     "1.5KW/2HP 1440RPM",
+     "1.5KW/2HP 2880RPM",
+     "2.2KW/3HP 1440RPM",
+     "2.2KW3HP 2880RPM",
+     "3KW/4HP 1440RPM",
+     "3KW/4HP 2880RPM",
+     "4KW/5.5HP 1440RPM",
+     "4KW/5.5HP 2880RPM",
+     "5.5KW/7.5HP 1440RPM",
+     "5.5KW/7.6HP 2880RPM",
+     "7.5KW/10HP 960RPM",
+     "7.5KW/10HP 1440RPM",
+     "10HP 2880RPM",
+     "10hp960rpm",
+     "15HP 960RPM",
+     "15HP 1440RPM",
+     "15HP 2880RPM",
+     "20HP 1440RPM",
+     "20HP 2880RPM",
+     "25HP 1440RPM",
+     "25HP 2880RPM",
+     "22KW/30HP 960RPM",
+     "22KW/30HP 1470RPM",
+     "22KW/30HP 2900RPM",
+     "30KW/40HP 960RPM",
+     "40HP 1440RPM",
+     "40HP 2880RPM",
+     "37KW/50HP 960RPM",
+     "50HP 1440RPM",
+     "50HP 2880RPM",
+     "45KW/60HP 960RPM",
+     "60HP 1440RPM",
+     "60H 2880RPM"
+    ]
+   },
+   {
+    "id": "altenator-yopa",
+    "name": "ALTENATOR YOPA",
+    "image": "/images/products/altenator-yopa.jpg",
+    "variants": [
+     "12KW 15 KVA",
+     "16KW 20KVA",
+     "15KW 18.75KVA",
+     "20KW 25KVA",
+     "24KW 30KVA",
+     "30KW 37.5KVA",
+     "50KW 62.5KVA"
+    ]
+   },
+   {
+    "id": "farm-jack",
+    "name": "FARM JACK",
+    "image": "/images/products/farm-jack.jpg",
+    "variants": [
+     "20\"",
+     "33\"",
+     "48\"",
+     "60\""
+    ]
+   },
+   {
+    "id": "gs-flange-plain",
+    "name": "GS FLANGE PLAIN",
+    "image": "/images/products/gs-flange-plain.jpg",
+    "variants": [
+     "DN25 1\"",
+     "DN32 11/4\"",
+     "DN40 11/2\"",
+     "DN50 2\"",
+     "DN65 21/2\"",
+     "DN80 3\"",
+     "DN100 4\"",
+     "DN125 5\"",
+     "DN150 6\"",
+     "DN20 8\""
+    ]
+   },
+   {
+    "id": "gs-flange-threaded",
+    "name": "GS FLANGE THREADED",
+    "image": "/images/products/gs-flange-threaded.jpg",
+    "variants": [
+     "DN25 1\"",
+     "DN32 11/4\"",
+     "DN40 11/2\"",
+     "DN50 2\"",
+     "DN65 21/2\"",
+     "DN80 3\"",
+     "DN100 4\"",
+     "DN125 5\"",
+     "DN150 6\"",
+     "DN20 8\""
+    ]
+   },
+   {
+    "id": "gabion-wire-mesh",
+    "name": "GABION WIRE MESH",
+    "image": "/images/products/gabion-wire-mesh.jpg",
+    "variants": []
+   },
+   {
+    "id": "angle-grander-professional",
+    "name": "ANGLE GRANDER PROFESSIONAL",
+    "image": "/images/products/angle-grander-professional.jpg",
+    "variants": []
+   },
+   {
+    "id": "angle-grander-makita",
+    "name": "ANGLE GRANDER MAKITA",
+    "image": "/images/products/angle-grander-makita.jpg",
+    "variants": [
+     "GA9020"
+    ]
+   },
+   {
+    "id": "concrete-mixer",
+    "name": "CONCRETE MIXER",
+    "image": "/images/products/concrete-mixer.jpg",
+    "variants": [
+     "BIG",
+     "MEDIUM",
+     "500 LTR"
+    ]
+   },
+   {
+    "id": "concrete-cutter",
+    "name": "CONCRETE CUTTER",
+    "image": "/images/products/concrete-cutter.jpg",
+    "variants": [
+     "CNQ 16A-1"
+    ]
+   },
+   {
+    "id": "rope-wire",
+    "name": "ROPE WIRE",
+    "image": "/images/products/rope-wire.jpg",
+    "variants": [
+     "6MM",
+     "8MM",
+     "10MM",
+     "12MM",
+     "14MM",
+     "16MM",
+     "20MM"
+    ]
+   },
+   {
+    "id": "pulapula",
+    "name": "PULAPULA",
+    "image": "/images/products/pulapula.jpg",
+    "variants": [
+     "no 90",
+     "no 60",
+     "n0 40",
+     "no 10",
+     "60CM",
+     "67CM",
+     "102CM"
+    ]
+   },
+   {
+    "id": "pneumatic-hammer-g10",
+    "name": "PNEUMATIC HAMMER (G10)",
+    "image": "/images/products/pneumatic-hammer-g10.jpg",
+    "variants": [
+     "G10"
+    ]
+   },
+   {
+    "id": "ss-nipple",
+    "name": "SS NIPPLE",
+    "image": "/images/products/ss-nipple.jpg",
+    "variants": [
+     "1/2\"",
+     "3/4\"",
+     "1\"",
+     "11/4\"",
+     "11/2\"",
+     "2\""
+    ]
+   },
+   {
+    "id": "ss-union",
+    "name": "SS UNION",
+    "image": "/images/products/ss-union.jpg",
+    "variants": [
+     "1/2\"",
+     "3/4\"",
+     "1\"",
+     "11/4\"",
+     "11/2\"",
+     "2\""
+    ]
+   },
+   {
+    "id": "ss-non-return-valve-2",
+    "name": "SS NON RETURN VALVE",
+    "image": "/images/products/ss-non-return-valve-2.jpg",
+    "variants": [
+     "1/2\"",
+     "3/4\"",
+     "1\"",
+     "11/4\"",
+     "11/2\"",
+     "2\""
+    ]
+   },
+   {
+    "id": "ss-y-strainer",
+    "name": "SS Y STRAINER",
+    "image": "/images/products/ss-y-strainer.jpg",
+    "variants": [
+     "1/2\"",
+     "3/4\"",
+     "1\"",
+     "11/4\"",
+     "11/2\"",
+     "2\""
+    ]
+   },
+   {
+    "id": "ss-reducer-bush-welding-type",
+    "name": "SS REDUCER BUSH welding type",
+    "image": "/images/products/ss-reducer-bush-welding-type.jpg",
+    "variants": [
+     "2X11/2\"",
+     "2X11/4\"",
+     "2X1",
+     "11/2\"X11/4\"",
+     "11/2X1",
+     "1X3/4\"",
+     "3/4\"X1/2\""
+    ]
+   },
+   {
+    "id": "ss-tee",
+    "name": "SS TEE",
+    "image": "/images/products/ss-tee.jpg",
+    "variants": [
+     "1/2\"",
+     "3/4\"",
+     "1\"",
+     "11/4\"",
+     "11/2\"",
+     "2\""
+    ]
+   },
+   {
+    "id": "ss-elbow-welding",
+    "name": "SS ELBOW welding",
+    "image": "/images/products/ss-elbow-welding.jpg",
+    "variants": [
+     "1/2\"",
+     "3/4\"",
+     "1\"",
+     "11/4\"",
+     "11/2\"",
+     "2\""
+    ]
+   },
+   {
+    "id": "ss-handle-gate-with-bolt",
+    "name": "SS HANDLE GATE WITH BOLT",
+    "image": "/images/products/ss-handle-gate-with-bolt.jpg",
+    "variants": [
+     "1/2\"",
+     "3/4\"",
+     "1\"",
+     "11/4\"",
+     "11/2\"",
+     "2\""
+    ]
+   },
+   {
+    "id": "ss-gate-valve",
+    "name": "SS GATE VALVE",
+    "image": "/images/products/ss-gate-valve.jpg",
+    "variants": [
+     "1/2\"",
+     "3/4\"",
+     "1\"",
+     "11/4\"",
+     "11/2\"",
+     "2\""
+    ]
+   },
+   {
+    "id": "ss-handlegate",
+    "name": "SS HANDLEGATE",
+    "image": "/images/products/ss-handlegate.jpg",
+    "variants": [
+     "1/2\"",
+     "3/4\"",
+     "1\"",
+     "11/4\"",
+     "11/2\"",
+     "2\""
+    ]
+   },
+   {
+    "id": "ms-tee",
+    "name": "MS TEE",
+    "image": "/images/products/ms-tee.jpg",
+    "variants": [
+     "1/2\"",
+     "3/4\"",
+     "1\"",
+     "11/4\"",
+     "11/2\"",
+     "2\""
+    ]
+   },
+   {
+    "id": "ms-elbow",
+    "name": "MS ELBOW",
+    "image": "/images/products/ms-elbow.jpg",
+    "variants": [
+     "1/2\"",
+     "3/4\"",
+     "1\"",
+     "11/4\"",
+     "11/2\"",
+     "2\""
+    ]
+   },
+   {
+    "id": "ms-nipple",
+    "name": "MS NIPPLE",
+    "image": "/images/products/ms-nipple.jpg",
+    "variants": [
+     "1/2\"",
+     "3/4\"",
+     "1\"",
+     "11/4\"",
+     "11/2\"",
+     "2\""
+    ]
+   },
+   {
+    "id": "ms-socket",
+    "name": "MS SOCKET",
+    "image": "/images/products/ms-socket.jpg",
+    "variants": [
+     "1/2\"",
+     "3/4\"",
+     "1\"",
+     "11/4\"",
+     "11/2\"",
+     "2\""
+    ]
+   },
+   {
+    "id": "ms-reducer-gi-type",
+    "name": "MS REDUCER gi type",
+    "image": "/images/products/ms-reducer-gi-type.jpg",
+    "variants": [
+     "2X11/2\"",
+     "2X11/4\"",
+     "2X1",
+     "11/2\"X11/4\"",
+     "11/2X1",
+     "1X3/4\"",
+     "3/4\"X1/2\""
+    ]
+   },
+   {
+    "id": "brass-tank-connector",
+    "name": "BRASS TANK CONNECTOR",
+    "image": "/images/products/brass-tank-connector.jpg",
+    "variants": [
+     "1\"",
+     "11/4\"",
+     "11/2\"",
+     "2\"",
+     "21/2\"",
+     "3\""
+    ]
+   },
+   {
+    "id": "copper-nipple",
+    "name": "COPPER NIPPLE",
+    "image": "/images/products/copper-nipple.jpg",
+    "variants": [
+     "1/2\"",
+     "3/4\"",
+     "1\""
+    ]
+   },
+   {
+    "id": "gas-tee",
+    "name": "GAS TEE",
+    "image": "/images/products/gas-tee.jpg",
+    "variants": []
+   },
+   {
+    "id": "gas-elbow",
+    "name": "GAS ELBOW",
+    "image": "/images/products/gas-elbow.jpg",
+    "variants": []
+   },
+   {
+    "id": "gas-socket",
+    "name": "GAS SOCKET",
+    "image": "/images/products/gas-socket.jpg",
+    "variants": []
+   },
+   {
+    "id": "copper-female-socket",
+    "name": "COPPER FEMALE SOCKET",
+    "image": "/images/products/copper-female-socket.jpg",
+    "variants": [
+     "15MM",
+     "20MM",
+     "22MM"
+    ]
+   },
+   {
+    "id": "copper-reducer-socket-reducer-15-22",
+    "name": "COPPER REDUCER SOCKET REDUCER 15*22",
+    "image": "/images/products/copper-reducer-socket-reducer-15-22.jpg",
+    "variants": [
+     "13000"
+    ]
+   },
+   {
+    "id": "copper-socket-plain",
+    "name": "COPPER SOCKET PLAIN",
+    "image": "/images/products/copper-socket-plain.jpg",
+    "variants": [
+     "15MM",
+     "22MM",
+     "32MM"
+    ]
+   },
+   {
+    "id": "copper-tee-plain",
+    "name": "COPPER TEE PLAIN",
+    "image": "/images/products/copper-tee-plain.jpg",
+    "variants": [
+     "15MM",
+     "22M",
+     "32MM"
+    ]
+   },
+   {
+    "id": "copper-female-tee",
+    "name": "COPPER FEMALE TEE",
+    "image": "/images/products/copper-female-tee.jpg",
+    "variants": [
+     "15MM",
+     "22M",
+     "32MM"
+    ]
+   },
+   {
+    "id": "copper-female-elbow",
+    "name": "COPPER FEMALE ELBOW",
+    "image": "/images/products/copper-female-elbow.jpg",
+    "variants": [
+     "15MM",
+     "22M",
+     "32MM"
+    ]
+   },
+   {
+    "id": "copper-elbow-plain",
+    "name": "COPPER ELBOW PLAIN",
+    "image": "/images/products/copper-elbow-plain.jpg",
+    "variants": [
+     "15MM",
+     "22M"
+    ]
+   },
+   {
+    "id": "copper-welding-socket",
+    "name": "COPPER WELDING SOCKET",
+    "image": "/images/products/copper-welding-socket.jpg",
+    "variants": [
+     "15X20mm",
+     "15X22mm",
+     "20x22mm"
+    ]
+   },
+   {
+    "id": "copper-welding-reducer-socket",
+    "name": "COPPER WELDING REDUCER SOCKET",
+    "image": "/images/products/copper-welding-reducer-socket.jpg",
+    "variants": [
+     "15X20mm",
+     "15X22mm",
+     "20x22mm"
+    ]
+   },
+   {
+    "id": "copper-welding-elbow",
+    "name": "COPPER WELDING ELBOW",
+    "image": "/images/products/copper-welding-elbow.jpg",
+    "variants": [
+     "15MM",
+     "20M",
+     "22MM"
+    ]
+   },
+   {
+    "id": "copper-welding-tee",
+    "name": "COPPER WELDING TEE",
+    "image": "/images/products/copper-welding-tee.jpg",
+    "variants": [
+     "15MM",
+     "20M",
+     "22MM"
+    ]
+   },
+   {
+    "id": "straight-connector",
+    "name": "STRAIGHT CONNECTOR",
+    "image": "/images/products/straight-connector.jpg",
+    "variants": [
+     "3/4\"",
+     "1\"",
+     "11/4\"",
+     "11/2\"",
+     "2\"",
+     "21/2\"",
+     "3\"",
+     "4\""
+    ]
+   },
+   {
+    "id": "male-connector",
+    "name": "MALE CONNECTOR",
+    "image": "/images/products/male-connector.jpg",
+    "variants": [
+     "3/4\"",
+     "1\"",
+     "11/4\"",
+     "11/2\"",
+     "2\"",
+     "21/2\"",
+     "3\"",
+     "4\""
+    ]
+   },
+   {
+    "id": "elbow-connector",
+    "name": "ELBOW CONNECTOR",
+    "image": "/images/products/elbow-connector.jpg",
+    "variants": [
+     "3/4\"",
+     "1\"",
+     "11/4\"",
+     "11/2\"",
+     "2\"",
+     "21/2\"",
+     "3\"",
+     "4\""
+    ]
+   },
+   {
+    "id": "tee-connector-p-p",
+    "name": "TEE CONNECTOR P/P",
+    "image": "/images/products/tee-connector-p-p.jpg",
+    "variants": [
+     "3/4\"",
+     "1\"",
+     "11/4\"",
+     "11/2\"",
+     "2\"",
+     "21/2\"",
+     "3\"",
+     "4\""
+    ]
+   },
+   {
+    "id": "tee-connector-p-gs",
+    "name": "TEE CONNECTOR P/GS",
+    "image": "/images/products/tee-connector-p-gs.jpg",
+    "variants": [
+     "3/4\"",
+     "1\"",
+     "11/4\"",
+     "11/2\"",
+     "2\"",
+     "21/2\"",
+     "3\"",
+     "4\""
+    ]
+   },
+   {
+    "id": "reducer-connector",
+    "name": "REDUCER CONNECTOR",
+    "image": null,
+    "variants": [
+     "3/4\"X1\"",
+     "1\"X11/4\"",
+     "1\"X11/2\"",
+     "11/2\"X2\"",
+     "11/2\"X21/2\"",
+     "2X21/2\"",
+     "2\"X3\"",
+     "2\"X4\"",
+     "3\"X4\""
+    ]
+   },
+   {
+    "id": "rubber-high-pressure-air-pipe-1-2-13mm-x50m",
+    "name": "Rubber High-pressure air pipe 1/2\"(13mm)X50m",
+    "image": "/images/products/rubber-high-pressure-air-pipe-1-2-13mm-x50m.jpg",
+    "variants": [
+     "ZC-2866"
+    ]
+   },
+   {
+    "id": "rubber-high-pressure-air-pipe-3-4-19mm-print19mm-id-3-4-od-1-x50m",
+    "name": "Rubber High-pressure air pipe 3/4\"(19mm/Print19mm-ID 3/4\" OD 1\")X50m",
+    "image": null,
+    "variants": [
+     "ZC-2867"
+    ]
+   },
+   {
+    "id": "rubber-high-pressure-air-pipe-1-25mm-x50m",
+    "name": "Rubber High-pressure air pipe 1\"(25mm)X50m",
+    "image": null,
+    "variants": [
+     "ZC-2868"
+    ]
+   },
+   {
+    "id": "rubber-high-pressure-air-pipe-1-1-4-32mm-x50m",
+    "name": "Rubber High-pressure air pipe 1-1/4\"(32mm)X50m",
+    "image": null,
+    "variants": [
+     "ZC-2869"
+    ]
+   },
+   {
+    "id": "rubber-high-pressure-air-pipe-1-1-2-38mm-x50m",
+    "name": "Rubber High-pressure air pipe 1-1/2\"(38mm)X50m",
+    "image": null,
+    "variants": [
+     "ZC-2870"
+    ]
+   },
+   {
+    "id": "tube-locking-machineym500-abc-5l-06mm-051mm-ym500-abc-5l",
+    "name": "Tube locking machineYM500-ABC(5L/06mm-051mm)/锁管机型号YM500-ABC(5L)",
+    "image": "/images/products/tube-locking-machineym500-abc-5l-06mm-051mm-ym500-abc-5l.jpg",
+    "variants": [
+     "ZC-2871"
+    ]
+   },
+   {
+    "id": "gi-elbow",
+    "name": "GI ELBOW",
+    "image": "/images/products/gi-elbow.jpg",
+    "variants": []
+   },
+   {
+    "id": "gi-bushing",
+    "name": "GI BUSHING",
+    "image": "/images/products/gi-bushing.jpg",
+    "variants": []
+   },
+   {
+    "id": "gi-socket",
+    "name": "GI SOCKET",
+    "image": "/images/products/gi-socket.jpg",
+    "variants": []
+   },
+   {
+    "id": "yellow-flange-screw-pn16-004",
+    "name": "YELLOW FLANGE SCREW PN16 004",
+    "image": "/images/products/yellow-flange-screw-pn16-004.jpg",
+    "variants": []
+   },
+   {
+    "id": "yellow-flange-plain-pn16-005",
+    "name": "YELLOW FLANGE PLAIN PN16 005",
+    "image": "/images/products/yellow-flange-plain-pn16-005.jpg",
+    "variants": []
+   },
+   {
+    "id": "sch40-ms-elbow",
+    "name": "SCH40 MS ELBOW",
+    "image": "/images/products/sch40-ms-elbow.jpg",
+    "variants": []
+   },
+   {
+    "id": "sch40-mselbow",
+    "name": "SCH40 MSELBOW",
+    "image": "/images/products/sch40-mselbow.jpg",
+    "variants": []
+   },
+   {
+    "id": "sch40-tee",
+    "name": "SCH40 TEE",
+    "image": "/images/products/sch40-tee.jpg",
+    "variants": []
+   },
+   {
+    "id": "304malethread",
+    "name": "304MaleThread",
+    "image": "/images/products/304malethread.jpg",
+    "variants": []
+   },
+   {
+    "id": "304ferrulestraightconnector",
+    "name": "304FerruleStraightConnector",
+    "image": "/images/products/304ferrulestraightconnector.jpg",
+    "variants": []
+   },
+   {
+    "id": "304-ferruleelbow",
+    "name": "304 FerruleElbow",
+    "image": "/images/products/304-ferruleelbow.jpg",
+    "variants": []
+   },
+   {
+    "id": "304-ferruletee",
+    "name": "304 FerruleTee",
+    "image": "/images/products/304-ferruletee.jpg",
+    "variants": []
+   },
+   {
+    "id": "304ball-valve",
+    "name": "304BALL VALVE",
+    "image": "/images/products/304ball-valve.jpg",
+    "variants": []
+   },
+   {
+    "id": "push-inmale-straightconnector-304",
+    "name": "Push-inMale StraightConnector 304",
+    "image": "/images/products/push-inmale-straightconnector-304.jpg",
+    "variants": []
+   },
+   {
+    "id": "304-304-push-inelbow",
+    "name": "304 304 Push-inElbow",
+    "image": "/images/products/304-304-push-inelbow.jpg",
+    "variants": []
+   },
+   {
+    "id": "304-equalstraight-pushfitting",
+    "name": "304 EqualStraight PushFitting",
+    "image": "/images/products/304-equalstraight-pushfitting.jpg",
+    "variants": []
+   },
+   {
+    "id": "304-equaldiameter-pushintee",
+    "name": "304 EqualDiameter PushinTee",
+    "image": "/images/products/304-equaldiameter-pushintee.jpg",
+    "variants": []
+   },
+   {
+    "id": "socket-acd-each-1-3",
+    "name": "SOCKET ACD EACH 1/3",
+    "image": "/images/products/socket-acd-each-1-3.jpg",
+    "variants": []
+   },
+   {
+    "id": "elbow-a-c-d-each-1-3",
+    "name": "ELBOW A C D EACH 1/3",
+    "image": "/images/products/elbow-a-c-d-each-1-3.jpg",
+    "variants": []
+   },
+   {
+    "id": "chain-block-1t-3m-vital",
+    "name": "chain block 1T*3M VITAL",
+    "image": "/images/products/chain-block-1t-3m-vital.jpg",
+    "variants": []
+   },
+   {
+    "id": "chain-block-2t-3m-vital",
+    "name": "chain block 2T*3M VITAL",
+    "image": null,
+    "variants": []
+   },
+   {
+    "id": "chain-block-3t-3m-vital",
+    "name": "chain block 3T*3M VITAL",
+    "image": null,
+    "variants": []
+   },
+   {
+    "id": "chain-block-5t-3m-vital",
+    "name": "chain block 5T*3M VITAL",
+    "image": null,
+    "variants": []
+   },
+   {
+    "id": "fast-winch-30-to-35meters-per-minute-1-ton-120m-10mm-wire-rope",
+    "name": "Fast winch （30 to 35meters per minute） 1 TON, 120M 10mm wire rope",
+    "image": "/images/products/fast-winch-30-to-35meters-per-minute-1-ton-120m-10mm-wire-rope.jpg",
+    "variants": []
+   },
+   {
+    "id": "fast-winch-30-to-35meters-per-minute-2-ton-140m-13mm-wire-rope",
+    "name": "Fast winch （30 to 35meters per minute） 2 TON, 140M 13mm wire rope",
+    "image": null,
+    "variants": []
+   },
+   {
+    "id": "fast-winch-30-to-35meters-per-minute-3-ton-200m-15mm-wire-rope",
+    "name": "Fast winch （30 to 35meters per minute） 3 TON, 200M 15mm wire rope",
+    "image": null,
+    "variants": []
+   }
+  ]
+ },
+ {
+  "id": "winches",
+  "label": "Winches & Hoists",
+  "items": [
+   {
+    "id": "chain-block",
+    "name": "Chain block",
+    "image": "/images/products/chain-block.jpg",
+    "variants": [
+     "1T*3M VITAL",
+     "2T*3M VITAL",
+     "2T*3M VITAL",
+     "5T*3M VITAL"
+    ]
+   },
+   {
+    "id": "chain-puller",
+    "name": "CHAIN PULLER",
+    "image": "/images/products/chain-puller.jpg",
+    "variants": [
+     "1.5TX4M,single",
+     "3TX4M,single",
+     "6X4M,Double"
+    ]
+   },
+   {
+    "id": "chain-hoist",
+    "name": "CHAIN HOIST",
+    "image": "/images/products/chain-hoist.jpg",
+    "variants": [
+     "1 Ton x 4M,6.3mm-single",
+     "2 Ton x 4M,7.1mm-single",
+     "3 Ton x 4M,11.2-single",
+     "5 Ton x 4M,11.2-double"
+    ]
+   },
+   {
+    "id": "eiectric-winch-without-break-ratio-16",
+    "name": "EIECTRIC WINCH WITHOUT BREAK RATIO 16",
+    "image": "/images/products/eiectric-winch-without-break-ratio-16.jpg",
+    "variants": [
+     "1.5TON (100M)",
+     "2TON(150M)",
+     "3TON(150M)",
+     "5TON(150M)"
+    ]
+   },
+   {
+    "id": "electric-winch-with-break",
+    "name": "ELECTRIC WINCH WITH BREAK",
+    "image": "/images/products/electric-winch-with-break.jpg",
+    "variants": [
+     "0.75TON RATIO 16",
+     "1.5TON RATIO 16",
+     "2TON",
+     "3TON",
+     "5TON"
+    ]
+   },
+   {
+    "id": "diesel-winch",
+    "name": "DIESEL WINCH",
+    "image": "/images/products/diesel-winch.jpg",
+    "variants": [
+     "1TONE",
+     "2TONE",
+     "3TONE"
+    ]
+   },
+   {
+    "id": "electric-winch-without-break",
+    "name": "ELECTRIC WINCH WITHOUT BREAK",
+    "image": "/images/products/electric-winch-without-break.jpg",
+    "variants": [
+     "5TON (200MTRS)",
+     "JM5T 12TON (700MTRS)"
+    ]
+   },
+   {
+    "id": "winch-with-no-break-ratio-16-30",
+    "name": "WINCH WITH NO BREAK (RATIO 16*30)",
+    "image": "/images/products/winch-with-no-break-ratio-16-30.jpg",
+    "variants": [
+     "1TON",
+     "1.5TON",
+     "2TON",
+     "3TON",
+     "5TON"
+    ]
+   },
+   {
+    "id": "chuchu-bit",
+    "name": "CHUCHU BIT",
+    "image": "/images/products/chuchu-bit.jpg",
+    "variants": [
+     "#5",
+     "7 tips",
+     "6 tips"
+    ]
+   },
+   {
+    "id": "generator-g-boss",
+    "name": "GENERATOR G-BOSS",
+    "image": "/images/products/generator-g-boss.jpg",
+    "variants": [
+     "GB3600D",
+     "GB3800D",
+     "GB6500D",
+     "GB7500D"
+    ]
+   },
+   {
+    "id": "illusion-heater-zimbabwe",
+    "name": "ILLUSION HEATER ZIMBABWE",
+    "image": "/images/products/illusion-heater-zimbabwe.jpg",
+    "variants": [
+     "3000W 380V"
+    ]
+   },
+   {
+    "id": "mechanical-seal",
+    "name": "MECHANICAL SEAL",
+    "image": "/images/products/mechanical-seal.jpg",
+    "variants": []
+   },
+   {
+    "id": "conveyor-fastner-clip",
+    "name": "CONVEYOR FASTNER CLIP",
+    "image": "/images/products/conveyor-fastner-clip.jpg",
+    "variants": []
+   },
+   {
+    "id": "conveyor-fastner-clip-set-record-belt",
+    "name": "CONVEYOR FASTNER CLIP SET RECORD BELT",
+    "image": "/images/products/conveyor-fastner-clip-set-record-belt.jpg",
+    "variants": [
+     "26\"/650MM",
+     "32\"/800MM",
+     "40\"/1000MM"
+    ]
+   },
+   {
+    "id": "alternator-with-engine",
+    "name": "ALTERNATOR WITH ENGINE",
+    "image": "/images/products/alternator-with-engine.jpg",
+    "variants": [
+     "20KVA"
+    ]
+   },
+   {
+    "id": "conveyor-belt",
+    "name": "CONVEYOR BELT",
+    "image": "/images/products/conveyor-belt.jpg",
+    "variants": [
+     "500MMx4x100",
+     "650MMx4x100",
+     "800MMx4x100",
+     "1000MMx4x100"
+    ]
+   },
+   {
+    "id": "conveyor-glue-cold-adhesive",
+    "name": "CONVEYOR GLUE COLD ADHESIVE",
+    "image": "/images/products/conveyor-glue-cold-adhesive.jpg",
+    "variants": [
+     "3000B/SA300"
+    ]
+   },
+   {
+    "id": "electronic-densimeter-300g",
+    "name": "ELECTRONIC DENSIMETER 300G",
+    "image": "/images/products/electronic-densimeter-300g.jpg",
+    "variants": []
+   },
+   {
+    "id": "electronic-densimeter-1000g",
+    "name": "ELECTRONIC DENSIMETER 1000G",
+    "image": "/images/products/electronic-densimeter-1000g.jpg",
+    "variants": []
+   },
+   {
+    "id": "welding-machine-edon",
+    "name": "WELDING MACHINE EDON",
+    "image": "/images/products/welding-machine-edon.jpg",
+    "variants": [
+     "4000S",
+     "6300S",
+     "400S",
+     "CUT-60",
+     "CUT-100"
+    ]
+   },
+   {
+    "id": "electric-reducer-motor-yopa",
+    "name": "ELECTRIC REDUCER MOTOR YOPA",
+    "image": "/images/products/electric-reducer-motor-yopa.jpg",
+    "variants": [
+     "5.5KW 7.5HP 380V 1471RPM",
+     "7.5KW 10HP 380V 1471RPM",
+     "11KW 15HP 380V 1440RPM"
+    ]
+   },
+   {
+    "id": "irrigation-diesel-engine-manuary",
+    "name": "IRRIGATION DIESEL ENGINE MANUARY",
+    "image": "/images/products/irrigation-diesel-engine-manuary.jpg",
+    "variants": [
+     "47KW"
+    ]
+   },
+   {
+    "id": "alternator-yopa",
+    "name": "ALTERNATOR YOPA",
+    "image": "/images/products/alternator-yopa.jpg",
+    "variants": [
+     "12KW-15KVA",
+     "16KW-18.5KVA",
+     "20KW-25KVA",
+     "24KW-30KVA",
+     "30KW-37.5 KVA",
+     "50KW-62KVA"
+    ]
+   },
+   {
+    "id": "ventilation-fan",
+    "name": "VENTILATION FAN",
+    "image": "/images/products/ventilation-fan.jpg",
+    "variants": [
+     "400MM",
+     "500MM",
+     "600MM"
+    ]
+   },
+   {
+    "id": "mining-vibrating-screen-panel",
+    "name": "MINING VIBRATING SCREEN PANEL",
+    "image": "/images/products/mining-vibrating-screen-panel.jpg",
+    "variants": []
+   },
+   {
+    "id": "fiber-glass-granting",
+    "name": "FIBER GLASS GRANTING",
+    "image": "/images/products/fiber-glass-granting.jpg",
+    "variants": []
+   },
+   {
+    "id": "stainless-steel-granting",
+    "name": "STAINLESS STEEL GRANTING",
+    "image": "/images/products/stainless-steel-granting.jpg",
+    "variants": []
+   },
+   {
+    "id": "ss-vibrating-wire-mesh-roll-30m",
+    "name": "SS VIBRATING WIRE MESH(ROLL( 30M)",
+    "image": "/images/products/ss-vibrating-wire-mesh-roll-30m.jpg",
+    "variants": [
+     "#300",
+     "#400",
+     "#600",
+     "#800",
+     "#1000"
+    ]
+   },
+   {
+    "id": "ss-vibrating-wire-mesh-roll-mita",
+    "name": "SS VIBRATING WIRE MESH(ROLL(@MITA)",
+    "image": "/images/products/ss-vibrating-wire-mesh-roll-mita.jpg",
+    "variants": [
+     "#300",
+     "#400",
+     "#600",
+     "#800",
+     "#1000"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "fire",
+  "label": "Fire Fighting",
+  "items": [
+   {
+    "id": "fire-hydrant-stand-doublr-complet",
+    "name": "FIRE HYDRANT STAND DOUBLR COMPLET",
+    "image": "/images/products/fire-hydrant-stand-doublr-complet.jpg",
+    "variants": []
+   },
+   {
+    "id": "fire-figthing-canon",
+    "name": "FIRE FIGTHING CANON",
+    "image": "/images/products/fire-figthing-canon.jpg",
+    "variants": []
+   },
+   {
+    "id": "fire-extinguisher",
+    "name": "FIRE EXTINGUISHER",
+    "image": "/images/products/fire-extinguisher.jpg",
+    "variants": [
+     "CO2 5KG",
+     "5KG POWDER",
+     "50KG PWDER"
+    ]
+   },
+   {
+    "id": "fire-hose-reel",
+    "name": "FIRE HOSE REEL",
+    "image": "/images/products/fire-hose-reel.jpg",
+    "variants": [
+     "1\""
+    ]
+   },
+   {
+    "id": "fire-hose",
+    "name": "FIRE HOSE",
+    "image": "/images/products/fire-hose.jpg",
+    "variants": [
+     "2.5\" 16BAR 30MTR"
+    ]
+   },
+   {
+    "id": "alternator-with-diesel-engine",
+    "name": "ALTERNATOR WITH DIESEL ENGINE",
+    "image": "/images/products/alternator-with-diesel-engine.jpg",
+    "variants": [
+     "15kw",
+     "20kw",
+     "24kw"
+    ]
+   },
+   {
+    "id": "electric-hydrolic-pump-breaker-splitter",
+    "name": "ELECTRIC HYDROLIC PUMP BREAKER(SPLITTER)",
+    "image": "/images/products/electric-hydrolic-pump-breaker-splitter.jpg",
+    "variants": [
+     "380V YGF-4KW"
+    ]
+   },
+   {
+    "id": "precise-filter",
+    "name": "PRECISE FILTER",
+    "image": "/images/products/precise-filter.jpg",
+    "variants": [
+     "1\"",
+     "11/2\"",
+     "2\""
+    ]
+   },
+   {
+    "id": "granding-ball-piece-price",
+    "name": "GRANDING BALL( PIECE PRICE)",
+    "image": "/images/products/granding-ball-piece-price.jpg",
+    "variants": [
+     "50MM",
+     "60MM",
+     "70MM",
+     "80MM",
+     "100MM"
+    ]
+   },
+   {
+    "id": "granding-ball-tone-price",
+    "name": "GRANDING BALL( TONE PRICE)",
+    "image": "/images/products/granding-ball-tone-price.jpg",
+    "variants": [
+     "50MM",
+     "60MM",
+     "70MM",
+     "80MM",
+     "90MM",
+     "100MM"
+    ]
+   },
+   {
+    "id": "hammer-crusher-complete",
+    "name": "HAMMER CRUSHER COMPLETE",
+    "image": "/images/products/hammer-crusher-complete.jpg",
+    "variants": [
+     "600*600",
+     "300*400"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "safety",
+  "label": "Safety Gear",
+  "items": [
+   {
+    "id": "face-mask",
+    "name": "FACE MASK",
+    "image": "/images/products/face-mask.jpg",
+    "variants": [
+     "#8201"
+    ]
+   },
+   {
+    "id": "silcon-full-mask",
+    "name": "SILCON FULL MASK",
+    "image": "/images/products/silcon-full-mask.jpg",
+    "variants": [
+     "#7180"
+    ]
+   },
+   {
+    "id": "forestry-safety-helment",
+    "name": "FORESTRY SAFETY HELMENT",
+    "image": "/images/products/forestry-safety-helment.jpg",
+    "variants": []
+   },
+   {
+    "id": "full-face-piecemask-safetyboy",
+    "name": "FULL FACE PIECEMASK SAFETYBOY",
+    "image": "/images/products/full-face-piecemask-safetyboy.jpg",
+    "variants": [
+     "#6700"
+    ]
+   },
+   {
+    "id": "ear-mulfs-safetyboy",
+    "name": "EAR MULFS SAFETYBOY",
+    "image": "/images/products/ear-mulfs-safetyboy.jpg",
+    "variants": []
+   },
+   {
+    "id": "half-face-piece-mask-safetyboy",
+    "name": "HALF FACE PIECE MASK SAFETYBOY",
+    "image": "/images/products/half-face-piece-mask-safetyboy.jpg",
+    "variants": [
+     "#S6200"
+    ]
+   },
+   {
+    "id": "solar-powered-led-head-lamp",
+    "name": "SOLAR POWERED LED HEAD LAMP",
+    "image": "/images/products/solar-powered-led-head-lamp.jpg",
+    "variants": [
+     "LY-807"
+    ]
+   },
+   {
+    "id": "head-torch",
+    "name": "HEAD TORCH",
+    "image": "/images/products/head-torch.jpg",
+    "variants": [
+     "KM2916"
+    ]
+   },
+   {
+    "id": "torch-ya-helment",
+    "name": "TORCH YA HELMENT",
+    "image": "/images/products/torch-ya-helment.jpg",
+    "variants": [
+     "KM-205"
+    ]
+   },
+   {
+    "id": "ear-plug-safety-boy",
+    "name": "EAR PLUG SAFETY BOY",
+    "image": "/images/products/ear-plug-safety-boy.jpg",
+    "variants": []
+   },
+   {
+    "id": "ear-plug-workman",
+    "name": "EAR PLUG WORKMAN",
+    "image": "/images/products/ear-plug-workman.jpg",
+    "variants": [
+     "WK-EC-1005C"
+    ]
+   },
+   {
+    "id": "torch-small",
+    "name": "TORCH SMALL",
+    "image": "/images/products/torch-small.jpg",
+    "variants": []
+   },
+   {
+    "id": "torch-medium",
+    "name": "TORCH MEDIUM",
+    "image": "/images/products/torch-medium.jpg",
+    "variants": []
+   },
+   {
+    "id": "muwan-big-white",
+    "name": "MUWAN BIG WHITE",
+    "image": "/images/products/muwan-big-white.jpg",
+    "variants": [
+     "#1997"
+    ]
+   },
+   {
+    "id": "miwani-big-black",
+    "name": "MIWANI BIG BLACK",
+    "image": "/images/products/miwani-big-black.jpg",
+    "variants": [
+     "#1996"
+    ]
+   },
+   {
+    "id": "miwani-safety-boy-white-and-red",
+    "name": "MIWANI SAFETY BOY WHITE AND RED",
+    "image": "/images/products/miwani-safety-boy-white-and-red.jpg",
+    "variants": [
+     "#1953"
+    ]
+   },
+   {
+    "id": "miwani-big-rubber-mkanda",
+    "name": "MIWANI BIG RUBBER MKANDA",
+    "image": "/images/products/miwani-big-rubber-mkanda.jpg",
+    "variants": []
+   },
+   {
+    "id": "safety-gloves-rubber",
+    "name": "SAFETY GLOVES RUBBER",
+    "image": "/images/products/safety-gloves-rubber.jpg",
+    "variants": []
+   },
+   {
+    "id": "safetyboy-gloves",
+    "name": "SAFETYBOY GLOVES",
+    "image": "/images/products/safetyboy-gloves.jpg",
+    "variants": [
+     "2131"
+    ]
+   },
+   {
+    "id": "gloves-leather",
+    "name": "GLOVES LEATHER",
+    "image": "/images/products/gloves-leather.jpg",
+    "variants": []
+   },
+   {
+    "id": "gloves-white-blue-upele",
+    "name": "GLOVES WHITE BLUE UPELE",
+    "image": "/images/products/gloves-white-blue-upele.jpg",
+    "variants": []
+   },
+   {
+    "id": "gloves-black-red-10",
+    "name": "GLOVES BLACK-RED 10\"",
+    "image": "/images/products/gloves-black-red-10.jpg",
+    "variants": []
+   },
+   {
+    "id": "gloves-kijivu",
+    "name": "GLOVES KIJIVU",
+    "image": "/images/products/gloves-kijivu.jpg",
+    "variants": []
+   },
+   {
+    "id": "safety-boot-safetyboy",
+    "name": "SAFETY BOOT-SAFETYBOY",
+    "image": "/images/products/safety-boot-safetyboy.jpg",
+    "variants": [
+     "YL-1951"
+    ]
+   },
+   {
+    "id": "safety-boot-delta",
+    "name": "SAFETY BOOT DELTA",
+    "image": "/images/products/safety-boot-delta.jpg",
+    "variants": []
+   },
+   {
+    "id": "safetyboot-rocklander",
+    "name": "SAFETYBOOT ROCKLANDER",
+    "image": "/images/products/safetyboot-rocklander.jpg",
+    "variants": [
+     "A8055"
+    ]
+   },
+   {
+    "id": "safetyboot-safetyboy",
+    "name": "SAFETYBOOT SAFETYBOY",
+    "image": "/images/products/safetyboot-safetyboy.jpg",
+    "variants": [
+     "YL5290",
+     "YL1890",
+     "YL1892",
+     "YL1850"
+    ]
+   },
+   {
+    "id": "safetyboot-pink",
+    "name": "SAFETYBOOT PINK",
+    "image": "/images/products/safetyboot-pink.jpg",
+    "variants": [
+     "FZ-207"
+    ]
+   },
+   {
+    "id": "rain-safety-gum-boots-safety-boy",
+    "name": "RAIN SAFETY GUM BOOTS SAFETY BOY",
+    "image": "/images/products/rain-safety-gum-boots-safety-boy.jpg",
+    "variants": []
+   },
+   {
+    "id": "rain-safety-boot-yopa",
+    "name": "RAIN SAFETY BOOT YOPA",
+    "image": "/images/products/rain-safety-boot-yopa.jpg",
+    "variants": []
+   },
+   {
+    "id": "relective-vest-kawaida",
+    "name": "RELECTIVE VEST KAWAIDA",
+    "image": "/images/products/relective-vest-kawaida.jpg",
+    "variants": [
+     "YL 1401"
+    ]
+   },
+   {
+    "id": "relective-vest-heavyduty",
+    "name": "RELECTIVE VEST HEAVYDUTY",
+    "image": "/images/products/relective-vest-heavyduty.jpg",
+    "variants": []
+   },
+   {
+    "id": "fire-suit",
+    "name": "fire suit",
+    "image": "/images/products/fire-suit.jpg",
+    "variants": []
+   },
+   {
+    "id": "traffic-safety-cone-road-cone",
+    "name": "TRAFFIC SAFETY CONE ROAD CONE",
+    "image": "/images/products/traffic-safety-cone-road-cone.jpg",
+    "variants": []
+   },
+   {
+    "id": "safety-helment-heavyduty",
+    "name": "SAFETY HELMENT HEAVYDUTY",
+    "image": "/images/products/safety-helment-heavyduty.jpg",
+    "variants": []
+   },
+   {
+    "id": "koleo",
+    "name": "KOLEO",
+    "image": "/images/products/koleo.jpg",
+    "variants": []
+   }
+  ]
+ },
+ {
+  "id": "tools",
+  "label": "Tools & Spanners",
+  "items": [
+   {
+    "id": "ring-spanner",
+    "name": "RING SPANNER",
+    "image": "/images/products/ring-spanner.jpg",
+    "variants": []
+   },
+   {
+    "id": "tool-kit-108pcs",
+    "name": "TOOL KIT 108PCS",
+    "image": "/images/products/tool-kit-108pcs.jpg",
+    "variants": [
+     "108PCS"
+    ]
+   },
+   {
+    "id": "187pcs-tool-set-with-combination-wrench",
+    "name": "187PCS TOOL SET WITH COMBINATION WRENCH",
+    "image": "/images/products/187pcs-tool-set-with-combination-wrench.jpg",
+    "variants": [
+     "187PCS"
+    ]
+   },
+   {
+    "id": "pipe-wrench-gozal",
+    "name": "PIPE WRENCH GOZAL",
+    "image": "/images/products/pipe-wrench-gozal.jpg",
+    "variants": [
+     "48\"",
+     "36\"",
+     "24\"",
+     "14\"",
+     "12\""
+    ]
+   },
+   {
+    "id": "screw-driver-set",
+    "name": "SCREW DRIVER SET",
+    "image": "/images/products/screw-driver-set.jpg",
+    "variants": [
+     "G0Z-T00439"
+    ]
+   },
+   {
+    "id": "plier-8",
+    "name": "PLIER 8\"",
+    "image": "/images/products/plier-8.jpg",
+    "variants": [
+     "GOZ-T0051"
+    ]
+   },
+   {
+    "id": "long-plier-8",
+    "name": "LONG PLIER 8\"",
+    "image": "/images/products/long-plier-8.jpg",
+    "variants": [
+     "GOZ.T00204"
+    ]
+   },
+   {
+    "id": "cutting-plier-8",
+    "name": "CUTTING PLIER 8\"",
+    "image": "/images/products/cutting-plier-8.jpg",
+    "variants": [
+     "GOZ.T00514"
+    ]
+   },
+   {
+    "id": "adjustable-spanner",
+    "name": "ADJUSTABLE SPANNER",
+    "image": "/images/products/adjustable-spanner.jpg",
+    "variants": [
+     "GOZ-T00566 10\"",
+     "GOZ-T00566 12\""
+    ]
+   },
+   {
+    "id": "cutter",
+    "name": "CUTTER",
+    "image": "/images/products/cutter.jpg",
+    "variants": [
+     "36\"",
+     "48\""
+    ]
+   },
+   {
+    "id": "chain-spanner",
+    "name": "CHAIN SPANNER",
+    "image": "/images/products/chain-spanner.jpg",
+    "variants": [
+     "24\"",
+     "36\"",
+     "48\""
+    ]
+   },
+   {
+    "id": "voltage-tester",
+    "name": "VOLTAGE TESTER",
+    "image": "/images/products/voltage-tester.jpg",
+    "variants": [
+     "GOZ.1000296"
+    ]
+   },
+   {
+    "id": "laser-level",
+    "name": "LASER LEVEL",
+    "image": "/images/products/laser-level.jpg",
+    "variants": [
+     "GOZ.00A10042"
+    ]
+   },
+   {
+    "id": "jump-starter",
+    "name": "JUMP STARTER",
+    "image": "/images/products/jump-starter.jpg",
+    "variants": []
+   },
+   {
+    "id": "screw-driver-set-44pcs",
+    "name": "SCREW DRIVER SET 44PCS",
+    "image": "/images/products/screw-driver-set-44pcs.jpg",
+    "variants": [
+     "ZC-2527"
+    ]
+   },
+   {
+    "id": "sds-socket-hole-puncher",
+    "name": "SDS Socket Hole Puncher",
+    "image": "/images/products/sds-socket-hole-puncher.jpg",
+    "variants": [
+     "ZC-2964"
+    ]
+   },
+   {
+    "id": "shelf",
+    "name": "SHELF",
+    "image": "/images/products/shelf.jpg",
+    "variants": [
+     "ZC-2548"
+    ]
+   },
+   {
+    "id": "lithium-light-21v-fold",
+    "name": "LITHIUM LIGHT,21V( FOLD)",
+    "image": "/images/products/lithium-light-21v-fold.jpg",
+    "variants": [
+     "ZC-2965"
+    ]
+   },
+   {
+    "id": "green-laser-3d-12-line",
+    "name": "GREEN laser 3D/12 line",
+    "image": "/images/products/green-laser-3d-12-line.jpg",
+    "variants": [
+     "ZC-2547"
+    ]
+   },
+   {
+    "id": "scale-40kg",
+    "name": "SCALE 40kg",
+    "image": "/images/products/scale-40kg.jpg",
+    "variants": [
+     "ZC-2966"
+    ]
+   },
+   {
+    "id": "hole-saw-9pcs",
+    "name": "HOLE SAW 9PCS",
+    "image": "/images/products/hole-saw-9pcs.jpg",
+    "variants": [
+     "ZC-2528"
+    ]
+   },
+   {
+    "id": "wall-cutter",
+    "name": "WALL CUTTER",
+    "image": "/images/products/wall-cutter.jpg",
+    "variants": []
+   },
+   {
+    "id": "toyo-chain-block-vt",
+    "name": "TOYO CHAIN BLOCK VT",
+    "image": "/images/products/toyo-chain-block-vt.jpg",
+    "variants": [
+     "TLVTA01003",
+     "TLVTA02003",
+     "TLVTA03003",
+     "TLVTA05003"
+    ]
+   },
+   {
+    "id": "toyo-lever-block-va",
+    "name": "TOYO LEVER BLOCK VA",
+    "image": "/images/products/toyo-lever-block-va.jpg",
+    "variants": [
+     "TLVAA100015",
+     "TLVAA200015",
+     "TLVAA300015",
+     "TLVAA600015"
+    ]
+   },
+   {
+    "id": "toyo-pipe-trolley",
+    "name": "TOYO PIPE TROLLEY",
+    "image": "/images/products/toyo-pipe-trolley.jpg",
+    "variants": [
+     "TLHPT0025"
+    ]
+   },
+   {
+    "id": "toyo-electric-chain-hoist-with-electric-trolley-380v-50hz-3phases",
+    "name": "TOYO ELECTRIC CHAIN HOIST WITH ELECTRIC TROLLEY, 380V 50HZ 3PHASES",
+    "image": "/images/products/toyo-electric-chain-hoist-with-electric-trolley-380v-50hz-3phases.jpg",
+    "variants": [
+     "TLHHBDT01051S",
+     "TLHHBDT02031S"
+    ]
+   },
+   {
+    "id": "toyo-mini-electric-wire-rope-hoist-with-wireless-remote-control-paw",
+    "name": "TOYO MINI ELECTRIC WIRE ROPE HOIST WITH WIRELESS REMOTE CONTROL PAW",
+    "image": "/images/products/toyo-mini-electric-wire-rope-hoist-with-wireless-remote-control-paw.jpg",
+    "variants": [
+     "TLPAWA0500124",
+     "TLPAWA1000124"
+    ]
+   },
+   {
+    "id": "toyo-crane-scale-ocs-b",
+    "name": "TOYO CRANE SCALE OCS-B",
+    "image": "/images/products/toyo-crane-scale-ocs-b.jpg",
+    "variants": [
+     "TLOCSB0200",
+     "TLOCSB0300",
+     "TLOCSB0500",
+     "TLOCSB1000"
+    ]
+   },
+   {
+    "id": "toyo-hydraulic-scissor-lift-table",
+    "name": "TOYO HYDRAULIC SCISSOR LIFT TABLE",
+    "image": "/images/products/toyo-hydraulic-scissor-lift-table.jpg",
+    "variants": [
+     "TLSLT350150"
+    ]
+   },
+   {
+    "id": "toyo-champion-snatch-pulley-with-hook",
+    "name": "TOYO CHAMPION SNATCH PULLEY WITH HOOK",
+    "image": "/images/products/toyo-champion-snatch-pulley-with-hook.jpg",
+    "variants": [
+     "TLSBH04W04",
+     "TLSBH06W08"
+    ]
+   },
+   {
+    "id": "toyo-champion-snatch-pulley-with-shackle",
+    "name": "TOYO CHAMPION SNATCH PULLEY WITH SHACKLE",
+    "image": "/images/products/toyo-champion-snatch-pulley-with-shackle.jpg",
+    "variants": [
+     "TLSBS04W04",
+     "TLSBS06W08"
+    ]
+   },
+   {
+    "id": "toyo-swivel-hook-with-latch-322a",
+    "name": "TOYO SWIVEL HOOK WITH LATCH 322A",
+    "image": "/images/products/toyo-swivel-hook-with-latch-322a.jpg",
+    "variants": [
+     "TLUSH800100A",
+     "TLUSH800200A",
+     "TLUSH800300A",
+     "TLUSH800450A"
+    ]
+   },
+   {
+    "id": "toyo-cargo-lashing",
+    "name": "TOYO CARGO LASHING",
+    "image": "/images/products/toyo-cargo-lashing.jpg",
+    "variants": [
+     "TLDL030010",
+     "TLDL050010",
+     "TLDL080010"
+    ]
+   },
+   {
+    "id": "toyo-webbing-sling-7-1",
+    "name": "TOYO WEBBING SLING 7:1",
+    "image": "/images/products/toyo-webbing-sling-7-1.jpg",
+    "variants": [
+     "TLEB7030002",
+     "TLEB7030005",
+     "TLEB7050002",
+     "TLEB7050005"
+    ]
+   },
+   {
+    "id": "toyo-electric-pallet-truck-2t-685-1150mm-48v-20ah",
+    "name": "TOYO ELECTRIC PALLET TRUCK 2T 685*1150mm 48V/20Ah",
+    "image": "/images/products/toyo-electric-pallet-truck-2t-685-1150mm-48v-20ah.jpg",
+    "variants": [
+     "TLEPT20685"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "ropes",
+  "label": "Ropes & Rigging",
+  "items": [
+   {
+    "id": "seal-kamba",
+    "name": "SEAL KAMBA",
+    "image": "/images/products/seal-kamba.jpg",
+    "variants": [
+     "10MM( 30KG ROLL)",
+     "12MM",
+     "14MM",
+     "16MM",
+     "18MM",
+     "10MM 1KG",
+     "12MM",
+     "14MM",
+     "16MM",
+     "18MM"
+    ]
+   },
+   {
+    "id": "manilla-kamba",
+    "name": "MANILLA KAMBA",
+    "image": "/images/products/manilla-kamba.jpg",
+    "variants": [
+     "4MM",
+     "6MM",
+     "8MM",
+     "10MM",
+     "12MM",
+     "14MM",
+     "16MM",
+     "18MM",
+     "20MM",
+     "22MM",
+     "24MM",
+     "26MM"
+    ]
+   },
+   {
+    "id": "koromeo-wire",
+    "name": "KOROMEO WIRE",
+    "image": "/images/products/koromeo-wire.jpg",
+    "variants": [
+     "3/4\"X25MTR",
+     "1\"X50MTR",
+     "11/2\"X50MTR",
+     "2\"X50MTR",
+     "3\"X30MTR"
+    ]
+   }
+  ]
+ }
+]

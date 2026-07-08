@@ -1,3 +1,4 @@
+{% load i18n %}
 
 <div class="max-w-7xl mx-auto">
 
@@ -13,12 +14,12 @@
 
       <!-- CUSTOMER SEARCH -->
       <div class="bg-white p-6 rounded-xl shadow relative">
-        <label class="text-xs font-bold text-gray-400 uppercase">Customer</label>
+        <label class="text-xs font-bold text-gray-400 uppercase">{% trans "Customer" %}</label>
 
         <input
           type="text"
           name="customer"
-          placeholder="Search customer..."
+          placeholder="{% trans 'Search customer...' %}"
           class="w-full border-b p-2"
           hx-get="{% url 'search_customers' %}"
           hx-trigger="keyup changed delay:300ms"
@@ -35,7 +36,7 @@
         <input
           type="text"
           name="product"
-          placeholder="Search product..."
+          placeholder="{% trans 'Search product...' %}"
           class="w-full border p-3 rounded"
           hx-get="{% url 'search_products' %}"
           hx-trigger="keyup changed delay:300ms"
@@ -58,7 +59,7 @@
 
       <div class="bg-white p-6 rounded-xl shadow sticky top-6">
 
-        <h3 class="text-xl font-bold mb-4">Summary</h3>
+        <h3 class="text-xl font-bold mb-4">{% trans "Summary" %}</h3>
 
         <div id="total-container">
           {% include "partials/total.html" %}
@@ -70,7 +71,7 @@
           hx-swap="innerHTML"
           class="w-full bg-black text-white py-3 rounded mt-6"
         >
-          Post Transaction
+          {% trans "Post Transaction" %}
         </button>
 
       </div>

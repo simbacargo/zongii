@@ -2,32 +2,40 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
+/* kept so legacy `dark:` utilities stay inert — no .dark class is ever set */
 @custom-variant dark (&:is(.dark *));
 
 /* ------------------------------------------------------------------ *
- *  Zongii V2 themes
- *  Two families via [data-theme]: "deepsea" (default) and "arctic".
- *  Each supports light + dark. Accent vars (--color-gold etc.) are the
- *  brand accent for the active family — components stay theme-agnostic.
+ *  Zongii — "Harbour Blue"
+ *  One crisp, engineered, light-only identity. Company navy leads;
+ *  trade-catalog plates and stamped spec labels carry the structure;
+ *  amber survives only as tiny heritage studs (the V1 pairing).
  * ------------------------------------------------------------------ */
 
 @theme {
-  /* Brand accent + ambient (defaults = Deep Sea Gold; overridden per family) */
-  --color-deepsea: #06121a;
-  --color-surface: #0d1f2a;
-  --color-slate-blue: #3a6ea5;
-  --color-slate-blue-soft: #5b8bc0;
-  --color-gold: #d4af6a;
-  --color-gold-soft: #e8cda0;
-  --color-gold-deep: #b8893d;
-  --color-on-accent: #07131b;
-  --color-foam: #edf4f7;
-  --color-tide: #7e94a0;
+  /* Material palette */
+  --color-paper: #f6f8fa; /* page ground */
+  --color-mist: #e8eef5; /* alternating section surface */
+  --color-ink: #0c1a2a; /* blue-black text */
+  --color-steel: #566573; /* muted text */
+  --color-brand: #175a8c; /* company blue — rules, marks, seals */
+  --color-brand-soft: #6fa8d6;
+  --color-brand-deep: #0d2b49; /* navy — footer, primary buttons */
+  --color-amber: #d9a441; /* heritage stud — use in points, never in planes */
+
+  /* Legacy accent aliases (three.js scene + shared components read these) */
+  --color-gold: #2e86c9;
+  --color-gold-soft: #6fa8d6;
+  --color-gold-deep: #175a8c;
+  --color-on-accent: #ffffff;
+  --color-slate-blue: #175a8c;
+  --color-slate-blue-soft: #6fa8d6;
 
   /* Fonts (wired from next/font in lib/fonts.ts) */
   --font-sans: var(--font-sans);
   --font-display: var(--font-display);
-  --font-serif: var(--font-serif);
+  --font-serif: var(--font-sans);
+  --font-mono: var(--font-mono);
   --font-heading: var(--font-display);
 
   /* Motion */
@@ -63,127 +71,31 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-/* ================================================================== *
- *  DEEP SEA GOLD (default family)
- * ================================================================== */
-
-/* light */
 :root {
-  --background: #f3f7f9;
-  --foreground: #0a1822;
+  --background: #f6f8fa;
+  --foreground: #0c1a2a;
   --card: #ffffff;
-  --card-foreground: #0a1822;
+  --card-foreground: #0c1a2a;
   --popover: #ffffff;
-  --popover-foreground: #0a1822;
-  --primary: #2f5c8a;
-  --primary-foreground: #f5fafd;
-  --secondary: #e6eef3;
-  --secondary-foreground: #0d1f2a;
-  --muted: #e6eef3;
-  --muted-foreground: #51636e;
-  --accent: #b8893d;
+  --popover-foreground: #0c1a2a;
+  --primary: #0d2b49;
+  --primary-foreground: #f6f8fa;
+  --secondary: #e8eef5;
+  --secondary-foreground: #0c1a2a;
+  --muted: #e8eef5;
+  --muted-foreground: #566573;
+  --accent: #175a8c;
   --accent-foreground: #ffffff;
-  --destructive: #c0392b;
-  --border: #d3e0e8;
-  --input: #d3e0e8;
-  --ring: #b8893d;
-  --radius: 0.75rem;
+  --destructive: #b03a2e;
+  --border: #dbe3ec;
+  --input: #dbe3ec;
+  --ring: #175a8c;
+  --radius: 0.375rem;
 
-  --glass-bg: rgba(255, 255, 255, 0.6);
-  --glass-border: rgba(13, 31, 42, 0.08);
-  --glow-gold: rgba(184, 137, 61, 0.25);
-}
-
-/* dark (default first paint) */
-.dark {
-  --background: #06121a;
-  --foreground: #edf4f7;
-  --card: #0d1f2a;
-  --card-foreground: #edf4f7;
-  --popover: #0d1f2a;
-  --popover-foreground: #edf4f7;
-  --primary: #3a6ea5;
-  --primary-foreground: #f1f7fb;
-  --secondary: #122735;
-  --secondary-foreground: #edf4f7;
-  --muted: #122735;
-  --muted-foreground: #7e94a0;
-  --accent: #d4af6a;
-  --accent-foreground: #07131b;
-  --destructive: #ef6b5e;
-  --border: rgba(237, 244, 247, 0.1);
-  --input: rgba(237, 244, 247, 0.14);
-  --ring: #d4af6a;
-
-  --glass-bg: rgba(13, 31, 42, 0.55);
-  --glass-border: rgba(237, 244, 247, 0.1);
-  --glow-gold: rgba(212, 175, 106, 0.35);
-}
-
-/* ================================================================== *
- *  ARCTIC MINIMAL (alternate family — light-first, electric indigo)
- * ================================================================== */
-
-/* accent family vars (both modes) */
-[data-theme="arctic"] {
-  --color-slate-blue: #4f46e5;
-  --color-slate-blue-soft: #6d68ee;
-  --color-gold: #4f46e5;
-  --color-gold-soft: #6366f1;
-  --color-gold-deep: #4338ca;
-  --color-on-accent: #ffffff;
-}
-
-/* arctic light */
-[data-theme="arctic"]:not(.dark) {
-  --background: #fbfcfd;
-  --foreground: #0b1220;
-  --card: #ffffff;
-  --card-foreground: #0b1220;
-  --popover: #ffffff;
-  --popover-foreground: #0b1220;
-  --primary: #1c2433;
-  --primary-foreground: #fbfcfd;
-  --secondary: #eef1f5;
-  --secondary-foreground: #0b1220;
-  --muted: #eef1f5;
-  --muted-foreground: #6b7686;
-  --accent: #4f46e5;
-  --accent-foreground: #ffffff;
-  --destructive: #dc2626;
-  --border: #e3e7ee;
-  --input: #e3e7ee;
-  --ring: #4f46e5;
-
-  --glass-bg: rgba(255, 255, 255, 0.7);
-  --glass-border: rgba(11, 18, 32, 0.07);
-  --glow-gold: rgba(79, 70, 229, 0.16);
-}
-
-/* arctic dark */
-[data-theme="arctic"].dark {
-  --background: #0b0f1a;
-  --foreground: #eef1f7;
-  --card: #121826;
-  --card-foreground: #eef1f7;
-  --popover: #121826;
-  --popover-foreground: #eef1f7;
-  --primary: #6366f1;
-  --primary-foreground: #0b0f1a;
-  --secondary: #1a2030;
-  --secondary-foreground: #eef1f7;
-  --muted: #1a2030;
-  --muted-foreground: #8a93a6;
-  --accent: #6366f1;
-  --accent-foreground: #ffffff;
-  --destructive: #f87171;
-  --border: rgba(238, 241, 247, 0.1);
-  --input: rgba(238, 241, 247, 0.14);
-  --ring: #6366f1;
-
-  --glass-bg: rgba(18, 24, 38, 0.6);
-  --glass-border: rgba(238, 241, 247, 0.1);
-  --glow-gold: rgba(99, 102, 241, 0.3);
+  /* Legacy surface aliases (former glass system) — now cool paper */
+  --glass-bg: #ffffff;
+  --glass-border: #dbe3ec;
+  --glow-gold: rgba(23, 90, 140, 0.15);
 }
 
 @layer base {
@@ -196,50 +108,91 @@
   }
   body {
     @apply bg-background text-foreground antialiased;
-    font-feature-settings: "ss01", "cv01";
   }
-  h1, h2, h3, h4 {
+  h1,
+  h2,
+  h3,
+  h4 {
     font-family: var(--font-display);
-    letter-spacing: -0.02em;
+    font-weight: 600;
+    letter-spacing: -0.015em;
   }
   ::selection {
-    background: var(--color-gold);
-    color: var(--color-on-accent);
+    background: var(--color-brand);
+    color: #ffffff;
   }
 }
 
 @layer utilities {
-  .font-display { font-family: var(--font-display); }
-  .font-serif { font-family: var(--font-serif); }
-
-  /* Frosted glass panel */
-  .glass {
-    background: var(--glass-bg);
-    backdrop-filter: blur(16px) saturate(140%);
-    -webkit-backdrop-filter: blur(16px) saturate(140%);
-    border: 1px solid var(--glass-border);
+  .font-display {
+    font-family: var(--font-display);
   }
+  /* serif standfirsts retired — the utility stays valid, mapped to the sans */
+  .font-serif {
+    font-family: var(--font-sans);
+  }
+  .font-mono {
+    font-family: var(--font-mono);
+  }
+
+  /* Stamped spec label — like markings on a valve body */
+  .stamp {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-brand);
+  }
+  .stamp-ink {
+    color: var(--color-steel);
+  }
+
+  /* Accent word inside a display headline — brand blue, no italic (Clash has none) */
+  .display-accent em,
+  em.display-accent {
+    font-style: normal;
+    color: var(--color-brand);
+  }
+
+  /* Catalog plate — white card with cool hairline border */
+  .plate {
+    background: var(--card);
+    border: 1px solid var(--border);
+    box-shadow: 0 1px 2px rgba(12, 26, 42, 0.04), 0 12px 32px -20px rgba(12, 26, 42, 0.16);
+  }
+
+  /* Legacy `.glass` callers get the same paper treatment */
+  .glass,
   .glass-strong {
-    background: color-mix(in srgb, var(--card) 80%, transparent);
-    backdrop-filter: blur(24px) saturate(160%);
-    -webkit-backdrop-filter: blur(24px) saturate(160%);
-    border: 1px solid var(--glass-border);
+    background: var(--card);
+    border: 1px solid var(--border);
+    box-shadow: 0 1px 2px rgba(12, 26, 42, 0.04), 0 12px 32px -20px rgba(12, 26, 42, 0.16);
   }
 
-  /* Accent text gradient (re-themes with the active family) */
+  /* Brand hairline rule */
+  .rule-brand {
+    height: 1px;
+    background: linear-gradient(
+      to right,
+      var(--color-brand) 0%,
+      color-mix(in srgb, var(--color-brand) 35%, transparent) 100%
+    );
+  }
+
   .text-gradient-gold {
     background: linear-gradient(
       120deg,
-      var(--color-gold-soft) 0%,
-      var(--color-gold) 45%,
-      var(--color-gold-deep) 100%
+      var(--color-brand-soft) 0%,
+      var(--color-brand) 45%,
+      var(--color-brand-deep) 100%
     );
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
   .text-gradient-foam {
-    background: linear-gradient(120deg, var(--foreground) 0%, var(--color-slate-blue-soft) 100%);
+    background: linear-gradient(120deg, var(--foreground) 0%, var(--color-brand) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -249,28 +202,33 @@
     box-shadow: 0 0 0 1px var(--glow-gold), 0 12px 48px -12px var(--glow-gold);
   }
 
-  /* Ambient mesh background (re-themes via accent vars) */
+  /* Ambient page wash — barely-there cool light from above */
   .bg-mesh {
     background-color: var(--background);
     background-image:
-      radial-gradient(50rem 40rem at 12% -10%, color-mix(in srgb, var(--color-slate-blue) 22%, transparent), transparent 60%),
-      radial-gradient(45rem 35rem at 110% 10%, color-mix(in srgb, var(--color-gold) 14%, transparent), transparent 55%),
-      radial-gradient(40rem 40rem at 50% 120%, color-mix(in srgb, var(--color-slate-blue) 16%, transparent), transparent 60%);
+      radial-gradient(60rem 30rem at 50% -8%, color-mix(in srgb, var(--color-brand) 6%, transparent), transparent 60%),
+      linear-gradient(to bottom, color-mix(in srgb, #ffffff 45%, transparent), transparent 30rem);
   }
 
-  /* Subtle dot grid */
+  /* Fine ruled-paper grid */
   .bg-grid {
-    background-image: radial-gradient(circle at 1px 1px, var(--glass-border) 1px, transparent 0);
+    background-image: radial-gradient(circle at 1px 1px, var(--border) 1px, transparent 0);
     background-size: 28px 28px;
   }
 
-  .reveal-init { opacity: 0; }
+  .reveal-init {
+    opacity: 0;
+  }
 }
 
 /* Infinite marquee (CSS — no JS) */
 @keyframes marquee {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
 }
 .animate-marquee {
   animation: marquee var(--marquee-duration, 32s) linear infinite;
@@ -281,6 +239,19 @@
 }
 .group\/marquee:hover .animate-marquee {
   animation-play-state: paused;
+}
+
+/* Slow-turning maker's mark */
+@keyframes seal-turn {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.animate-seal {
+  animation: seal-turn 48s linear infinite;
 }
 
 /* Respect reduced-motion preferences */
@@ -295,14 +266,19 @@
   }
 }
 
-/* Custom scrollbar (dark, theme-aware) */
-.dark ::-webkit-scrollbar { width: 10px; height: 10px; }
-.dark ::-webkit-scrollbar-track { background: var(--background); }
-.dark ::-webkit-scrollbar-thumb {
-  background: color-mix(in srgb, var(--muted-foreground) 45%, transparent);
+/* Custom scrollbar — warm */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--color-steel) 40%, transparent);
   border-radius: 8px;
   border: 2px solid var(--background);
 }
-.dark ::-webkit-scrollbar-thumb:hover {
-  background: color-mix(in srgb, var(--muted-foreground) 70%, transparent);
+::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--color-steel) 65%, transparent);
 }

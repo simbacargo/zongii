@@ -1,3 +1,4 @@
+{% load i18n %}
 {% load humanize %}<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -74,6 +75,32 @@
   .info-label { color: #555; font-weight: 600; white-space: nowrap; padding-right: 8px; }
   .info-value { font-weight: 400; }
   .info-value.bold { font-weight: 700; }
+
+  /* ── Associate brands strip ── */
+  .brands-strip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 18px;
+    padding: 9px 0;
+    border-bottom: 1px solid #aaa;
+  }
+  .brands-label {
+    font-size: 8.5px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: #6b7280;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 2px;
+  }
+  .brands-strip img {
+    height: 72px;
+    width: auto;
+    object-fit: contain;
+  }
 
   /* ── Items table ── */
   .items-table {
@@ -174,7 +201,7 @@
   <!-- Header -->
   <div class="doc-header">
     <div class="logo-box">
-      <img src="/assets/Logo.png" alt="Zongii Logo">
+      <img src="/assets/Logo.png" alt="{% trans 'Zongii Logo' %}">
     </div>
     <div class="doc-title-block">
       <div class="company-name">ZONGII MINING COMPANY LTD</div>
@@ -189,18 +216,18 @@
     <div class="info-col-left">
       <table class="info-table">
         <tr>
-          <td class="info-label">To:</td>
+          <td class="info-label">{% trans "To:" %}</td>
           <td class="info-value bold">{{ doc.customer.name }}</td>
         </tr>
         {% if doc.customer.phone %}
         <tr>
-          <td class="info-label">Tel:</td>
+          <td class="info-label">{% trans "Tel:" %}</td>
           <td class="info-value">{{ doc.customer.phone }}</td>
         </tr>
         {% endif %}
         {% if doc.customer.email %}
         <tr>
-          <td class="info-label">Email:</td>
+          <td class="info-label">{% trans "Email:" %}</td>
           <td class="info-value">{{ doc.customer.email }}</td>
         </tr>
         {% endif %}
@@ -211,8 +238,8 @@
         </tr>
         {% endif %}
         <tr>
-          <td class="info-label">Address:</td>
-          <td class="info-value">Mwanza / Dar es Salaam, Tanzania</td>
+          <td class="info-label">{% trans "Address:" %}</td>
+          <td class="info-value">{% trans "Mwanza / Dar es Salaam, Tanzania" %}</td>
         </tr>
       </table>
     </div>
@@ -223,7 +250,7 @@
           <td class="info-value bold">{{ doc.number }}</td>
         </tr>
         <tr>
-          <td class="info-label">Date:</td>
+          <td class="info-label">{% trans "Date:" %}</td>
           <td class="info-value">{{ doc.issue_date|date:"M jS, Y" }}</td>
         </tr>
         {% if doc.due_date %}
@@ -234,7 +261,7 @@
         {% endif %}
         {% if doc.created_by %}
         <tr>
-          <td class="info-label">Prepared by:</td>
+          <td class="info-label">{% trans "Prepared by:" %}</td>
           <td class="info-value">{{ doc.created_by.username }}</td>
         </tr>
         {% endif %}
@@ -242,17 +269,27 @@
     </div>
   </div>
 
+  <!-- Associate brands -->
+  {% if brand_logos %}
+  <div class="brands-strip">
+    <div class="brands-label">{% trans "Authorized Dealer &amp; Associate Brands" %}</div>
+    {% for logo in brand_logos %}
+    <img src="{{ logo }}" alt="{% trans 'Associate brand' %}">
+    {% endfor %}
+  </div>
+  {% endif %}
+
   <!-- Items table -->
   <table class="items-table">
     <thead>
       <tr>
-        <th style="width:28px;">No.</th>
-        <th class="left">Description of Goods</th>
-        <th style="width:62px;">Picture</th>
-        <th style="width:38px;">Qty</th>
-        <th style="width:44px;">Unit</th>
-        <th class="right" style="width:88px;">Unit Price<br>(TZS)</th>
-        <th class="right" style="width:88px;">Total<br>(TZS)</th>
+        <th style="width:28px;">{% trans "No." %}</th>
+        <th class="left">{% trans "Description of Goods" %}</th>
+        <th style="width:62px;">{% trans "Picture" %}</th>
+        <th style="width:38px;">{% trans "Qty" %}</th>
+        <th style="width:44px;">{% trans "Unit" %}</th>
+        <th class="right" style="width:88px;">{% trans "Unit Price" %}<br>(TZS)</th>
+        <th class="right" style="width:88px;">{% trans "Total" %}<br>(TZS)</th>
       </tr>
     </thead>
     <tbody>
@@ -312,7 +349,7 @@
   {% endif %}
   {% if doc.terms %}
   <div style="margin-top:{% if doc.notes %}4px{% else %}10px{% endif %};">
-    <div class="section-title">TERMS &amp; CONDITIONS:</div>
+    <div class="section-title">{% trans "TERMS &amp; CONDITIONS:" %}</div>
     <div class="section-body">{{ doc.terms }}</div>
   </div>
   {% endif %}
@@ -322,8 +359,8 @@
     <div class="section-title">PAYMENT DETAILS</div>
     <table class="payment-table">
       <tr><td>BENEFICIARY: ZONGII MINING COMPANY LTD</td></tr>
-      <tr><td>BANK: CRDB Bank / NMB Bank – Tanzania</td></tr>
-      <tr><td>MOBILE MONEY: M-Pesa / Airtel Money – +255 786 421 150</td></tr>
+      <tr><td>{% trans "BANK: CRDB Bank / NMB Bank – Tanzania" %}</td></tr>
+      <tr><td>{% trans "MOBILE MONEY: M-Pesa / Airtel Money – +255 786 421 150" %}</td></tr>
     </table>
   </div>
 
@@ -331,26 +368,26 @@
   <div class="sig-grid">
     <div class="sig-block">
       <div class="sig-party">Buyer: {{ doc.customer.name }}</div>
-      <div class="sig-label">Signature &amp; Stamp:</div>
+      <div class="sig-label">{% trans "Signature &amp; Stamp:" %}</div>
       <div class="sig-line">Signing Date: {{ doc.issue_date|date:"Y-m-d" }}</div>
     </div>
     <div style="text-align:center;">
       {% if stamp_data_uri %}
-      <img src="{{ stamp_data_uri }}" alt="Company Stamp" style="width:90px; height:90px; object-fit:contain; mix-blend-mode:multiply;">
+      <img src="{{ stamp_data_uri }}" alt="{% trans 'Company Stamp' %}" style="width:90px; height:90px; object-fit:contain; mix-blend-mode:multiply;">
       {% else %}
-      <div class="stamp-circle">Company<br>Stamp</div>
+      <div class="stamp-circle">{% trans "Company" %}<br>{% trans "Stamp" %}</div>
       {% endif %}
     </div>
     <div class="sig-block sig-right">
-      <div class="sig-party">Seller: ZONGII MINING COMPANY Ltd</div>
-      <div class="sig-label">Signature &amp; Stamp:</div>
+      <div class="sig-party">{% trans "Seller: ZONGII MINING COMPANY Ltd" %}</div>
+      <div class="sig-label">{% trans "Signature &amp; Stamp:" %}</div>
       <div class="sig-line">Signing Date: {{ doc.issue_date|date:"Y-m-d" }}</div>
     </div>
   </div>
 
   <!-- Footer -->
   <div class="doc-footer">
-    Mwanza / Dar es Salaam, Tanzania &nbsp;|&nbsp; info@zongii.co.tz &nbsp;|&nbsp; +255 786 421 150
+    {% trans "Mwanza / Dar es Salaam, Tanzania &nbsp;|&nbsp; info@zongii.co.tz &nbsp;|&nbsp; +255 786 421 150" %}
   </div>
 
 </div>

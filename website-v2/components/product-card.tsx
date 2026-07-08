@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { ImageOff } from "lucide-react";
 import { motion } from "motion/react";
+import { Link } from "@/i18n/navigation";
 import type { Product } from "@/lib/content";
 import type { Locale } from "@/lib/catalog";
 import { categoryLabel } from "@/lib/catalog";
@@ -28,8 +29,11 @@ export function ProductCard({
       transition={{ duration: duration.fast, ease: ease.out }}
     >
       <TiltCard className="h-full">
-        <div className="group glass flex h-full flex-col overflow-hidden rounded-2xl transition-shadow duration-300 hover:shadow-[0_24px_60px_-24px_var(--glow-gold)]">
-          <div className="relative aspect-[4/3] overflow-hidden bg-secondary/40">
+        <Link
+          href={`/products/${product.id}`}
+          className="plate group flex h-full flex-col overflow-hidden rounded-[4px] p-2 transition-colors duration-300 hover:border-brand/50"
+        >
+          <div className="relative aspect-[4/3] shrink-0 overflow-hidden rounded-[2px] bg-mist">
             {imgError ? (
               <div className="flex h-full w-full flex-col items-center justify-center gap-2 text-muted-foreground/60">
                 <ImageOff className="size-8" />
@@ -44,31 +48,27 @@ export function ProductCard({
                 fill
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 380px"
                 onError={() => setImgError(true)}
-                className="object-cover transition-transform duration-700 group-hover:scale-110"
+                className="object-cover transition-transform duration-700 group-hover:scale-105"
               />
             )}
-            <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/50 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
-            <div className="absolute left-3 top-3 flex flex-wrap gap-1.5">
-              {product.categories.slice(0, 2).map((cat) => (
-                <span
-                  key={cat}
-                  className="rounded-full bg-background/70 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-foreground/80 backdrop-blur"
-                >
-                  {categoryLabel(locale, cat)}
-                </span>
-              ))}
-            </div>
+            <div className="absolute inset-x-0 bottom-0 h-0.5 origin-left scale-x-0 bg-brand transition-transform duration-500 group-hover:scale-x-100" />
           </div>
 
-          <div className="flex flex-1 flex-col p-5">
-            <h3 className="font-display text-lg font-semibold text-foreground transition-colors group-hover:text-gold">
+          <div className="flex flex-1 flex-col p-4 pt-4">
+            <p className="stamp stamp-ink text-[9px]">
+              {product.categories
+                .slice(0, 2)
+                .map((cat) => categoryLabel(locale, cat))
+                .join(" · ")}
+            </p>
+            <h3 className="mt-2.5 font-display text-xl text-foreground transition-colors group-hover:text-brand-deep">
               {product.name}
             </h3>
             <p className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground">
               {product.description}
             </p>
           </div>
-        </div>
+        </Link>
       </TiltCard>
     </motion.article>
   );

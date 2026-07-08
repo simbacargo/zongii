@@ -1,3 +1,4 @@
+{% load i18n %}
 {% block content %}
 <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
     
@@ -32,79 +33,85 @@
         
         {# Image Section #}
         <div class="md:col-span-2 flex flex-col items-center gap-4">
-            <label class="text-xs font-bold text-gray-500 uppercase self-start">Product Photo</label>
+            <label class="text-xs font-bold text-gray-500 uppercase self-start">{% trans "Product Photo" %}</label>
             <div class="relative group w-48 h-48 bg-gray-100 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden">
                 <img id="image-preview" 
                      src="{% if product.product_photo %}{{ product.product_photo.url }}{% else %}https://placehold.co/400x400?text=No+Image{% endif %}" 
                      class="object-cover w-full h-full">
                 <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <span class="text-white text-xs font-medium">Change Photo</span>
+                    <span class="text-white text-xs font-medium">{% trans "Change Photo" %}</span>
                 </div>
                 <input type="file" name="product_photo" accept="image/*" onchange="previewImage(this)"
                        class="absolute inset-0 opacity-0 cursor-pointer">
             </div>
-            <p class="text-[10px] text-gray-400 text-center">Click image to upload. PNG, JPG up to 5MB.</p>
+            <p class="text-[10px] text-gray-400 text-center">{% trans "Click image to upload. PNG, JPG up to 5MB." %}</p>
         </div>
 
         {# Details Section #}
         <div class="md:col-span-4 grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="md:col-span-2">
-                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Product Name</label>
+                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{% trans "Product Name" %}</label>
                 <input type="text" name="name" value="{{ product.name }}" required
-                       class="w-full border-gray-300 border rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 outline-none transition">
+                       class="w-full border-gray-300 border rounded-lg p-2.5 focus:ring-2 focus:ring-amber-500 outline-none transition">
             </div>
 
             <div>
-                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Brand</label>
+                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{% trans "Brand" %}</label>
                 <input type="text" name="brand" value="{{ product.brand }}"
-                       class="w-full border-gray-300 border rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 outline-none transition">
+                       class="w-full border-gray-300 border rounded-lg p-2.5 focus:ring-2 focus:ring-amber-500 outline-none transition">
             </div>
 
             <div>
-                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Part Number</label>
+                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{% trans "Part Number" %}</label>
                 <input type="text" name="part_number" value="{{ product.part_number }}"
-                       class="w-full border-gray-300 border rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 outline-none transition">
+                       class="w-full border-gray-300 border rounded-lg p-2.5 focus:ring-2 focus:ring-amber-500 outline-none transition">
             </div>
 
             <div class="md:col-span-2">
-                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Description</label>
+                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{% trans "Description" %}</label>
                 <textarea name="description" rows="2"
-                          class="w-full border-gray-300 border rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 outline-none transition">{{ product.description }}</textarea>
+                          class="w-full border-gray-300 border rounded-lg p-2.5 focus:ring-2 focus:ring-amber-500 outline-none transition">{{ product.description }}</textarea>
             </div>
         </div>
 
         {# Inventory & Pricing Section #}
-        <div class="md:col-span-6 grid grid-cols-1 md:grid-cols-4 gap-4 p-4 bg-indigo-50 rounded-xl">
+        <div class="md:col-span-6 grid grid-cols-1 md:grid-cols-5 gap-4 p-4 bg-amber-50 rounded-xl">
             <div>
-                <label class="block text-xs font-bold text-indigo-600 uppercase mb-1">Stock on Hand</label>
+                <label class="block text-xs font-bold text-amber-600 uppercase mb-1">{% trans "Stock on Hand" %}</label>
                 <input type="number" name="quantity_at_hand" value="{{ product.quantity_at_hand|default:0 }}"
-                       class="w-full border-indigo-200 border rounded-lg p-2.5 bg-white font-bold text-indigo-900 focus:ring-2 focus:ring-indigo-500 outline-none transition">
+                       class="w-full border-amber-200 border rounded-lg p-2.5 bg-white font-bold text-amber-900 focus:ring-2 focus:ring-amber-500 outline-none transition">
             </div>
             <div>
-                <label class="block text-xs font-bold text-indigo-600 uppercase mb-1">Buying Price <span class="font-normal normal-case text-indigo-400">(optional)</span></label>
+                <label class="block text-xs font-bold text-amber-600 uppercase mb-1">{% trans "Stock (Tons)" %} <span class="font-normal normal-case text-amber-400">{% trans "(optional)" %}</span></label>
+                <input type="number" step="0.01" name="quantity_tons" value="{{ product.quantity_tons|default_if_none:'' }}"
+                       placeholder="—"
+                       class="w-full border-amber-200 border rounded-lg p-2.5 bg-white font-bold text-amber-900 focus:ring-2 focus:ring-amber-500 outline-none transition">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-amber-600 uppercase mb-1">{% trans "Buying Price" %} <span class="font-normal normal-case text-amber-400">{% trans "(optional)" %}</span></label>
                 <div class="relative">
-                    <span class="absolute left-3 top-2.5 text-indigo-400">TZS</span>
+                    <span class="absolute left-3 top-2.5 text-amber-400">TZS</span>
                     <input type="number" step="0.01" name="buying_price" value="{{ product.buying_price }}"
                            placeholder="—"
-                           class="w-full border-indigo-200 border rounded-lg p-2.5 pl-12 bg-white focus:ring-2 focus:ring-indigo-500 outline-none transition">
+                           class="w-full border-amber-200 border rounded-lg p-2.5 pl-12 bg-white focus:ring-2 focus:ring-amber-500 outline-none transition">
                 </div>
             </div>
             <div>
-                <label class="block text-xs font-bold text-indigo-600 uppercase mb-1">Min Selling Price</label>
+                <label class="block text-xs font-bold text-amber-600 uppercase mb-1">{% trans "Min Selling Price" %}</label>
                 <div class="relative">
-                    <span class="absolute left-3 top-2.5 text-indigo-400">TZS</span>
+                    <span class="absolute left-3 top-2.5 text-amber-400">TZS</span>
                     <input type="number" step="0.01" name="min_price" value="{{ product.min_price }}"
                            placeholder="—"
-                           class="w-full border-indigo-200 border rounded-lg p-2.5 pl-12 bg-white focus:ring-2 focus:ring-indigo-500 outline-none transition">
+                           class="w-full border-amber-200 border rounded-lg p-2.5 pl-12 bg-white focus:ring-2 focus:ring-amber-500 outline-none transition">
                 </div>
             </div>
             <div>
-                <label class="block text-xs font-bold text-indigo-600 uppercase mb-1">Max Selling Price</label>
+                <label class="block text-xs font-bold text-amber-600 uppercase mb-1">{% trans "Max Selling Price" %}</label>
                 <div class="relative">
-                    <span class="absolute left-3 top-2.5 text-indigo-400">TZS</span>
+                    <span class="absolute left-3 top-2.5 text-amber-400">TZS</span>
                     <input type="number" step="0.01" name="max_price" value="{{ product.max_price }}"
                            placeholder="—"
-                           class="w-full border-indigo-200 border rounded-lg p-2.5 pl-12 bg-white focus:ring-2 focus:ring-indigo-500 outline-none transition">
+                           class="w-full border-amber-200 border rounded-lg p-2.5 pl-12 bg-white focus:ring-2 focus:ring-amber-500 outline-none transition">
                 </div>
             </div>
         </div>
@@ -114,17 +121,17 @@
     {# Footer Actions #}
     <div class="mt-8 pt-6 border-t flex justify-end items-center gap-4">
         <span id="form-spinner" class="htmx-indicator">
-            <svg class="animate-spin h-5 w-5 text-indigo-600" fill="none" viewBox="0 0 24 24">
+            <svg class="animate-spin h-5 w-5 text-amber-600" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
         </span>
         
         <button type="button" hx-get="/products/" hx-target="#main-content" class="text-sm font-semibold text-gray-500 hover:text-gray-700">
-            Cancel
+            {% trans "Cancel" %}
         </button>
         
-        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-10 py-3 rounded-xl font-bold shadow-lg shadow-indigo-200 transition-all active:scale-95">
+        <button type="submit" class="bg-amber-600 hover:bg-amber-700 text-white px-10 py-3 rounded-xl font-bold shadow-lg shadow-amber-200 transition-all active:scale-95">
             {% if product.pk %}Save Changes{% else %}Create Product{% endif %}
         </button>
     </div>
@@ -154,7 +161,7 @@
     
     toast.className = `
       flex items-center p-4 w-full max-w-xs text-white rounded-lg shadow-2xl transition-all duration-500 transform translate-x-full pointer-events-auto
-      ${isSuccess ? 'bg-emerald-600' : 'bg-red-600'}
+      ${isSuccess ? 'bg-green-600' : 'bg-red-600'}
     `;
     
     toast.innerHTML = `

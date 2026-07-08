@@ -1,3 +1,4 @@
+{% load i18n %}
 <tr id="item-row-{{ index }}" class="item-row border-b border-gray-50 hover:bg-amber-50/30 transition-colors">
 
     <!-- Photo -->
@@ -16,7 +17,7 @@
                 <input type="text"
                        name="description[]"
                        id="item-desc-{{ index }}"
-                       placeholder="Type to search or browse…"
+                       placeholder="{% trans 'Type to search or browse…' %}"
                        autocomplete="off"
                        hx-get="{% url 'document_product_search' %}"
                        hx-vals='js:{"q": event.target.value, "index": "{{ index }}"}'
@@ -26,7 +27,7 @@
                        onblur="setTimeout(()=>{ const r=document.getElementById('item-results-{{ index }}'); if(r)r.innerHTML=''; }, 200)"
                        class="flex-1 border-2 border-gray-100 focus:border-amber-400 rounded-xl px-3 py-2.5 text-sm outline-none transition bg-gray-50 focus:bg-white">
                 <button type="button"
-                        title="Browse products"
+                        title="{% trans 'Browse products' %}"
                         hx-get="{% url 'document_product_search' %}?q=&index={{ index }}"
                         hx-target="#item-results-{{ index }}"
                         hx-swap="innerHTML"

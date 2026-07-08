@@ -1,3 +1,4 @@
+{% load i18n %}
 {% for customer in page_obj %}
 <tr>
   <td><strong>{{ customer.name }}</strong></td>
@@ -13,15 +14,15 @@
   <td>
     <div class="flex gap-1">
       <button hx-get="{% url 'customer_detail' customer.pk %}" hx-target="#main-content"
-              class="px-3 py-1.5 text-xs font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-colors">View</button>
+              class="px-3 py-1.5 text-xs font-bold text-amber-600 bg-amber-50 hover:bg-amber-100 rounded-lg transition-colors">{% trans "View" %}</button>
       <button hx-get="{% url 'customer_update' customer.pk %}" hx-target="#main-content"
-              class="px-3 py-1.5 text-xs font-bold text-gray-600 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">Edit</button>
+              class="px-3 py-1.5 text-xs font-bold text-gray-600 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">{% trans "Edit" %}</button>
     </div>
   </td>
 </tr>
 {% empty %}
 <tr>
-  <td colspan="5" style="text-align:center;color:var(--pico-muted-color);padding:2rem">No customers found.</td>
+  <td colspan="5" style="text-align:center;color:var(--pico-muted-color);padding:2rem">{% trans "No customers found." %}</td>
 </tr>
 {% endfor %}
 
@@ -33,7 +34,7 @@
         <button class="btn-sm outline"
           hx-get="?page={{ page_obj.previous_page_number }}&q={{ query }}"
           hx-target="#customer-table-body" hx-swap="innerHTML">
-          &laquo; Prev
+          {% trans "&laquo; Prev" %}
         </button>
       {% endif %}
       <span style="align-self:center;font-size:.85rem;color:var(--pico-muted-color)">
@@ -43,7 +44,7 @@
         <button class="btn-sm outline"
           hx-get="?page={{ page_obj.next_page_number }}&q={{ query }}"
           hx-target="#customer-table-body" hx-swap="innerHTML">
-          Next &raquo;
+          {% trans "Next &raquo;" %}
         </button>
       {% endif %}
     </div>

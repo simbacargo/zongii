@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Canvas, useFrame, useThree } from '@react-three/fiber'
+import { Canvas, useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { prefersReducedMotion } from '../lib/motion'
 
@@ -94,9 +94,6 @@ function Dust() {
 
 /** Gold-edged specimen plate carrying the product photo on its face. */
 function Plate({ image }: { image: string | null }) {
-  const group = useRef<THREE.Group>(null!)
-  const reduced = useMemo(prefersReducedMotion, [])
-  const pointer = useThree((s) => s.pointer)
   const [texture, setTexture] = useState<THREE.Texture | null>(null)
 
   useEffect(() => {
@@ -126,21 +123,6 @@ function Plate({ image }: { image: string | null }) {
 
   const geometry = useMemo(() => new THREE.BoxGeometry(2.6, 1.95, 0.1), [])
 
-  useFrame((state, delta) => {
-    if (!group.current) return
-    const t = state.clock.elapsedTime
-    if (!reduced) {
-      group.current.rotation.y = Math.sin(t * 0.35) * 0.42 + 0.1
-      group.current.position.y = Math.sin(t * 0.6) * 0.08
-      const targetX = pointer.x * 0.3
-      const targetY = pointer.y * 0.16
-      group.current.rotation.y += (targetX - 0) * 0.15
-      group.current.rotation.x += (-targetY - group.current.rotation.x) * Math.min(1, delta * 2.2)
-    } else {
-      group.current.rotation.y = 0.18
-    }
-  })
-
   const edgeMaterial = useMemo(
     () => new THREE.MeshStandardMaterial({ color: GOLD, metalness: 0.85, roughness: 0.32 }),
     [],
@@ -152,7 +134,13 @@ function Plate({ image }: { image: string | null }) {
 
   const faceMaterial = useMemo(() => {
     if (!texture) return backMaterial
-    return new THREE.MeshStandardMaterial({ map: texture, metalness: 0.1, roughness: 0.55 })
+    // bone tint multiplies the photo's white background into the site's card stock
+    return new THREE.MeshStandardMaterial({
+      map: texture,
+      color: new THREE.Color('#ede6d8'),
+      metalness: 0.1,
+      roughness: 0.55,
+    })
   }, [texture, backMaterial])
 
   const materials = useMemo(
@@ -161,7 +149,7 @@ function Plate({ image }: { image: string | null }) {
   )
 
   return (
-    <group ref={group}>
+    <group rotation={[0, 0.18, 0]}>
       <mesh geometry={geometry} material={materials} />
     </group>
   )

@@ -42,7 +42,9 @@ export default function Layout() {
       <Cursor />
       <DepthMeter />
       <Nav />
-      <Outlet context={{ ready, setReady } satisfies LayoutContext} />
+      <div key={location.pathname} className="page-enter">
+        <Outlet context={{ ready, setReady } satisfies LayoutContext} />
+      </div>
     </div>
   )
 }

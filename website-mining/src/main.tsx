@@ -7,6 +7,7 @@ import Home from './pages/Home'
 import CatalogIndex from './pages/CatalogIndex'
 import Category from './pages/Category'
 import Product from './pages/Product'
+import EquipmentLine from './pages/EquipmentLine'
 
 const router = createBrowserRouter([
   {
@@ -16,6 +17,7 @@ const router = createBrowserRouter([
       { path: '/catalog', element: <CatalogIndex /> },
       { path: '/catalog/:categoryId', element: <Category /> },
       { path: '/catalog/:categoryId/:itemId', element: <Product /> },
+      { path: '/equipment/:lineId', element: <EquipmentLine /> },
     ],
   },
 ])

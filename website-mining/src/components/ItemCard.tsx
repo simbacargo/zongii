@@ -4,12 +4,14 @@ import type { CatalogItem } from '../lib/catalog'
 export function ItemImage({ item, className = '' }: { item: CatalogItem; className?: string }) {
   if (item.image) {
     return (
-      <img
-        src={item.image}
-        alt={item.name.toLowerCase()}
-        loading="lazy"
-        className={`h-full w-full bg-bone object-contain ${className}`}
-      />
+      <div className={`specimen h-full w-full p-3 ${className}`}>
+        <img
+          src={item.image}
+          alt={item.name.toLowerCase()}
+          loading="lazy"
+          className="h-full w-full object-contain"
+        />
+      </div>
     )
   }
   return (
@@ -27,14 +29,14 @@ export default function ItemCard({ item, categoryId }: { item: CatalogItem; cate
       data-cursor="VIEW"
       className="group flex h-full flex-col border border-bone/10 bg-strata transition-colors duration-300 hover:border-gold/50"
     >
-      <div className="img-frame aspect-[4/3] shrink-0">
+      <div className="img-frame tick-frame aspect-[4/3] shrink-0">
         <ItemImage item={item} />
       </div>
       <div className="flex flex-1 flex-col gap-2 p-4">
         <h3 className="font-display text-sm font-extrabold leading-tight tracking-wide text-bone">
           {item.name}
         </h3>
-        <p className="mt-auto font-mono text-[9px] uppercase tracking-[0.18em] text-ash">
+        <p className="mt-auto border-t border-bone/10 pt-2.5 font-mono text-[9px] uppercase tracking-[0.18em] text-ash transition-colors group-hover:text-smoke">
           {item.variants.length > 1
             ? `${item.variants.length} sizes`
             : item.variants[0] || 'On request'}

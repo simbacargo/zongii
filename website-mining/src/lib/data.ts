@@ -84,6 +84,10 @@ export const EQUIPMENT: EquipmentLine[] = [
   },
 ]
 
+export function getEquipmentLine(id: string | undefined): EquipmentLine | undefined {
+  return EQUIPMENT.find((line) => line.id === id)
+}
+
 export const STATS = [
   { value: 24, suffix: '', label: 'Years at the rock face' },
   { value: 6, suffix: '', label: 'Equipment lines in stock' },

@@ -51,8 +51,13 @@ export default function Equipment() {
           <Reveal key={line.id} delay={i * 0.05} className="lg:h-[72%] lg:w-[clamp(380px,30vw,480px)] lg:shrink-0">
             <article
               data-cursor="VIEW"
-              className="group flex h-full flex-col border border-bone/10 bg-strata transition-colors duration-500 hover:border-gold/50"
+              className="group relative flex h-full flex-col border border-bone/10 bg-strata transition-colors duration-500 hover:border-gold/50"
             >
+              <Link
+                to={`/equipment/${line.id}`}
+                aria-label={`${line.name} — details`}
+                className="absolute inset-0 z-[1]"
+              />
               <div className="img-frame aspect-[3/2] shrink-0">
                 <img
                   src={line.image}
@@ -79,7 +84,7 @@ export default function Equipment() {
                 </ul>
                 <Link
                   to={`/catalog/${line.catalogCategory}`}
-                  className="mt-5 inline-flex items-center gap-2 border-t border-bone/10 pt-4 font-mono text-[10px] uppercase tracking-[0.18em] text-gold transition-colors hover:text-gold-hot"
+                  className="relative z-[2] mt-5 inline-flex items-center gap-2 border-t border-bone/10 pt-4 font-mono text-[10px] uppercase tracking-[0.18em] text-gold transition-colors hover:text-gold-hot"
                 >
                   Browse the shelf →
                 </Link>

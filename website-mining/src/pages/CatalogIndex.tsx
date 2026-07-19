@@ -12,7 +12,7 @@ function CategoryCard({ id, label, count, image }: { id: string; label: string; 
       data-cursor="OPEN"
       className="group flex flex-col border border-bone/10 bg-strata transition-colors duration-300 hover:border-gold/50"
     >
-      <div className="img-frame aspect-[16/10]">
+      <div className="img-frame tick-frame aspect-[16/10]">
         <ItemImage item={{ id, name: label, image, variants: [] }} />
       </div>
       <div className="flex items-baseline justify-between gap-3 p-5">

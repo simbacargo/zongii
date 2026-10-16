@@ -5,7 +5,7 @@
     <td class="p-4">
         <div class="flex items-center gap-4">
             {% if product.product_photo %}
-            <img src="{{ product.product_photo.url }}" class="w-12 h-12 rounded-lg object-cover bg-gray-100">
+            <img src="{{ product.product_photo.url }}" alt="{{ product.name }}" loading="lazy" decoding="async" width="48" height="48" class="w-12 h-12 rounded-lg object-cover bg-gray-100">
             {% else %}
             <div class="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center text-gray-400">
                 <i class="bi bi-box"></i>
@@ -74,7 +74,7 @@
 {% if page_obj.has_next %}
 <tr id="load-more-row">
     <td colspan="5" class="p-4 text-center">
-        <button hx-get="{% url 'product_list' %}?page={{ page_obj.next_page_number }}&q={{ query }}"
+        <button hx-get="{% url 'product_list' %}?page={{ page_obj.next_page_number }}&q={{ query|urlencode }}{% if business_id %}&business={{ business_id|urlencode }}{% endif %}"
                 hx-target="#load-more-row"
                 hx-swap="outerHTML"
                 class="text-xs font-bold text-amber-600 hover:underline">

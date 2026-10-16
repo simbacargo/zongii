@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from decimal import Decimal
 from django.contrib.auth import get_user_model
 
 from .models import (
@@ -190,6 +191,43 @@ class SaleWriteSerializer(serializers.ModelSerializer):
 # ─────────────────────────────────────────────────────────────────────────────
 #  SALE ORDER
 # ─────────────────────────────────────────────────────────────────────────────
+
+class CheckoutItemSerializer(serializers.Serializer):
+    product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
+    quantity_sold = serializers.IntegerField(min_value=1)
+    price_per_unit = serializers.DecimalField(max_digits=12, decimal_places=2, min_value=Decimal('0.01'))
+
+
+class CheckoutSerializer(serializers.Serializer):
+    customer = serializers.PrimaryKeyRelatedField(
+        queryset=Customer.objects.all(), required=False, allow_null=True,
+    )
+    notes = serializers.CharField(required=False, allow_blank=True, default='')
+    items = CheckoutItemSerializer(many=True, allow_empty=False)
+
+    def validate_items(self, items):
+        # Lock and aggregate repeated products so splitting one product across
+        # multiple lines cannot bypass the available-stock check.
+        products = {
+            p.pk: p for p in Product.objects.select_for_update().filter(
+                pk__in=[item['product'].pk for item in items]
+            )
+        }
+        requested = {}
+        for item in items:
+            product = products[item['product'].pk]
+            item['product'] = product
+            requested[product.pk] = requested.get(product.pk, 0) + item['quantity_sold']
+            if requested[product.pk] > product.available_stock:
+                raise serializers.ValidationError(f'Insufficient stock for {product.name}. Available: {product.available_stock}.')
+            price = item['price_per_unit']
+            if (product.min_price is not None and product.max_price is not None
+                    and not product.min_price <= price <= product.max_price):
+                raise serializers.ValidationError(
+                    f'Price for {product.name} must be between {product.min_price} and {product.max_price}.'
+                )
+        return items
+
 
 class SaleStatusHistorySerializer(serializers.ModelSerializer):
     changed_by_username = serializers.CharField(source='changed_by.username', read_only=True)

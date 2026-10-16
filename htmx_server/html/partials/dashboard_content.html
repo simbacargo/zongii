@@ -1,7 +1,7 @@
 {% load i18n %}
 {% load currency %}
 <!-- KPI Row 1: Financial -->
-<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+<div class="dashboard-financial grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
 
     <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
         <div class="flex items-center justify-between mb-3">
@@ -49,7 +49,7 @@
 </div>
 
 <!-- KPI Row 2: Operational Alerts -->
-<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+<div class="dashboard-operations grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
 
     <div class="{% if pending_count > 0 %}bg-amber-50 border-amber-200{% else %}bg-white border-gray-100{% endif %} p-5 rounded-2xl border shadow-sm">
         <div class="flex items-center justify-between mb-3">
@@ -97,7 +97,7 @@
             <span class="text-xs text-gray-400">{% if period == 'month' %}Last 30 days{% else %}Last 7 days{% endif %}</span>
         </div>
         <div class="h-[280px]">
-            <canvas id="revenueChart"></canvas>
+            <canvas id="revenueChart" role="img" aria-label="{% trans 'Revenue Analytics' %}" data-label="{% trans 'Revenue' %}"></canvas>
         </div>
     </div>
 

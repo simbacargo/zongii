@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n static %}
 <!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE|default:'en' }}">
 <head>
@@ -116,13 +116,35 @@
         html.dark ::-webkit-scrollbar-thumb { background: #334155; }
         html.dark ::-webkit-scrollbar-thumb:hover { background: #475569; }
     </style>
+    <link rel="stylesheet" href="{% static 'app.css' %}">
+    <script src="{% static 'app.js' %}" defer></script>
 </head>
 <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' class="app-bg text-gray-700">
 
-    <main class="mx-auto flex w-full min-h-screen">
+    <a class="skip-link" href="#main-content">{% trans "Skip to content" %}</a>
+    <div id="navigation-backdrop" class="navigation-backdrop" hidden></div>
+    <main class="app-layout mx-auto flex w-full min-h-screen">
   {% include 'snippets/aside.html' %}
 
-        <div class="flex-1 bg-white/90 backdrop-blur-sm m-2 rounded-2xl ring-1 ring-gray-200/70 shadow-[0_8px_30px_-12px_rgba(15,23,42,0.12)] flex flex-col relative overflow-hidden">
+        <div class="app-workspace flex-1 flex flex-col relative min-w-0">
+            {% if user.is_authenticated %}
+            <header class="app-topbar">
+                <div class="flex items-center gap-3 min-w-0">
+                    <button id="navigation-toggle" type="button" class="navigation-toggle" aria-controls="app-sidebar" aria-expanded="false" aria-label="{% trans 'Menu' %}">
+                        <i class="bi bi-list" aria-hidden="true"></i>
+                    </button>
+                    <span class="text-sm font-semibold text-gray-400 hidden sm:inline">Zongii</span>
+                    <span class="text-gray-300 hidden sm:inline" aria-hidden="true">/</span>
+                    <span id="current-section" class="text-sm font-semibold text-gray-900 truncate">{% trans "Dashboard" %}</span>
+                </div>
+                <div class="flex items-center gap-4 shrink-0">
+                    <time class="hidden md:block text-xs text-gray-500" datetime="{% now 'Y-m-d' %}">{% now "d M Y" %}</time>
+                    <a href="{% url 'notification_list' %}" hx-get="{% url 'notification_list' %}" hx-target="#main-content" hx-push-url="true" class="topbar-notifications" aria-label="{% trans 'Notifications' %}">
+                        <i class="bi bi-bell" aria-hidden="true"></i>
+                    </a>
+                </div>
+            </header>
+            {% endif %}
 
             <div id="loading-spinner" class="htmx-indicator absolute inset-0 z-50 flex items-center justify-center bg-white/60 backdrop-blur-sm">
                 <div class="flex flex-col items-center gap-3">
@@ -131,7 +153,7 @@
                 </div>
             </div>
 
-            <div id="main-content" class="flex-1 p-4 overflow-y-auto">
+            <div id="main-content" class="flex-1 min-w-0" tabindex="-1">
                 {% if messages %}
                     <div class="mb-4 space-y-2">
                         {% for message in messages %}
@@ -157,6 +179,8 @@
         <div id="modal-content" class="bg-white rounded-2xl shadow-2xl ring-1 ring-gray-200 max-w-lg w-full m-4"></div>
     </div>
 
+    {% trans "Light mode" as light_mode_label %}
+    {% trans "Dark mode" as dark_mode_label %}
     <script>
         // CSRF Token setup for HTMX (Crucial for Django POST)
         document.body.addEventListener('htmx:configRequest', (event) => {
@@ -197,7 +221,7 @@
                 el.classList.toggle('bi-sun', isDark);
             });
             document.querySelectorAll('[data-theme-label]').forEach(el => {
-                el.textContent = isDark ? 'Light mode' : 'Dark mode';
+                el.textContent = isDark ? '{{ light_mode_label|escapejs }}' : '{{ dark_mode_label|escapejs }}';
             });
         }
         document.addEventListener('DOMContentLoaded', syncThemeIcon);

@@ -5,6 +5,8 @@ from . import api_views as views
 
 urlpatterns = [
     # Auth
+    path('auth/signup/',  views.signup, name='api-signup'),
+    path('auth/activate/', views.activate_account, name='api-activate'),
     path('auth/login/',   TokenObtainPairView.as_view(), name='api-token-obtain'),
     path('auth/refresh/', TokenRefreshView.as_view(),    name='api-token-refresh'),
     path('auth/verify/',  TokenVerifyView.as_view(),     name='api-token-verify'),
@@ -54,6 +56,7 @@ urlpatterns = [
     path('documents/',                 views.document_list,   name='api-document-list'),
     path('documents/<int:pk>/',        views.document_detail, name='api-document-detail'),
     path('documents/<int:pk>/status/', views.document_status, name='api-document-status'),
+    path('documents/<int:pk>/pdf/', views.document_pdf, name='api-document-pdf'),
 
     # Picking Orders
     path('picking/',                  views.picking_list,   name='api-picking-list'),
@@ -64,6 +67,7 @@ urlpatterns = [
     # Gate Passes
     path('gate-passes/',          views.gate_pass_list,   name='api-gatepass-list'),
     path('gate-passes/<int:pk>/', views.gate_pass_detail, name='api-gatepass-detail'),
+    path('gate-passes/<int:pk>/print/', views.gate_pass_print, name='api-gatepass-print'),
 
     # Notifications
     path('notifications/',                views.notification_list,          name='api-notification-list'),

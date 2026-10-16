@@ -278,7 +278,9 @@ def product_list(request):
     if query:
         products = _apply_product_search(products, query)
 
-    paginator = Paginator(products, 2500)
+    if not query:
+        products = products.order_by('name', 'pk')
+    paginator = Paginator(products, 50)
     page = paginator.get_page(request.GET.get("page"))
 
     # In-place search / "load more" swap only the table body, so the search
@@ -287,6 +289,7 @@ def product_list(request):
         return render(request, "partials/product_table.html", {
             "page_obj": page,
             "query": query,
+            "business_id": business_id,
         })
 
     return render(request, "product_list.html", {
@@ -1747,26 +1750,13 @@ def document_delete(request, pk):
 
 
 @login_required
-def document_pdf(request, pk):
-    import weasyprint
-    doc = get_object_or_404(
-        Document.objects.select_related('customer', 'created_by')
-                        .prefetch_related('items__product'),
-        pk=pk,
-    )
-    html_string = render_to_string('invoice_pdf.html', {'doc': doc}, request=request)
-    pdf_bytes = weasyprint.HTML(
-        string=html_string,
-        base_url=request.build_absolute_uri('/'),
-    ).write_pdf()
-    response = HttpResponse(pdf_bytes, content_type='application/pdf')
-    response['Content-Disposition'] = f'attachment; filename="{doc.number}.pdf"'
-    return response
-
-
-@login_required
 @require_GET
 def document_pdf(request, pk):
+    return render_document_pdf(request, pk)
+
+
+def render_document_pdf(request, pk):
+    """Shared PDF rendering; callers enforce their own session or JWT authentication."""
     import base64, os as _os
     from weasyprint import HTML
     doc = get_object_or_404(
@@ -2258,6 +2248,11 @@ def gate_pass_detail(request, pk):
 
 @login_required
 def gate_pass_print(request, pk):
+    return render_gate_pass_print(request, pk)
+
+
+def render_gate_pass_print(request, pk):
+    """Shared print layout; callers enforce authentication."""
     gp = get_object_or_404(
         GatePass.objects.select_related(
             'sale_order__customer', 'sale_order__created_by',
@@ -2306,5 +2301,3 @@ def stock_refill_view(request, pk):
 
     messages.success(request, _("Added %(qty)s units to %(name)s. New stock: %(quantity_after)s.") % {'qty': qty, 'name': product.name, 'quantity_after': quantity_after})
     return redirect('product_detail', pk=pk)
-
-

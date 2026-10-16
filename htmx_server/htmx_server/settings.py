@@ -16,7 +16,7 @@ ALLOWED_SIGNUP_DOMAINS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
-    'daphne',
+        #'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -30,10 +30,10 @@ INSTALLED_APPS = [
     'home',
     'notifications',
     'authentication',
-     'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',  # Google provider
+    #     'allauth',
+    #'allauth.account',
+    #    'allauth.socialaccount',
+    #'allauth.socialaccount.providers.google',  # Google provider
     # 'allauth.socialaccount.providers.apple', # <-- You need this
 ]
 
@@ -50,7 +50,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'allauth.account.middleware.AccountMiddleware',
     'home.middleware.HtmxBaseMiddleware',
 ]
 
@@ -78,7 +77,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'htmx_server.wsgi.application'
 ASGI_APPLICATION = "htmx_server.asgi.application"    
-CHANNEL_LAYERS = {
+ICHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
@@ -255,7 +254,6 @@ CSRF_TRUSTED_ORIGINS = [
 AUTH_USER_MODEL = 'authentication.User'
 
 AUTHENTICATION_BACKENDS = (
-    'allauth.account.auth_backends.AuthenticationBackend',  # allauth authentication backend
     'django.contrib.auth.backends.ModelBackend',  # Default backend for local authentication
 )
 

@@ -1768,3 +1768,15 @@ msgstr "← Nyuma"
 
 msgid "🖨 Print Gate Pass"
 msgstr "🖨 Chapisha Pasi ya Geti"
+
+msgid "Menu"
+msgstr "Menyu"
+
+msgid "Close menu"
+msgstr "Funga menyu"
+
+msgid "Navigation"
+msgstr "Urambazaji"
+
+msgid "Skip to content"
+msgstr "Ruka hadi maudhui"

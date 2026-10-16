@@ -29,7 +29,7 @@ from .serializers import (
     ProductListSerializer, ProductWriteSerializer,
     CustomerSerializer,
     SaleReadSerializer, SaleWriteSerializer,
-    SaleOrderSerializer, SaleOrderListSerializer,
+    SaleOrderSerializer, SaleOrderListSerializer, CheckoutSerializer,
     DocumentSerializer, DocumentWriteSerializer, DocumentItemSerializer,
     PickingOrderSerializer, PickingOrderItemSerializer,
     GatePassSerializer,
@@ -38,6 +38,7 @@ from .serializers import (
     UserSerializer, UserCreateSerializer,
     VALID_ROLES, _ROLE_FLAGS, _ROLE_SECTIONS,
 )
+from .views import _apply_product_search, render_document_pdf, render_gate_pass_print
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -70,6 +71,44 @@ def _is_picker(user):
 # ─────────────────────────────────────────────────────────────────────────────
 #  AUTH / PROFILE
 # ─────────────────────────────────────────────────────────────────────────────
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def signup(request):
+    """Register using the same validation and activation policy as the web form."""
+    from authentication.forms import SignupForm
+
+    form = SignupForm(request.data)
+    if not form.is_valid():
+        return Response(form.errors.get_json_data(), status=status.HTTP_400_BAD_REQUEST)
+    with transaction.atomic():
+        user = form.save(commit=False)
+        user.is_active = True
+        user.is_staff = False
+        user.save()
+    return Response(UserSerializer(user).data, status=status.HTTP_201_CREATED)
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def activate_account(request):
+    from django.contrib.auth.tokens import default_token_generator
+    from django.utils.encoding import force_str
+    from django.utils.http import urlsafe_base64_decode
+    from django.core.exceptions import ValidationError
+
+    try:
+        uid = force_str(urlsafe_base64_decode(request.data.get('uid', '')))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, UnicodeDecodeError, ValidationError, User.DoesNotExist):
+        user = None
+    token = request.data.get('token')
+    if user is None or not isinstance(token, str) or not default_token_generator.check_token(user, token):
+        return Response({'error': 'Invalid or expired activation link.'}, status=status.HTTP_400_BAD_REQUEST)
+    user.is_active = True
+    user.save(update_fields=['is_active'])
+    return Response({'detail': 'Account activated. Sign in to obtain tokens.'})
+
 
 @api_view(['GET', 'PATCH'])
 @permission_classes([IsAuthenticated])
@@ -250,10 +289,7 @@ def product_list(request):
 
         q = request.GET.get('q', '').strip()
         if q:
-            qs = qs.filter(
-                Q(name__icontains=q) | Q(brand__icontains=q)
-                | Q(part_number__icontains=q) | Q(upc_code__icontains=q)
-            )
+            qs = _apply_product_search(qs, q)
 
         category = request.GET.get('category')
         if category:
@@ -262,7 +298,7 @@ def product_list(request):
         if request.GET.get('low_stock') == 'true':
             qs = qs.filter(quantity_at_hand__lte=F('reorder_point'))
 
-        return Response(ProductListSerializer(qs.order_by('name'), many=True).data)
+        return Response(ProductListSerializer(qs if q else qs.order_by('name'), many=True).data)
 
     if not _is_admin(request.user):
         return Response({'error': 'Admin access required.'}, status=status.HTTP_403_FORBIDDEN)
@@ -595,37 +631,35 @@ def sale_order_list(request):
          Body: { customer?: id, notes?: str, items: [{product, quantity_sold, price_per_unit}] }
     """
     if request.method == 'POST':
-        items_data = request.data.get('items', [])
-        if not items_data:
-            return Response({'items': 'At least one item is required.'}, status=status.HTTP_400_BAD_REQUEST)
-
-        customer_id = request.data.get('customer') or None
-        errors = []
-        for i, item in enumerate(items_data):
-            if not item.get('product'):
-                errors.append({f'items[{i}].product': 'Required.'})
-            if not item.get('quantity_sold') or int(item['quantity_sold']) <= 0:
-                errors.append({f'items[{i}].quantity_sold': 'Must be > 0.'})
-            if not item.get('price_per_unit') or float(item['price_per_unit']) <= 0:
-                errors.append({f'items[{i}].price_per_unit': 'Must be > 0.'})
-        if errors:
-            return Response(errors, status=status.HTTP_400_BAD_REQUEST)
-
         with transaction.atomic():
+            serializer = CheckoutSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            data = serializer.validated_data
             order = SaleOrder.objects.create(
-                customer_id=customer_id,
+                customer=data.get('customer'),
                 created_by=request.user,
-                notes=request.data.get('notes', ''),
+                notes=data['notes'],
             )
-            for item in items_data:
+            for item in data['items']:
                 Sale.objects.create(
                     order=order,
-                    product_id=item['product'],
-                    quantity_sold=int(item['quantity_sold']),
-                    price_per_unit=Decimal(str(item['price_per_unit'])),
-                    customer_id=customer_id,
+                    product=item['product'],
+                    quantity_sold=item['quantity_sold'],
+                    price_per_unit=item['price_per_unit'],
+                    customer=data.get('customer'),
                     created_by=request.user,
                 )
+            SaleStatusHistory.objects.create(
+                sale_order=order, from_status='', to_status=SaleOrder.PENDING_APPROVAL,
+                changed_by=request.user, note='Order created — awaiting accountant approval',
+            )
+            from notifications.utils import notify_accountants
+            transaction.on_commit(lambda: notify_accountants(
+                Notification.ORDER_APPROVAL,
+                title=f'New order {order.order_code} awaiting approval',
+                message=f'Created by {request.user.username}. {order.sales.count()} item(s). Please review and approve.',
+                link=f'/orders/{order.pk}/', entity_id=order.pk,
+            ))
 
         order.refresh_from_db()
         return Response(SaleOrderSerializer(order).data, status=status.HTTP_201_CREATED)
@@ -864,6 +898,12 @@ def document_list(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def document_pdf(request, pk):
+    return render_document_pdf(request, pk)
+
+
 @api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
 @permission_classes([IsAuthenticated])
 def document_detail(request, pk):
@@ -1035,6 +1075,12 @@ def picking_submit(request, pk):
 # ─────────────────────────────────────────────────────────────────────────────
 #  GATE PASSES
 # ─────────────────────────────────────────────────────────────────────────────
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def gate_pass_print(request, pk):
+    return render_gate_pass_print(request, pk)
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
